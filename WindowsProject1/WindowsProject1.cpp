@@ -92,8 +92,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
             // Start rendering the menu through imgui functions
             if (ImGuiMenu) {
-
+                // Main Menu or Gameplay
                 static bool startGame = false;
+
+                // Main Menu
                 if (!startGame) {
                     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{});
                     if (ImGui::Begin("##Hello", &ImGuiMenu, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize)) {
@@ -127,7 +129,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                     ImGui::End();
                     ImGui::PopStyleVar();
                 }
-
+                
+                // Gameplay
                 if (startGame) {
                     ImGui::Begin("begin2", &ImGuiMenu, ImGuiWindowFlags_NoResize);
                     {
