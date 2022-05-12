@@ -75,9 +75,9 @@ Viewer::Button::operator bool()const { return isClicked; }
 ///////////////////////////////////////////////////// DirectX9 /////////////////////////////////////////////////////
 
 // Initialize static variable
-LPDIRECT3DDEVICE9 Viewer::DirectX::direct3DDevice9 = NULL;
-
-Viewer::DirectX::DirectX( Viewer& viewer ) : imgs(viewer) { }
+LPDIRECT3D9			    Viewer::DirectX::direct3D9;
+LPDIRECT3DDEVICE9	    Viewer::DirectX::direct3DDevice9;
+D3DPRESENT_PARAMETERS   Viewer::DirectX::direct3DParams;
 
 BOOL Viewer::DirectX::CreateDeviceD3D(HWND hWnd) {
 
@@ -139,21 +139,22 @@ BOOL Viewer::DirectX::InitDisplay(HWND hWnd) {
 }
 
 void Viewer::DirectX::InitImgs() {
+
     // Initialize background textures
-    imgs.backgroundMenu.create(TEXT("../../assets\\mainmenu.png"));
-    imgs.backgroundGame.create(TEXT("../../assets\\gameboard.png"));
+    backgroundMenu.create(TEXT("../../assets\\mainmenu.png"));
+    backgroundGame.create(TEXT("../../assets\\gameboard.png"));
 
     // Initialize button textures
-    imgs.buttonStartGameImg.create(TEXT("../../assets\\button startgame.png"));
-    imgs.buttonExitGameImg.create(TEXT("../../assets\\button exitgame.png"));
-    imgs.buttonReadFileImg.create(TEXT("../../assets\\button readfile.png"));
-    imgs.buttonStartGameHoverImg.create(TEXT("../../assets\\button startgame hover.png"));
-    imgs.buttonExitGameHoverImg.create(TEXT("../../assets\\button exitgame hover.png"));
-    imgs.buttonReadFileHoverImg.create(TEXT("../../assets\\button readfile hover.png"));
-    imgs.buttonBackToMenuImg.create(TEXT("../../assets\\button backtomenu.png"));
+    buttonStartGameImg.create(TEXT("../../assets\\button startgame.png"));
+    buttonExitGameImg.create(TEXT("../../assets\\button exitgame.png"));
+    buttonReadFileImg.create(TEXT("../../assets\\button readfile.png"));
+    buttonStartGameHoverImg.create(TEXT("../../assets\\button startgame hover.png"));
+    buttonExitGameHoverImg.create(TEXT("../../assets\\button exitgame hover.png"));
+    buttonReadFileHoverImg.create(TEXT("../../assets\\button readfile hover.png"));
+    buttonBackToMenuImg.create(TEXT("../../assets\\button backtomenu.png"));
 
     // Initialize chess piece textures
-    imgs.chessRedGeneral.create(TEXT("../../assets\\pion\\chess red general.png"));
+    chessRedGeneral.create(TEXT("../../assets\\pion\\chess red general.png"));
 }
 
 void Viewer::DirectX::onResize(WPARAM wParam, LPARAM lParam)noexcept {
@@ -168,7 +169,7 @@ void Viewer::DirectX::onResize(WPARAM wParam, LPARAM lParam)noexcept {
 
 ///////////////////////////////////////////////////// Viewer Functions /////////////////////////////////////////////////////
 
-Viewer::Viewer() : directx(*this) { }
+Viewer::Viewer () { }
 
 void Viewer::render() {
     // Start the Dear ImGui frame
@@ -186,21 +187,21 @@ void Viewer::endRender() {
     ImGui::EndFrame();
 
     // Rendering through directx9
-    directx.direct3DDevice9->SetRenderState(D3DRS_ZENABLE, FALSE);
-    directx.direct3DDevice9->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
-    directx.direct3DDevice9->SetRenderState(D3DRS_SCISSORTESTENABLE, FALSE);
-    directx.direct3DDevice9->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR(), 1.f, 0);
+    DirectX::direct3DDevice9->SetRenderState(D3DRS_ZENABLE, FALSE);
+    DirectX::direct3DDevice9->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
+    DirectX::direct3DDevice9->SetRenderState(D3DRS_SCISSORTESTENABLE, FALSE);
+    DirectX::direct3DDevice9->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR(), 1.f, 0);
 
-    if (directx.direct3DDevice9->BeginScene() >= 0) {
+    if ( DirectX::direct3DDevice9->BeginScene() >= 0) {
         ImGui::Render();
         ImGui_ImplDX9_RenderDrawData(ImGui::GetDrawData());
-        directx.direct3DDevice9->EndScene();
+        DirectX::direct3DDevice9->EndScene();
     }
 
-    HRESULT result = directx.direct3DDevice9->Present(NULL, NULL, NULL, NULL);
+    HRESULT result = DirectX::direct3DDevice9->Present(NULL, NULL, NULL, NULL);
     // Handle loss of D3D9 device
-    if (result == D3DERR_DEVICELOST && directx.direct3DDevice9->TestCooperativeLevel() == D3DERR_DEVICENOTRESET)
-        directx.ResetDevice();
+    if (result == D3DERR_DEVICELOST && DirectX::direct3DDevice9->TestCooperativeLevel() == D3DERR_DEVICENOTRESET)
+        DirectX::ResetDevice();
 }
 
 void Viewer::endAll() {
@@ -208,7 +209,7 @@ void Viewer::endAll() {
     ImGui_ImplWin32_Shutdown();
     ImGui::DestroyContext();
 
-    directx.CleanupDeviceD3D();
+    DirectX::CleanupDeviceD3D();
 }
 
 ImVec2 Viewer::createWindow(bool& appRunning, Texture background) {

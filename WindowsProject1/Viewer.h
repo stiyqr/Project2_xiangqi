@@ -37,23 +37,20 @@ public:
 	class DirectX {
 	public:
 		// Global Variables for directx 9:
-		LPDIRECT3D9				direct3D9;
-		static LPDIRECT3DDEVICE9	direct3DDevice9;
-		D3DPRESENT_PARAMETERS	direct3DParams;
-		Viewer& imgs;
+		static LPDIRECT3D9			 direct3D9;
+		static LPDIRECT3DDEVICE9	 direct3DDevice9;
+		static D3DPRESENT_PARAMETERS direct3DParams;
 
 	public:
-		DirectX( Viewer& );
+		// DirectX Functions
+		static BOOL CreateDeviceD3D(HWND hWnd);
+		static VOID CleanupDeviceD3D ();
+		static VOID ResetDevice ();
 
-		// Functions
-		BOOL CreateDeviceD3D(HWND hWnd);
-		VOID CleanupDeviceD3D ();
-		VOID ResetDevice ();
+		static BOOL InitDisplay(HWND);
+		static VOID InitImgs ();
 
-		BOOL InitDisplay(HWND);
-		VOID InitImgs ();
-
-		VOID onResize(WPARAM, LPARAM)noexcept;
+		static VOID onResize(WPARAM, LPARAM) noexcept;
 	};
 
 	// Viewer functions
@@ -67,7 +64,6 @@ public:
 	void setButtonPos(float, float);
 
 public:
-	DirectX directx;
 
 	// Textures
 	//Main Menu
