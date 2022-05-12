@@ -19,8 +19,8 @@ public:
 	Viewer& operator=( Viewer&& ) = delete;
 	Viewer& operator=( const Viewer& ) = delete;
 
-	void run () noexcept;
 	void reset () noexcept;
+	void resize ( WPARAM, LPARAM ) noexcept;
 
 	LPDIRECT3D9             Direct3D9;
 	LPDIRECT3DDEVICE9       Direct3DDevice9;

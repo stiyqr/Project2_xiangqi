@@ -1,4 +1,15 @@
 #include "Window.h"
+#include "GameManager.h"
+#include "Viewer.h"
+
+#include "ImGui/imgui.h"
+#include "ImGui/imgui_impl_win32.h"
+#include "ImGui/imgui_impl_dx9.h"
+
+#pragma push_macro("#define IMGUI_DEFINE_MATH_OPERATORS")
+#define IMGUI_DEFINE_MATH_OPERATORS
+#include "ImGui/imgui_internal.h"
+#pragma pop_macro("#define IMGUI_DEFINE_MATH_OPERATORS")
 
 Window::Window (
     HINSTANCE   hInstance,
@@ -38,6 +49,8 @@ Window::Window (
     SetLayeredWindowAttributes ( handle, RGB ( 0, 0, 0 ), 1, LWA_COLORKEY );
     ShowWindow ( handle, nCmdShow );
     UpdateWindow ( handle );
+
+    running = true;
 }
 
 Window::~Window () noexcept {
@@ -52,9 +65,26 @@ LRESULT Window::Proc (
     WPARAM  wParam,
     LPARAM  lParam ) noexcept {
 
+    const auto& gameManager{ GameManager::instance () };
+
+    if ( gameManager.window ) {
+
+        if ( !gameManager.window->running )
+            message = WM_DESTROY;
+        else if ( gameManager.viewer ) {
+
+            LRESULT ImGui_ImplWin32_WndProcHandler ( HWND, UINT, WPARAM, LPARAM );
+            if ( ImGui_ImplWin32_WndProcHandler ( hWnd, message, wParam, lParam ) )
+                return true;
+
+            switch ( message ) {
+            case WM_SIZE: if ( gameManager.viewer ) gameManager.viewer->resize ( wParam, lParam );
+                return EXIT_SUCCESS;
+            }
+        }
+    }
+
     switch ( message ) {
-    case WM_SIZE:
-        return EXIT_SUCCESS;
     case WM_DESTROY: PostQuitMessage ( 0 );
         return EXIT_SUCCESS;
     }
@@ -62,13 +92,50 @@ LRESULT Window::Proc (
     return DefWindowProc ( hWnd, message, wParam, lParam );
 }
 
-bool Window::run () noexcept {
+INT Window::run (
+    Viewer& viewer,
+    void    ( *callback )( ) ) noexcept {
 
-    if ( GetMessage ( &message, nullptr, 0, 0 ) == NULL )
-        return false;
+    while ( GetMessage ( &message, nullptr, 0, 0 ) ) {
 
-    TranslateMessage ( &message );
-    DispatchMessage ( &message );
+        TranslateMessage ( &message );
+        DispatchMessage ( &message );
 
-    return true;
+        ImGui_ImplDX9_NewFrame ();
+        ImGui_ImplWin32_NewFrame ();
+        ImGui::NewFrame ();
+
+        if ( running ) {
+
+            ImGui::SetNextWindowSize ( ImGui::GetIO ().DisplaySize / 2, ImGuiCond_Once );
+
+            ImGui::PushStyleVar ( ImGuiStyleVar_WindowPadding, ImVec2{} );
+
+            if ( ImGui::Begin ( "Xiangqi", &running, ImGuiWindowFlags_NoCollapse ) && callback )
+                callback ();
+
+            ImGui::End ();
+
+            ImGui::PopStyleVar ();
+        }
+
+        ImGui::EndFrame ();
+
+        viewer.Direct3DDevice9->SetRenderState ( D3DRS_ZENABLE, FALSE );
+        viewer.Direct3DDevice9->SetRenderState ( D3DRS_ALPHABLENDENABLE, FALSE );
+        viewer.Direct3DDevice9->SetRenderState ( D3DRS_SCISSORTESTENABLE, FALSE );
+        viewer.Direct3DDevice9->Clear ( 0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR (), 1.f, 0 );
+
+        if ( viewer.Direct3DDevice9->BeginScene () == D3D_OK ) {
+            ImGui::Render ();
+            ImGui_ImplDX9_RenderDrawData ( ImGui::GetDrawData () );
+            viewer.Direct3DDevice9->EndScene ();
+        }
+
+        if ( viewer.Direct3DDevice9->Present ( nullptr, nullptr, nullptr, nullptr ) == D3DERR_DEVICELOST &&
+             viewer.Direct3DDevice9->TestCooperativeLevel () == D3DERR_DEVICENOTRESET )
+            viewer.reset ();
+    }
+
+    return static_cast< INT >( message.wParam );
 }

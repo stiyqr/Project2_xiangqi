@@ -3,6 +3,8 @@
 #include "framework.h"
 #include "WindowsProject1.h"
 
+class Viewer;
+
 class Window {
 public:
 	static LRESULT CALLBACK Proc ( HWND, UINT, WPARAM, LPARAM ) noexcept;
@@ -15,7 +17,7 @@ public:
 	Window& operator=( Window&& ) = delete;
 	Window& operator=( const Window& ) = delete;
 
-	[[nodiscard]] bool run () noexcept;
+	[[nodiscard]] INT run ( Viewer&, void( *callback )( ) ) noexcept;
 
 	HINSTANCE instance;
 	WCHAR text[64];          
@@ -24,4 +26,5 @@ public:
 	HWND handle;
 	MSG message;
 	TCHAR path[MAX_PATH];
+	bool running;
 };

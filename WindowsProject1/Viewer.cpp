@@ -1,5 +1,11 @@
 #include "Viewer.h"
 
+#include "ImGui/imgui.h"
+#include "ImGui/imgui_impl_win32.h"
+#include "ImGui/imgui_impl_dx9.h"
+
+#include "tahoma.h"
+
 Viewer::Viewer (
     HWND windowHandle ) noexcept {
 
@@ -20,34 +26,51 @@ Viewer::Viewer (
 
     assert ( Direct3D9 = Direct3DCreate9 ( D3D_SDK_VERSION ) );
     assert ( Direct3D9->CreateDevice ( D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, windowHandle, D3DCREATE_HARDWARE_VERTEXPROCESSING, &Direct3DParams, &Direct3DDevice9 ) == D3D_OK );
+
+    ImGui::CreateContext ();
+    ImGui::StyleColorsDark ();
+
+    ImGui_ImplWin32_Init ( windowHandle );
+    ImGui_ImplDX9_Init ( Direct3DDevice9 );
+
+    auto& io{ ImGui::GetIO () };
+    io.IniFilename = nullptr;
+    io.LogFilename = nullptr;
+
+    auto& fonts{ *io.Fonts };
+    fonts.AddFontFromMemoryCompressedTTF ( tahoma_compressed_data, tahoma_compressed_size, 15 );
+
+    auto& style{ ImGui::GetStyle () };
+    style.WindowRounding    = 6;
+    style.FrameRounding     = 6;
 }
+
 Viewer::~Viewer () noexcept {
+
+    ImGui_ImplDX9_Shutdown ();
+    ImGui_ImplWin32_Shutdown ();
+    ImGui::DestroyContext ();
 
     if ( Direct3DDevice9 ) { Direct3DDevice9->Release (); Direct3DDevice9 = NULL; }
     if ( Direct3D9 ) { Direct3D9->Release (); Direct3D9 = NULL; }
 }
 
-void Viewer::run () noexcept {
-
-    Direct3DDevice9->SetRenderState ( D3DRS_ZENABLE, FALSE );
-    Direct3DDevice9->SetRenderState ( D3DRS_ALPHABLENDENABLE, FALSE );
-    Direct3DDevice9->SetRenderState ( D3DRS_SCISSORTESTENABLE, FALSE );
-    Direct3DDevice9->Clear ( 0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR (), 1.f, 0 );
-
-    if ( Direct3DDevice9->BeginScene () == D3D_OK ) {
-        //ImGui::Render ();
-        //ImGui_ImplDX9_RenderDrawData ( ImGui::GetDrawData () );
-        Direct3DDevice9->EndScene ();
-    }
-
-    if ( Direct3DDevice9->Present ( nullptr, nullptr, nullptr, nullptr )    == D3DERR_DEVICELOST &&
-         Direct3DDevice9->TestCooperativeLevel ()                           == D3DERR_DEVICENOTRESET )
-        reset ();
-}
-
 void Viewer::reset () noexcept {
 
-    //ImGui_ImplDX9_InvalidateDeviceObjects ();
+    ImGui_ImplDX9_InvalidateDeviceObjects ();
     assert ( Direct3DDevice9->Reset ( &Direct3DParams ) != D3DERR_INVALIDCALL );
-    //ImGui_ImplDX9_CreateDeviceObjects ();
+    ImGui_ImplDX9_CreateDeviceObjects ();
+}
+
+void Viewer::resize (
+    WPARAM wParam,
+    LPARAM lParam ) noexcept {
+
+    if ( wParam == SIZE_MINIMIZED )
+        return;
+
+    Direct3DParams.BackBufferWidth  = LOWORD ( lParam );
+    Direct3DParams.BackBufferHeight = HIWORD ( lParam );
+
+    reset ();
 }
