@@ -5,7 +5,6 @@
 class GameManager {
 public:
 	Viewer viewer;
-	std::vector
 
 public:
 	GameManager();

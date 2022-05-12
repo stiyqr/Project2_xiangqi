@@ -1,21 +1,21 @@
 #include "Viewer.h"
 
 // Static Members
-Viewer::DirectX directx;
+//Viewer::DirectX Viewer::directx;
 
 //Main Menu
-Viewer::Texture backgroundMenu;
-Viewer::Texture buttonStartGameImg;
-Viewer::Texture buttonExitGameImg;
-Viewer::Texture buttonReadFileImg;
-Viewer::Texture buttonStartGameHoverImg;
-Viewer::Texture buttonExitGameHoverImg;
-Viewer::Texture buttonReadFileHoverImg;
-
-//Gameplay
-Viewer::Texture backgroundGame;
-Viewer::Texture buttonBackToMenuImg;
-Viewer::Texture chessRedGeneral;
+Viewer::Texture Viewer::backgroundMenu;
+Viewer::Texture Viewer::buttonStartGameImg;
+Viewer::Texture Viewer::buttonExitGameImg;
+Viewer::Texture Viewer::buttonReadFileImg;
+Viewer::Texture Viewer::buttonStartGameHoverImg;
+Viewer::Texture Viewer::buttonExitGameHoverImg;
+Viewer::Texture Viewer::buttonReadFileHoverImg;
+//
+////Gameplay
+Viewer::Texture Viewer::backgroundGame;
+Viewer::Texture Viewer::buttonBackToMenuImg;
+Viewer::Texture Viewer::chessRedGeneral;
 
 ///////////////////////////////////////////////////// Texture /////////////////////////////////////////////////////
 
@@ -77,38 +77,29 @@ Viewer::Button::operator bool()const { return isClicked; }
 // Initialize static variable
 LPDIRECT3DDEVICE9 Viewer::DirectX::direct3DDevice9 = NULL;
 
-Viewer::DirectX::DirectX(Viewer& viewer) : imgs(viewer) {}
+Viewer::DirectX::DirectX( Viewer& viewer ) : imgs(viewer) { }
 
 BOOL Viewer::DirectX::CreateDeviceD3D(HWND hWnd) {
 
-    static const auto once = [&]() noexcept -> BOOL {
+    if ((direct3D9 = Direct3DCreate9(D3D_SDK_VERSION)) == NULL)
+        return FALSE;
 
-        if ((direct3D9 = Direct3DCreate9(D3D_SDK_VERSION)) == NULL)
-            return FALSE;
+    // Create the D3DDevice
+    ZeroMemory(&direct3DParams, sizeof(direct3DParams));
+    direct3DParams.Windowed = TRUE;
+    direct3DParams.SwapEffect = D3DSWAPEFFECT_DISCARD;
+    direct3DParams.BackBufferFormat = D3DFMT_UNKNOWN; // Need to use an explicit format with alpha if needing per-pixel alpha composition.
+    direct3DParams.EnableAutoDepthStencil = TRUE;
+    direct3DParams.AutoDepthStencilFormat = D3DFMT_D16;
+    direct3DParams.PresentationInterval = D3DPRESENT_INTERVAL_ONE;           // Present with vsync
+    //g_d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;   // Present without vsync, maximum unthrottled framerate
+    if (direct3D9->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hWnd, D3DCREATE_HARDWARE_VERTEXPROCESSING, &direct3DParams, &direct3DDevice9) < 0)
+        return FALSE;
 
-        // Create the D3DDevice
-        ZeroMemory(&direct3DParams, sizeof(direct3DParams));
-        direct3DParams.Windowed = TRUE;
-        direct3DParams.SwapEffect = D3DSWAPEFFECT_DISCARD;
-        direct3DParams.BackBufferFormat = D3DFMT_UNKNOWN; // Need to use an explicit format with alpha if needing per-pixel alpha composition.
-        direct3DParams.EnableAutoDepthStencil = TRUE;
-        direct3DParams.AutoDepthStencilFormat = D3DFMT_D16;
-        direct3DParams.PresentationInterval = D3DPRESENT_INTERVAL_ONE;           // Present with vsync
-        //g_d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;   // Present without vsync, maximum unthrottled framerate
-        if (direct3D9->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hWnd, D3DCREATE_HARDWARE_VERTEXPROCESSING, &direct3DParams, &direct3DDevice9) < 0)
-            return FALSE;
-
-        return TRUE;
-    }();
-
-    return once;
+    return TRUE;
 }
 
 VOID Viewer::DirectX::CleanupDeviceD3D() {
-
-    static const auto once = [&]() noexcept {
-
-    }();
 
     if (direct3DDevice9) { direct3DDevice9->Release(); direct3DDevice9 = NULL; }
     if (direct3D9) { direct3D9->Release(); direct3D9 = NULL; }
@@ -177,7 +168,7 @@ void Viewer::DirectX::onResize(WPARAM wParam, LPARAM lParam)noexcept {
 
 ///////////////////////////////////////////////////// Viewer Functions /////////////////////////////////////////////////////
 
-Viewer::Viewer() {}
+Viewer::Viewer() : directx(*this) { }
 
 void Viewer::render() {
     // Start the Dear ImGui frame

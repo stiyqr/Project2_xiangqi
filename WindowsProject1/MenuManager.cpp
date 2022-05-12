@@ -32,9 +32,9 @@ void MenuManager::createMainMenu(bool& appRunning, bool& startGame) {
 }
 
 void MenuManager::createGameBoard(bool& appRunning, bool& startGame) {
-	ImVec2 screenSize = viewer.createWindow(appRunning, viewer.backgroundGame());
+	ImVec2 screenSize = viewer.createWindow(appRunning, viewer.backgroundGame);
 
 	// chess piece
-	viewer.setButtonPos(0, 0);
-	Viewer::Button redGeneral()
+	//viewer.setButtonPos(0, 0);
+	//Viewer::Button redGeneral()
 }
