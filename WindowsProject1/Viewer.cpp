@@ -1,21 +1,20 @@
 #include "Viewer.h"
 
-// Static Members
-Viewer::DirectX directx;
-
+//Static Members
+//Viewer::DirectX Viewer::directx;
 //Main Menu
-Viewer::Texture backgroundMenu;
-Viewer::Texture buttonStartGameImg;
-Viewer::Texture buttonExitGameImg;
-Viewer::Texture buttonReadFileImg;
-Viewer::Texture buttonStartGameHoverImg;
-Viewer::Texture buttonExitGameHoverImg;
-Viewer::Texture buttonReadFileHoverImg;
-
-//Gameplay
-Viewer::Texture backgroundGame;
-Viewer::Texture buttonBackToMenuImg;
-Viewer::Texture chessRedGeneral;
+//Viewer::Texture backgroundMenu;
+//Viewer::Texture buttonStartGameImg;
+//Viewer::Texture buttonExitGameImg;
+//Viewer::Texture buttonReadFileImg;
+//Viewer::Texture buttonStartGameHoverImg;
+//Viewer::Texture buttonExitGameHoverImg;
+//Viewer::Texture buttonReadFileHoverImg;
+//
+////Gameplay
+//Viewer::Texture backgroundGame;
+//Viewer::Texture buttonBackToMenuImg;
+//Viewer::Texture chessRedGeneral;
 
 ///////////////////////////////////////////////////// Texture /////////////////////////////////////////////////////
 
@@ -81,7 +80,7 @@ Viewer::DirectX::DirectX(Viewer& viewer) : imgs(viewer) {}
 
 BOOL Viewer::DirectX::CreateDeviceD3D(HWND hWnd) {
 
-    static const auto once = [&]() noexcept -> BOOL {
+    //static const auto once = [&]() noexcept -> BOOL {
 
         if ((direct3D9 = Direct3DCreate9(D3D_SDK_VERSION)) == NULL)
             return FALSE;
@@ -99,17 +98,12 @@ BOOL Viewer::DirectX::CreateDeviceD3D(HWND hWnd) {
             return FALSE;
 
         return TRUE;
-    }();
+    //}();
 
-    return once;
+    //return once;
 }
 
 VOID Viewer::DirectX::CleanupDeviceD3D() {
-
-    static const auto once = [&]() noexcept {
-
-    }();
-
     if (direct3DDevice9) { direct3DDevice9->Release(); direct3DDevice9 = NULL; }
     if (direct3D9) { direct3D9->Release(); direct3D9 = NULL; }
 }
@@ -162,7 +156,7 @@ void Viewer::DirectX::InitImgs() {
     imgs.buttonBackToMenuImg.create(TEXT("../../assets\\button backtomenu.png"));
 
     // Initialize chess piece textures
-    imgs.chessRedGeneral.create(TEXT("../../assets\\pion\\chess red general.png"));
+    //imgs.chessRedGeneral.create(TEXT(""))
 }
 
 void Viewer::DirectX::onResize(WPARAM wParam, LPARAM lParam)noexcept {
@@ -177,7 +171,7 @@ void Viewer::DirectX::onResize(WPARAM wParam, LPARAM lParam)noexcept {
 
 ///////////////////////////////////////////////////// Viewer Functions /////////////////////////////////////////////////////
 
-Viewer::Viewer() {}
+Viewer::Viewer() : directx(*this) {}
 
 void Viewer::render() {
     // Start the Dear ImGui frame

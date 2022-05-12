@@ -5,10 +5,10 @@
 class GameManager {
 public:
 	Viewer viewer;
-	std::vector
+	//std::vector
 
 public:
-	GameManager();
+	//GameManager();
 
-	void createGameBoard();
+	//void createGameBoard();
 };

@@ -37,18 +37,19 @@ public:
 	class DirectX {
 	public:
 		// Global Variables for directx 9:
-		static LPDIRECT3D9				direct3D9;
-		static LPDIRECT3DDEVICE9		direct3DDevice9;
-		static D3DPRESENT_PARAMETERS	direct3DParams;
-		
+		LPDIRECT3D9					direct3D9;
+		static LPDIRECT3DDEVICE9	direct3DDevice9;
+		D3DPRESENT_PARAMETERS		direct3DParams;
+		Viewer& imgs;
 
 	public:
+		DirectX();
 		DirectX(Viewer&);
 
 		// Functions
-		static BOOL CreateDeviceD3D(HWND hWnd);
-		static BOOL InitDisplay(HWND);
-
+		BOOL CreateDeviceD3D(HWND hWnd);
+		BOOL InitDisplay(HWND);
+		VOID InitImgs();
 		VOID CleanupDeviceD3D();
 		VOID ResetDevice();
 		VOID onResize(WPARAM, LPARAM)noexcept;
@@ -64,23 +65,22 @@ public:
 	void createGameWindow(bool&, bool&);
 	void setButtonPos(float, float);
 
-	static VOID InitImgs();
 
 public:
-	static DirectX directx;
+	DirectX directx;
 
 	// Textures
 	//Main Menu
-	static Texture backgroundMenu;
-	static Texture buttonStartGameImg;
-	static Texture buttonExitGameImg;
-	static Texture buttonReadFileImg;
-	static Texture buttonStartGameHoverImg;
-	static Texture buttonExitGameHoverImg;
-	static Texture buttonReadFileHoverImg;
+	Texture backgroundMenu;
+	Texture buttonStartGameImg;
+	Texture buttonExitGameImg;
+	Texture buttonReadFileImg;
+	Texture buttonStartGameHoverImg;
+	Texture buttonExitGameHoverImg;
+	Texture buttonReadFileHoverImg;
 
 	//Gameplay
-	static Texture backgroundGame;
-	static Texture buttonBackToMenuImg;
-	static Texture chessRedGeneral;
+	Texture backgroundGame;
+	Texture buttonBackToMenuImg;
+	Texture chessRedGeneral;
 };
