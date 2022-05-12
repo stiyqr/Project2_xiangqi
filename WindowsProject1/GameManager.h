@@ -1,14 +1,21 @@
 #pragma once
+
+#include "Window.h"
 #include "Viewer.h"
-#include "Chess.h"
 
 class GameManager {
 public:
-	Viewer viewer;
+	static GameManager& instance () noexcept;
 
-public:
-	GameManager();
+	GameManager ( GameManager&& ) = delete;
+	GameManager ( const GameManager& ) = delete;
+	GameManager& operator=( GameManager&& ) = delete;
+	GameManager& operator=( const GameManager& ) = delete;
 
-	void createTextures ();
-	void createGameBoard(bool& appRunning);
+	std::unique_ptr<Window> window;
+	std::unique_ptr<Viewer> viewer;
+
+private:
+	GameManager () = default;
+	~GameManager() noexcept;
 };

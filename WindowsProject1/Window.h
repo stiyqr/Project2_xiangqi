@@ -1,0 +1,27 @@
+#pragma once
+
+#include "framework.h"
+#include "WindowsProject1.h"
+
+class Window {
+public:
+	static LRESULT CALLBACK Proc ( HWND, UINT, WPARAM, LPARAM ) noexcept;
+
+	Window ( HINSTANCE, INT ) noexcept;
+	~Window () noexcept;
+
+	Window ( Window&& ) = delete;
+	Window ( const Window& ) = delete;
+	Window& operator=( Window&& ) = delete;
+	Window& operator=( const Window& ) = delete;
+
+	[[nodiscard]] bool run () noexcept;
+
+	HINSTANCE instance;
+	WCHAR text[64];          
+	WCHAR className[64];
+	WNDCLASSEX classEx;
+	HWND handle;
+	MSG message;
+	TCHAR path[MAX_PATH];
+};
