@@ -1,30 +1,16 @@
 #include "Viewer.h"
 
-// Static Members
-//Viewer::DirectX Viewer::directx;
-
-//Main Menu
-Viewer::Texture Viewer::backgroundMenu;
-Viewer::Texture Viewer::buttonStartGameImg;
-Viewer::Texture Viewer::buttonExitGameImg;
-Viewer::Texture Viewer::buttonReadFileImg;
-Viewer::Texture Viewer::buttonStartGameHoverImg;
-Viewer::Texture Viewer::buttonExitGameHoverImg;
-Viewer::Texture Viewer::buttonReadFileHoverImg;
-//
-////Gameplay
-Viewer::Texture Viewer::backgroundGame;
-Viewer::Texture Viewer::buttonBackToMenuImg;
-Viewer::Texture Viewer::chessRedGeneral;
-
 ///////////////////////////////////////////////////// Texture /////////////////////////////////////////////////////
 
-void Viewer::Texture::create(CONST TCHAR* fileName) {
-    assert(D3DXCreateTextureFromFile(DirectX::direct3DDevice9, fileName, &this->data) == S_OK);
+void Viewer::Texture::create ( const char* fileName ) {
+    assert ( D3DXCreateTextureFromFileA ( DirectX::direct3DDevice9, fileName, &this->data ) == S_OK );
 }
 
-auto& Viewer::Texture::operator()() { return data; }
+void Viewer::Texture::create ( const wchar_t* fileName ) {
+    assert ( D3DXCreateTextureFromFileW ( DirectX::direct3DDevice9, fileName, &this->data ) == S_OK );
+}
 
+LPDIRECT3DTEXTURE9& Viewer::Texture::operator()() { return data; }
 
 ///////////////////////////////////////////////////// Button /////////////////////////////////////////////////////
 
@@ -117,6 +103,7 @@ VOID Viewer::DirectX::ResetDevice() {
 }
 
 BOOL Viewer::DirectX::InitDisplay(HWND hWnd) {
+
     // Initialize Direct3D
     if (!CreateDeviceD3D(hWnd)) {
         CleanupDeviceD3D();
@@ -129,32 +116,11 @@ BOOL Viewer::DirectX::InitDisplay(HWND hWnd) {
     ImGui_ImplWin32_Init(hWnd);
     ImGui_ImplDX9_Init(direct3DDevice9);
 
-    InitImgs();
-
     // Initialize font
     auto& io = ImGui::GetIO();
     io.Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\tahoma.ttf", 20);
 
     return TRUE;
-}
-
-void Viewer::DirectX::InitImgs() {
-
-    // Initialize background textures
-    backgroundMenu.create(TEXT("../../assets\\mainmenu.png"));
-    backgroundGame.create(TEXT("../../assets\\gameboard.png"));
-
-    // Initialize button textures
-    buttonStartGameImg.create(TEXT("../../assets\\button startgame.png"));
-    buttonExitGameImg.create(TEXT("../../assets\\button exitgame.png"));
-    buttonReadFileImg.create(TEXT("../../assets\\button readfile.png"));
-    buttonStartGameHoverImg.create(TEXT("../../assets\\button startgame hover.png"));
-    buttonExitGameHoverImg.create(TEXT("../../assets\\button exitgame hover.png"));
-    buttonReadFileHoverImg.create(TEXT("../../assets\\button readfile hover.png"));
-    buttonBackToMenuImg.create(TEXT("../../assets\\button backtomenu.png"));
-
-    // Initialize chess piece textures
-    chessRedGeneral.create(TEXT("../../assets\\pion\\chess red general.png"));
 }
 
 void Viewer::DirectX::onResize(WPARAM wParam, LPARAM lParam)noexcept {
@@ -229,18 +195,6 @@ ImVec2 Viewer::createWindow(bool& appRunning, Texture background) {
 void Viewer::endWindow() {
     ImGui::End();
     ImGui::PopStyleVar();
-}
-
-void Viewer::createGameWindow(bool& appRunning, bool& startGame) {
-    // Game Board's window settings
-    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{});
-    ImGui::Begin("##MainMenu", &appRunning, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize);
-
-    // Set background
-    ImVec2 screenSize = ImGui::GetContentRegionAvail();
-    float middle_x = (screenSize.x / 2) - 100;
-    float middle_y = (screenSize.y / 2) + 90;
-    ImGui::Image(backgroundGame(), screenSize);
 }
 
 void Viewer::setButtonPos(float x, float y) {

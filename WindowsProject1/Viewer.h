@@ -7,8 +7,9 @@ class Viewer {
 public:
     // Struct for image texture
     struct Texture {
-        void create(CONST TCHAR* fileName);
-		auto& operator()();
+        void create(const char* fileName);
+        void create(const wchar_t* fileName);
+		LPDIRECT3DTEXTURE9& operator()();
     private:
         LPDIRECT3DTEXTURE9 data;
     };
@@ -40,17 +41,13 @@ public:
 		static LPDIRECT3D9			 direct3D9;
 		static LPDIRECT3DDEVICE9	 direct3DDevice9;
 		static D3DPRESENT_PARAMETERS direct3DParams;
-
 	public:
 		// DirectX Functions
 		static BOOL CreateDeviceD3D(HWND hWnd);
+		static BOOL InitDisplay ( HWND );
 		static VOID CleanupDeviceD3D ();
 		static VOID ResetDevice ();
-
-		static BOOL InitDisplay(HWND);
-		static VOID InitImgs ();
-
-		static VOID onResize(WPARAM, LPARAM) noexcept;
+		static VOID onResize ( WPARAM, LPARAM ) noexcept;
 	};
 
 	// Viewer functions
@@ -60,23 +57,8 @@ public:
 	void endAll();
 	ImVec2 createWindow(bool&, Texture);
 	void endWindow();
-	void createGameWindow(bool&, bool&);
 	void setButtonPos(float, float);
 
 public:
-
-	// Textures
-	//Main Menu
-	static Texture backgroundMenu;
-	static Texture buttonStartGameImg;
-	static Texture buttonExitGameImg;
-	static Texture buttonReadFileImg;
-	static Texture buttonStartGameHoverImg;
-	static Texture buttonExitGameHoverImg;
-	static Texture buttonReadFileHoverImg;
-
-	//Gameplay
-	static Texture backgroundGame;
-	static Texture buttonBackToMenuImg;
-	static Texture chessRedGeneral;
+	std::unordered_map<std::string, Texture> textures;
 };

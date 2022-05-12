@@ -10,6 +10,6 @@ public:
 	MenuManager();
 
 	// Functions
+	void createTextures ();
 	void createMainMenu(bool&, bool&);
-	void createGameBoard(bool&, bool&);
 };

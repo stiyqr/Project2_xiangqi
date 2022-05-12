@@ -7,16 +7,17 @@
 
 #include "Viewer.h"
 #include "MenuManager.h"
+#include "GameManager.h"
 
 #define MAX_LOADSTRING 100
-
 
 // Global Variables:
 HINSTANCE hInst;                                // current instance
 WCHAR szTitle[MAX_LOADSTRING];                  // The title bar text
 WCHAR szWindowClass[MAX_LOADSTRING];            // the main window class name
-Viewer viewer;                                  // for GUI
-MenuManager mainMenu;                           // for Main Menu
+
+MenuManager menuManager;                        // for Main Window
+GameManager gameManager;                        // for Game Window
 
 // Forward declarations of functions included in this code module:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
@@ -57,7 +58,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         DispatchMessage(&msg);
 
         // Start rendering the menu
-        viewer.render();
+        menuManager.viewer.render();
         {
             if (appRunning) {
                 // Main Menu or Gameplay
@@ -65,28 +66,26 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
                 // Main Menu
                 if (!startGame) {
-                    //mainMenu.viewer.createMenuWindow(appRunning, startGame);
-                    mainMenu.createMainMenu(appRunning, startGame);
-                    mainMenu.viewer.endWindow();
+                    menuManager.createMainMenu(appRunning, startGame);
+                    menuManager.viewer.endWindow();
                 }
                 
                 // Gameplay
                 if (startGame) {
-                    viewer.createGameWindow(appRunning, startGame);
-                    viewer.endWindow();
+                    gameManager.createGameBoard(appRunning);
+                    gameManager.viewer.endWindow();
                 }
             }
-
-            ImGui::ShowDemoWindow();
         }
-        viewer.endRender();
+        menuManager.viewer.endRender();
     }
-    viewer.endAll();
+
+    menuManager.viewer.endAll();
+
+    Viewer::DirectX::CleanupDeviceD3D ();
 
     return (int) msg.wParam;
 }
-
-
 
 //
 //  FUNCTION: MyRegisterClass()
@@ -126,20 +125,22 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 //
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
-   hInst = hInstance; // Store instance handle in our global variable
+    hInst = hInstance; // Store instance handle in our global variable
 
-   HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW^WS_THICKFRAME,
-      CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr, nullptr, hInstance, nullptr);
+    HWND hWnd = CreateWindowW ( szWindowClass, szTitle, WS_OVERLAPPEDWINDOW ^ WS_THICKFRAME,
+                                CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr, nullptr, hInstance, nullptr );
 
-   if (!hWnd) return FALSE;
+    if ( !hWnd ) return FALSE;
 
-   viewer.directx.InitDisplay(hWnd);
-   viewer.directx.InitImgs();
+    Viewer::DirectX::InitDisplay ( hWnd );
 
-   ShowWindow(hWnd, nCmdShow);
-   UpdateWindow(hWnd);
+    ShowWindow ( hWnd, nCmdShow );
+    UpdateWindow ( hWnd );
 
-   return TRUE;
+    menuManager.createTextures ();
+    gameManager.createTextures ();
+
+    return TRUE;
 }
 
 //
@@ -168,7 +169,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     // Handle render buffer size to window size
     case WM_SIZE:
     {
-        viewer.directx.onResize(wParam,lParam);
+        Viewer::DirectX::onResize(wParam,lParam);
         break;
     }
     case WM_DESTROY:
@@ -179,4 +180,3 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     }
     return 0;
 }
-

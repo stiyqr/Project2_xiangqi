@@ -9,5 +9,6 @@ public:
 public:
 	GameManager();
 
-	void createGameBoard();
+	void createTextures ();
+	void createGameBoard(bool& appRunning);
 };
