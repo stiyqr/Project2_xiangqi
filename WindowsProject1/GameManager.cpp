@@ -46,6 +46,7 @@ GameManager::GameManager() {
 
 void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
 	ImVec2 screenSize = viewer.createWindow(appRunning, viewer.backgroundGame);
+	auto position = viewer.getCursorPos();
 
 	// Control buttons
 	viewer.setButtonPos(800, 370);
@@ -53,21 +54,6 @@ void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
 
 	// Chess pieces
 	static Chess* mover = nullptr;
-	if (mover != nullptr) {
-		for (int i = 0; i < mover->allPossibleMove.size(); i++) {
-			Viewer::ID id(i);
-			viewer.setButtonPos(board.xPosition[mover->allPossibleMove[i].x], board.yPosition[mover->allPossibleMove[i].y]);
-			Viewer::Button moveBtn("move", *(mover->moveImg), *(mover->moveImg), Viewer::Button::Type::CIRCLE);
-
-			if (moveBtn) {
-				mover->curPos.x = mover->allPossibleMove[i].x;
-				mover->curPos.y = mover->allPossibleMove[i].y;
-				mover = nullptr;
-				break;
-			}
-		}
-		//mover->renderAllPossibleMove();
-	}
 
 	for (int i = 0; i < on_board.size(); i++) {
 		Viewer::ID id(i);
@@ -79,6 +65,48 @@ void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
 			mover = on_board[i];
 		}
 	}
+
+	if (mover != nullptr) {
+		viewer.setButtonPos(position.x, position.y);
+		viewer.makeMoveWindow();
+
+		for (int i = 0; i < mover->allPossibleMove.size(); i++) {
+			bool isFriend = false, isEnemy = false;
+			int enemyIndex = 0;
+			for (int j = 0; j < on_board.size(); j++) {
+				if (mover->allPossibleMove[i] == on_board[j]->curPos) {
+					if (on_board[j]->side == mover->side) {
+						isFriend = true;
+					}
+					else {
+						isEnemy = true;
+						enemyIndex = j;
+					}
+				}
+			}
+
+			if (isFriend) continue;
+
+			Viewer::ID id(i);
+			viewer.setButtonPos(board.xPosition[mover->allPossibleMove[i].x], board.yPosition[mover->allPossibleMove[i].y]);
+
+			Viewer::Button moveBtn("move", *(mover->moveImg), *(mover->moveImg), Viewer::Button::Type::CIRCLE);
+
+			if (moveBtn) {
+				if (isEnemy) {
+					on_board.erase(on_board.begin() + enemyIndex);
+				}
+
+				mover->curPos.x = mover->allPossibleMove[i].x;
+				mover->curPos.y = mover->allPossibleMove[i].y;
+				mover = nullptr;
+				break;
+			}
+		}
+		viewer.endMoveWindow();
+		//mover->renderAllPossibleMove();
+	}
+
 
 
 

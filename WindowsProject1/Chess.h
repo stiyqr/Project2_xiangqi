@@ -15,6 +15,7 @@ public:
 		Position(int, int);
 
 		Position& operator=(Position);
+		bool operator==(Position);
 	};
 
 	const char* id;

@@ -13,6 +13,10 @@ Chess::Position& Chess::Position::operator=(Position pos) {
 	return *this;
 }
 
+bool Chess::Position::operator==(Position pos) {
+	return x == pos.x && y == pos.y;
+}
+
 Chess::Chess() {}
 
 void Chess::updateAllPossibleMove() {

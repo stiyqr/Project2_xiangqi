@@ -275,13 +275,15 @@ void Viewer::endAll() {
 ImVec2 Viewer::createWindow(bool& appRunning, Texture background) {
     // Main Menu's window settings
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{});
-    ImGui::Begin("##MainMenu", &appRunning, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize);
+    ImGui::Begin("##Window", &appRunning, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize);
 
     // Set background
     ImVec2 screenSize = ImGui::GetContentRegionAvail();
     float middle_x = (screenSize.x / 2) - 100;
     float middle_y = (screenSize.y / 2) + 90;
+    auto position = ImGui::GetCursorPos();
     ImGui::Image(background(), screenSize);
+    ImGui::SetCursorPos(position);
 
     return screenSize;
 }
@@ -307,3 +309,16 @@ void Viewer::setButtonPos(float x, float y) {
     ImGui::SetCursorPos(ImVec2(x, y));
 }
 
+ImVec2 Viewer::getCursorPos()
+{
+    auto position = ImGui::GetCursorPos();
+    return position;
+}
+
+void Viewer::makeMoveWindow() {
+    ImGui::BeginChild("##movement windown", ImGui::GetContentRegionAvail(), false, ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoScrollbar);
+}
+
+void Viewer::endMoveWindow() {
+    ImGui::EndChild();
+}

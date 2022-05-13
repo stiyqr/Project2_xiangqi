@@ -70,7 +70,9 @@ public:
 	void endWindow();
 	void createGameWindow(bool&, bool&);
 	void setButtonPos(float, float);
-
+	ImVec2 getCursorPos();
+	void makeMoveWindow();
+	void endMoveWindow();
 
 public:
 	DirectX directx;
