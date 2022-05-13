@@ -2,7 +2,8 @@
 
 #include "tahoma.h"
 
-std::unordered_map<std::string, Viewer::Button::Data> Viewer::Button::buttons;
+const char* Viewer::Frame::frames;
+std::unordered_map<std::string, Viewer::Frame::Button::Data> Viewer::Frame::Button::buttons;
 
 Viewer::Viewer (
     HWND windowHandle ) noexcept {
@@ -107,6 +108,11 @@ Viewer::Frame::Frame ( const char* id, const Texture& texture ) noexcept {
 
     assert ( texture );
 
+    if ( frames != id )
+        for ( auto&& button : Button::buttons )
+            button.second = {};
+
+    frames = id;
     draw = ImGui::BeginChild ( id, ImGui::GetContentRegionAvail (), false, ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoScrollbar );
 
     if ( !draw )
@@ -136,7 +142,7 @@ Viewer::Frame::~Frame () noexcept {
     ImGui::EndChild ();
 }
 
-Viewer::Button::Button (
+Viewer::Frame::Button::Button (
     const char*     id,
     const Texture&  texture,
     const Texture&  textureHovered,
@@ -146,7 +152,7 @@ Viewer::Button::Button (
 
     assert ( texture && textureHovered );
 
-    button = &buttons[id] ;
+    button = &buttons[id];
 
     ImGui::PushStyleVar ( ImGuiStyleVar_FrameRounding, rounding );
 
@@ -160,7 +166,7 @@ Viewer::Button::Button (
     button->isHovered = ImGui::IsItemHovered ();
 }
 
-Viewer::Button::Button (
+Viewer::Frame::Button::Button (
     const char*     id,
     const ImVec4&   color,
     const ImVec4&   colorActive,
@@ -183,13 +189,13 @@ Viewer::Button::Button (
     button->isHovered = ImGui::IsItemHovered ();
 }
 
-Viewer::Button::~Button () noexcept {
+Viewer::Frame::Button::~Button () noexcept {
 
     ImGui::PopStyleVar ();
     ImGui::PopStyleColor ( 3 );
 }
 
-const Viewer::Button::Data& Viewer::Button::data () const noexcept {
+const Viewer::Frame::Button::Data& Viewer::Frame::Button::data () const noexcept {
 
     return *button;
 }

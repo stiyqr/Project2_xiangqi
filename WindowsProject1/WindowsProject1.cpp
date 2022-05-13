@@ -48,17 +48,17 @@ INT APIENTRY wWinMain (
 
                 ImVec2 btnPos = pos.data ();
                 btnPos -= btnSize * .5f;
-                Viewer::Button btnRead{ "##btn-read", viewer->textures["btn-read"], viewer->textures["btn-read-hover"], btnPos, btnSize };
+                Viewer::Frame::Button btnRead{ "##btn-read", viewer->textures["btn-read"], viewer->textures["btn-read-hover"], btnPos, btnSize };
 
                 btnPos = pos.data ();
                 btnPos.x *= 1.5f;
                 btnPos -= btnSize * .5f;
-                Viewer::Button btnExit{ "##btn-exit", viewer->textures["btn-exit"], viewer->textures["btn-exit-hover"], btnPos, btnSize };
+                Viewer::Frame::Button btnExit{ "##btn-exit", viewer->textures["btn-exit"], viewer->textures["btn-exit-hover"], btnPos, btnSize };
 
                 btnPos = pos.data ();
                 btnPos.x *= .5f;
                 btnPos -= btnSize * .5f;
-                Viewer::Button btnStart{ "##btn-start", viewer->textures["btn-start"], viewer->textures["btn-start-hover"], btnPos, btnSize };
+                Viewer::Frame::Button btnStart{ "##btn-start", viewer->textures["btn-start"], viewer->textures["btn-start-hover"], btnPos, btnSize };
 
                 if ( btnStart.data ().isClicked )
                     startGame = true;
@@ -81,7 +81,7 @@ INT APIENTRY wWinMain (
 
                 ImVec2 btnPos = pos.data ();
                 btnPos -= buttonSize * .5f;
-                Viewer::Button btnBack{ "##btn-back", viewer->textures["btn-back"], viewer->textures["btn-back-hover"], btnPos, buttonSize };
+                Viewer::Frame::Button btnBack{ "##btn-back", viewer->textures["btn-back"], viewer->textures["btn-back-hover"], btnPos, buttonSize };
 
                 if ( btnBack.data ().isClicked )
                     startGame = false;
