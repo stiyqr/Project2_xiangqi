@@ -9,6 +9,7 @@ public:
 	Viewer viewer;
 	std::vector<Chess*> on_board;
 	Board board;
+	Chess::Side current_player = Chess::Side::RED;
 
 public:
 	GameManager();

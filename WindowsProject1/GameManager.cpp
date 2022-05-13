@@ -54,15 +54,13 @@ void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
 
 	// Chess pieces
 	static Chess* mover = nullptr;
-	//int enemyIndex = 0;
-	//bool isFriend = false, isEnemy = false;
 
 	for (int i = 0; i < on_board.size(); i++) {
 		Viewer::ID id(i);
 		viewer.setButtonPos(board.xPosition[on_board[i]->curPos.x], board.yPosition[on_board[i]->curPos.y]);
 		Viewer::Button thisBtn(on_board[i]->id, *(on_board[i]->img), *(on_board[i]->img), Viewer::Button::Type::CIRCLE);
 
-		if (thisBtn) {
+		if (thisBtn && on_board[i]->side == current_player) {
 			on_board[i]->updateAllPossibleMove(on_board);
 			mover = on_board[i];
 		}
@@ -104,6 +102,10 @@ void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
 					mover->curPos.x = mover->allPossibleMove[i].x;
 					mover->curPos.y = mover->allPossibleMove[i].y;
 					mover = nullptr;
+
+					if (current_player == Chess::Side::RED) current_player = Chess::Side::BLACK;
+					else current_player = Chess::Side::RED;
+
 					break;
 				}
 				else if (backBtn) {

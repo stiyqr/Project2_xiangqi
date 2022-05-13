@@ -130,7 +130,7 @@ void ChessCannon::updateAllPossibleMove(std::vector<Chess*> on_board) {
 	while (curPos.x >= 0 && curPos.x <= 8 && curPos.x + i <= 8) {
 		for (int j = 0; j < on_board.size(); j++) {
 			if (curPos.x + i == on_board[j]->curPos.x && curPos.y == on_board[j]->curPos.y) {
-				found = true;
+				found++;
 
 				if (found >= 2 && side != on_board[j]->side) isEnemy = true;
 				else skipOne = true;
