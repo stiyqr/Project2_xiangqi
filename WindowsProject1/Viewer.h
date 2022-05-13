@@ -84,4 +84,5 @@ public:
 	static Texture buttonBackToMenuImg;
 	static Texture buttonBackToMenuHoverImg;
 	static Texture chessRedGeneral;
+	static Texture chessBlackGeneral;
 };

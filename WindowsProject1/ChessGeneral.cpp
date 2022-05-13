@@ -7,9 +7,15 @@ ChessGeneral::ChessGeneral(const char* name) {
 	id = name;
 
 	if (name == "redGeneralBtn") {
-		Viewer::Button redGeneralButton(name, viewer.chessRedGeneral, viewer.chessRedGeneral, Viewer::Button::Type::CIRCLE);
+		side = Side::RED;
+		curPosX = 4;
+		curPosY = 9;
+		img = &viewer.chessRedGeneral;
 	}
 	else if (name == "blackGeneralBtn") {
-		//Viewer::Button redGeneralButton(name, viewer.chessBlackGeneral, viewer.chessBlackGeneral, Viewer::Button::Type::CIRCLE);
+		side = Side::BLACK;
+		curPosX = 4;
+		curPosY = 0;
+		img = &viewer.chessBlackGeneral;
 	}
 }

@@ -75,6 +75,9 @@
     <ClInclude Include="ChessGeneral.h">
       <Filter>Chess pieces</Filter>
     </ClInclude>
+    <ClInclude Include="Board.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="WindowsProject1.cpp">
@@ -115,6 +118,9 @@
     </ClCompile>
     <ClCompile Include="ChessGeneral.cpp">
       <Filter>Chess pieces</Filter>
+    </ClCompile>
+    <ClCompile Include="Board.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

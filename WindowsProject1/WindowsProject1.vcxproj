@@ -147,6 +147,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Board.h" />
     <ClInclude Include="Chess.h" />
     <ClInclude Include="ChessGeneral.h" />
     <ClInclude Include="framework.h" />
@@ -166,6 +167,7 @@
     <ClInclude Include="Viewer.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Board.cpp" />
     <ClCompile Include="Chess.cpp" />
     <ClCompile Include="ChessGeneral.cpp" />
     <ClCompile Include="GameManager.cpp" />

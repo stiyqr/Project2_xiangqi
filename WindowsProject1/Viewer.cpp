@@ -14,6 +14,7 @@ Viewer::Texture Viewer::backgroundGame;
 Viewer::Texture Viewer::buttonBackToMenuImg;
 Viewer::Texture Viewer::buttonBackToMenuHoverImg;
 Viewer::Texture Viewer::chessRedGeneral;
+Viewer::Texture Viewer::chessBlackGeneral;
 
 ///////////////////////////////////////////////////// Texture /////////////////////////////////////////////////////
 
@@ -137,7 +138,6 @@ BOOL Viewer::DirectX::InitDisplay(HWND hWnd) {
     ImGui_ImplDX9_Init(direct3DDevice9);
 
     InitImgs();
-    //InitImgsGame();
 
     // Initialize font
     auto& io = ImGui::GetIO();
@@ -171,6 +171,7 @@ void Viewer::DirectX::InitImgs() {
 
     // Initialize chess piece textures
     imgs.chessRedGeneral.create(TEXT("../assets\\pion\\chess red general.png"));
+    imgs.chessBlackGeneral.create(TEXT("../assets\\pion\\chess black general.png"));
 }
 
 void Viewer::DirectX::onResize(WPARAM wParam, LPARAM lParam)noexcept {

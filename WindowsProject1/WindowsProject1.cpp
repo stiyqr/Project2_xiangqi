@@ -137,7 +137,6 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    if (!hWnd) return FALSE;
 
    viewer.directx.InitDisplay(hWnd);
-   viewer.directx.InitImgs();
 
    ShowWindow(hWnd, nCmdShow);
    UpdateWindow(hWnd);
