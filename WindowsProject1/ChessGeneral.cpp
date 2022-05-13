@@ -27,9 +27,16 @@ ChessGeneral::ChessGeneral(const char* name) {
 void ChessGeneral::updateAllPossibleMove() {
 	allPossibleMove.clear();
 
-	// up, down, left, right
-	if (curPos.y > 0) allPossibleMove.emplace_back(curPos.x, curPos.y - 1);
-	if (curPos.y < 9) allPossibleMove.emplace_back(curPos.x, curPos.y + 1);
-	if (curPos.x > 0) allPossibleMove.emplace_back(curPos.x - 1, curPos.y);
-	if (curPos.x < 8) allPossibleMove.emplace_back(curPos.x + 1, curPos.y);
+	if (side == Side::RED) {
+		if (curPos.y < 9 && curPos.x >= 3 && curPos.x <= 5) allPossibleMove.emplace_back(curPos.x, curPos.y + 1);
+		if (curPos.y > 7 && curPos.x >= 3 && curPos.x <= 5) allPossibleMove.emplace_back(curPos.x, curPos.y - 1);
+		if (curPos.x > 3 && curPos.y >= 7 && curPos.y <= 9) allPossibleMove.emplace_back(curPos.x - 1, curPos.y);
+		if (curPos.x < 5 && curPos.y >= 7 && curPos.y <= 9) allPossibleMove.emplace_back(curPos.x + 1, curPos.y);
+	}
+	else if (side == Side::BLACK) {
+		if (curPos.y < 2 && curPos.x >= 3 && curPos.x <= 5) allPossibleMove.emplace_back(curPos.x, curPos.y + 1);
+		if (curPos.y > 0 && curPos.x >= 3 && curPos.x <= 5) allPossibleMove.emplace_back(curPos.x, curPos.y - 1);
+		if (curPos.x > 3 && curPos.y >= 0 && curPos.y <= 2) allPossibleMove.emplace_back(curPos.x - 1, curPos.y);
+		if (curPos.x < 5 && curPos.y >= 0 && curPos.y <= 2) allPossibleMove.emplace_back(curPos.x + 1, curPos.y);
+	}
 }

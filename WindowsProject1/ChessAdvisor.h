@@ -5,4 +5,6 @@ class ChessAdvisor : public Chess {
 public:
 	ChessAdvisor();
 	ChessAdvisor(const char*, int, int);
+
+	void updateAllPossibleMove() override;
 };

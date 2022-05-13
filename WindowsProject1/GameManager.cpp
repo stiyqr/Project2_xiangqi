@@ -69,39 +69,47 @@ void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
 	if (mover != nullptr) {
 		viewer.setButtonPos(position.x, position.y);
 		viewer.makeMoveWindow();
+		{
+			viewer.setButtonPos(board.xPosition[mover->curPos.x], board.yPosition[mover->curPos.y]);
+			Viewer::Button backBtn("back", *(mover->img), *(mover->img), Viewer::Button::Type::CIRCLE);
 
-		for (int i = 0; i < mover->allPossibleMove.size(); i++) {
-			bool isFriend = false, isEnemy = false;
-			int enemyIndex = 0;
-			for (int j = 0; j < on_board.size(); j++) {
-				if (mover->allPossibleMove[i] == on_board[j]->curPos) {
-					if (on_board[j]->side == mover->side) {
-						isFriend = true;
-					}
-					else {
-						isEnemy = true;
-						enemyIndex = j;
+			for (int i = 0; i < mover->allPossibleMove.size(); i++) {
+				bool isFriend = false, isEnemy = false;
+				int enemyIndex = 0;
+				for (int j = 0; j < on_board.size(); j++) {
+					if (mover->allPossibleMove[i] == on_board[j]->curPos) {
+						if (on_board[j]->side == mover->side) {
+							isFriend = true;
+						}
+						else {
+							isEnemy = true;
+							enemyIndex = j;
+						}
 					}
 				}
-			}
 
-			if (isFriend) continue;
+				if (isFriend) continue;
 
-			Viewer::ID id(i);
-			viewer.setButtonPos(board.xPosition[mover->allPossibleMove[i].x], board.yPosition[mover->allPossibleMove[i].y]);
+				Viewer::ID id(i);
+				viewer.setButtonPos(board.xPosition[mover->allPossibleMove[i].x], board.yPosition[mover->allPossibleMove[i].y]);
+				Viewer::Button moveBtn("move", *(mover->moveImg), *(mover->moveImg), Viewer::Button::Type::CIRCLE);
 
-			Viewer::Button moveBtn("move", *(mover->moveImg), *(mover->moveImg), Viewer::Button::Type::CIRCLE);
+				if (moveBtn) {
+					if (isEnemy) {
+						on_board.erase(on_board.begin() + enemyIndex);
+					}
 
-			if (moveBtn) {
-				if (isEnemy) {
-					on_board.erase(on_board.begin() + enemyIndex);
+					mover->curPos.x = mover->allPossibleMove[i].x;
+					mover->curPos.y = mover->allPossibleMove[i].y;
+					mover = nullptr;
+					break;
 				}
-
-				mover->curPos.x = mover->allPossibleMove[i].x;
-				mover->curPos.y = mover->allPossibleMove[i].y;
-				mover = nullptr;
-				break;
+				else if (backBtn) {
+					mover = nullptr;
+					break;
+				}
 			}
+			if (backBtn) mover = nullptr;
 		}
 		viewer.endMoveWindow();
 		//mover->renderAllPossibleMove();

@@ -316,9 +316,11 @@ ImVec2 Viewer::getCursorPos()
 }
 
 void Viewer::makeMoveWindow() {
-    ImGui::BeginChild("##movement windown", ImGui::GetContentRegionAvail(), false, ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoScrollbar);
+    ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0, 0, 0, 0.2));
+    ImGui::BeginChild("##movement windown", ImGui::GetContentRegionAvail(), false, ImGuiWindowFlags_NoScrollbar);
 }
 
 void Viewer::endMoveWindow() {
     ImGui::EndChild();
+    ImGui::PopStyleColor();
 }

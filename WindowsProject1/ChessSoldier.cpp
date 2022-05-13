@@ -12,6 +12,7 @@ ChessSoldier::ChessSoldier(const char* name, int x, int y) {
 		curPos.x = x;
 		curPos.y = y;
 		img = &viewer.chessRedSoldier;
+		moveImg = &viewer.possibleRed;
 	}
 	else if (name == "blackSoldierBtn") {
 		side = Side::BLACK;
@@ -19,5 +20,27 @@ ChessSoldier::ChessSoldier(const char* name, int x, int y) {
 		curPos.x = x;
 		curPos.y = y;
 		img = &viewer.chessBlackSoldier;
+		moveImg = &viewer.possibleBlack;
+	}
+}
+
+void ChessSoldier::updateAllPossibleMove() {
+	allPossibleMove.clear();
+
+	if (side == Side::RED) {
+		if (curPos.y > 0) allPossibleMove.emplace_back(curPos.x, curPos.y - 1);
+
+		if (curPos.y < 5) {
+			if (curPos.x > 0) allPossibleMove.emplace_back(curPos.x - 1, curPos.y);
+			if (curPos.x < 8) allPossibleMove.emplace_back(curPos.x + 1, curPos.y);
+		}
+	}
+	else if (side == Side::BLACK) {
+		if (curPos.y < 9) allPossibleMove.emplace_back(curPos.x, curPos.y + 1);
+
+		if (curPos.y > 4) {
+			if (curPos.x > 0) allPossibleMove.emplace_back(curPos.x - 1, curPos.y);
+			if (curPos.x < 8) allPossibleMove.emplace_back(curPos.x + 1, curPos.y);
+		}
 	}
 }
