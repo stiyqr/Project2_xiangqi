@@ -2,15 +2,6 @@
 #include "GameManager.h"
 #include "Viewer.h"
 
-#include "ImGui/imgui.h"
-#include "ImGui/imgui_impl_win32.h"
-#include "ImGui/imgui_impl_dx9.h"
-
-#pragma push_macro("#define IMGUI_DEFINE_MATH_OPERATORS")
-#define IMGUI_DEFINE_MATH_OPERATORS
-#include "ImGui/imgui_internal.h"
-#pragma pop_macro("#define IMGUI_DEFINE_MATH_OPERATORS")
-
 Window::Window (
     HINSTANCE   hInstance,
     INT         nCmdShow ) noexcept :
@@ -42,7 +33,7 @@ Window::Window (
     rect.right      = GetSystemMetrics ( SM_CXMAXTRACK ); //If you have more than one monitor, you will get the total width
     rect.bottom     = GetSystemMetrics ( SM_CYMAXTRACK );
 
-    handle = CreateWindowEx ( WS_EX_TOPMOST | WS_EX_LAYERED, className, text, WS_POPUP,
+    handle = CreateWindowEx ( WS_EX_LAYERED, className, text, WS_POPUP,
                               0, 0, rect.right - rect.left, rect.bottom - rect.top, nullptr, nullptr, hInstance, nullptr );
     assert ( handle != NULL );
 
@@ -94,7 +85,7 @@ LRESULT Window::Proc (
 
 INT Window::run (
     Viewer& viewer,
-    void    ( *callback )( ) ) noexcept {
+    void    ( *callback )( GameManager& ) ) noexcept {
 
     while ( GetMessage ( &message, nullptr, 0, 0 ) ) {
 
@@ -107,12 +98,12 @@ INT Window::run (
 
         if ( running ) {
 
-            ImGui::SetNextWindowSize ( ImGui::GetIO ().DisplaySize / 2, ImGuiCond_Once );
+            ImGui::SetNextWindowSize ( ImVec2{ 1364, 764 }, ImGuiCond_Once );
 
             ImGui::PushStyleVar ( ImGuiStyleVar_WindowPadding, ImVec2{} );
 
-            if ( ImGui::Begin ( "Xiangqi", &running, ImGuiWindowFlags_NoCollapse ) && callback )
-                callback ();
+            if ( ImGui::Begin ( "Xiangqi", &running, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar ) && callback )
+                callback ( GameManager::instance () );
 
             ImGui::End ();
 

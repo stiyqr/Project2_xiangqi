@@ -11,6 +11,17 @@
 class Viewer {
 public:
 
+	class Texture {
+	public:
+		Texture () = default;
+
+		void load ( const Viewer& viewer, const char* path ) noexcept;
+		void load ( const Viewer& viewer, const wchar_t* path ) noexcept;
+
+		ImVec2 size;
+		LPDIRECT3DTEXTURE9 data;
+	};
+
 	Viewer ( HWND ) noexcept;
 	~Viewer () noexcept;
 
@@ -25,4 +36,56 @@ public:
 	LPDIRECT3D9             Direct3D9;
 	LPDIRECT3DDEVICE9       Direct3DDevice9;
 	D3DPRESENT_PARAMETERS   Direct3DParams;
+
+	std::unordered_map<std::string, Texture> textures;
+
+	///////////////////
+	// ImGui Helper  //
+	///////////////////
+	class Position {
+	public:
+		enum class Type {
+			CURSOR,
+			CENTER
+		};
+		Position ( Type type = Type::CURSOR ) noexcept;
+		constexpr auto& data () noexcept { return position; }
+	private:
+		ImVec2 position;
+	};
+
+	///////////////////
+	// ImGui Widgets //
+	///////////////////
+	class Widget {
+	protected:
+		Widget () = default;
+
+		Widget ( Widget&& ) = delete;
+		Widget ( const Widget& ) = delete;
+		Widget& operator=( Widget&& ) = delete;
+		Widget& operator=( const Widget& ) = delete;
+
+		bool draw;
+	public:
+		constexpr operator bool () const noexcept { return draw; }
+	};
+
+	class Frame : public Widget {
+	public:
+		Frame ( const char* id, const Texture& texture ) noexcept;
+		~Frame () noexcept;
+	};
+
+	class Button {
+	public:
+		Button ( const char* id, const Texture& texture, const Texture& textureHovered, const ImVec2& position, const ImVec2& size ) noexcept;
+		~Button () noexcept;
+
+		struct Data { bool isClicked, isHovered; };
+		const Data& data () const noexcept;
+	private:
+		static std::unordered_map<std::string, Data> buttons;
+		Data* button;
+	};
 };

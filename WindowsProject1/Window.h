@@ -3,6 +3,7 @@
 #include "framework.h"
 #include "WindowsProject1.h"
 
+class GameManager;
 class Viewer;
 
 class Window {
@@ -17,7 +18,7 @@ public:
 	Window& operator=( Window&& ) = delete;
 	Window& operator=( const Window& ) = delete;
 
-	[[nodiscard]] INT run ( Viewer&, void( *callback )( ) ) noexcept;
+	[[nodiscard]] INT run ( Viewer& viewer, void( *callback )( GameManager& ) ) noexcept;
 
 	HINSTANCE instance;
 	WCHAR text[64];          
