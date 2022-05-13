@@ -6,5 +6,5 @@ public:
 	ChessSoldier();
 	ChessSoldier(const char*, int, int);
 
-	void updateAllPossibleMove();
+	void updateAllPossibleMove(std::vector<Chess*>);
 };

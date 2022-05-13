@@ -19,7 +19,7 @@ bool Chess::Position::operator==(Position pos) {
 
 Chess::Chess() {}
 
-void Chess::updateAllPossibleMove() {
+void Chess::updateAllPossibleMove(std::vector<Chess*>on_board) {
 	// override in child class
 }
 

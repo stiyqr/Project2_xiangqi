@@ -24,7 +24,7 @@ ChessGeneral::ChessGeneral(const char* name) {
 	}
 }
 
-void ChessGeneral::updateAllPossibleMove() {
+void ChessGeneral::updateAllPossibleMove(std::vector<Chess*>on_board) {
 	allPossibleMove.clear();
 
 	if (side == Side::RED) {

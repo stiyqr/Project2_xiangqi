@@ -6,5 +6,5 @@ public:
 	ChessAdvisor();
 	ChessAdvisor(const char*, int, int);
 
-	void updateAllPossibleMove() override;
+	void updateAllPossibleMove(std::vector<Chess*>) override;
 };

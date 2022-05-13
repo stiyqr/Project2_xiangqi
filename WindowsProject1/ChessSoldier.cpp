@@ -24,7 +24,7 @@ ChessSoldier::ChessSoldier(const char* name, int x, int y) {
 	}
 }
 
-void ChessSoldier::updateAllPossibleMove() {
+void ChessSoldier::updateAllPossibleMove(std::vector<Chess*>on_board) {
 	allPossibleMove.clear();
 
 	if (side == Side::RED) {

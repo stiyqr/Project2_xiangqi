@@ -6,6 +6,6 @@ public:
 	ChessGeneral();
 	ChessGeneral(const char*);
 
-	void updateAllPossibleMove() override;
+	void updateAllPossibleMove(std::vector<Chess*>) override;
 	//void renderAllPossibleMove();
 };

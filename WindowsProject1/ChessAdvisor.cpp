@@ -22,7 +22,7 @@ ChessAdvisor::ChessAdvisor(const char* name, int x, int y) {
 	}
 }
 
-void ChessAdvisor::updateAllPossibleMove() {
+void ChessAdvisor::updateAllPossibleMove(std::vector<Chess*>on_board) {
 	allPossibleMove.clear();
 
 	if (side == Side::RED) {
