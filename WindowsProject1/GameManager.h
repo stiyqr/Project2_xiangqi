@@ -7,7 +7,7 @@
 class GameManager {
 public:
 	Viewer viewer;
-	std::vector<Chess> on_board;
+	std::vector<Chess*> on_board;
 	Board board;
 
 public:

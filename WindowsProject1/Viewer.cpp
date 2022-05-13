@@ -29,6 +29,9 @@ Viewer::Texture Viewer::chessBlackChariot;
 Viewer::Texture Viewer::chessBlackHorse;
 Viewer::Texture Viewer::chessBlackSoldier;
 
+Viewer::Texture Viewer::possibleRed;
+Viewer::Texture Viewer::possibleBlack;
+
 ///////////////////////////////////////////////////// Texture /////////////////////////////////////////////////////
 
 void Viewer::Texture::create(CONST TCHAR* fileName) {
@@ -198,6 +201,9 @@ void Viewer::DirectX::InitImgs() {
     imgs.chessBlackChariot.create(TEXT("../assets\\pion\\chess black chariot.png"));
     imgs.chessBlackHorse.create(TEXT("../assets\\pion\\chess black horse.png"));
     imgs.chessBlackSoldier.create(TEXT("../assets\\pion\\chess black soldier.png"));
+
+    imgs.possibleRed.create(TEXT("../assets\\pion\\possible red.png"));
+    imgs.possibleBlack.create(TEXT("../assets\\pion\\possible black.png"));
 }
 
 void Viewer::DirectX::onResize(WPARAM wParam, LPARAM lParam)noexcept {

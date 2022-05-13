@@ -10,6 +10,11 @@ public:
 
 	struct Position {
 		int x, y;
+
+		Position();
+		Position(int, int);
+
+		Position& operator=(Position);
 	};
 
 	const char* id;
@@ -19,13 +24,13 @@ public:
 	bool isAlive = true;
 	Viewer viewer;
 	Viewer::Texture* img;
+	Viewer::Texture* moveImg;
 	Position curPos;
 	std::vector<Position> allPossibleMove;
-
-	
 
 public:
 	Chess();
 
-	
+	virtual void updateAllPossibleMove();
+	virtual void renderAllPossibleMove();
 };

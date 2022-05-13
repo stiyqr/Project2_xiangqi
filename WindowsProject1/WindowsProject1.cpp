@@ -19,8 +19,9 @@ WCHAR szTitle[MAX_LOADSTRING];                  // The title bar text
 WCHAR szWindowClass[MAX_LOADSTRING];            // the main window class name
 Viewer viewer;                                  // for GUI
 MenuManager mainMenu;                           // for Main Menu
-GameManager gameManager;                        // for Game Manager
+GameManager* gameManager = nullptr;             // for Game Manager
 Chess chess;                                    // for chess pieces
+bool appRunning = true;                         // game is running
 
 // Forward declarations of functions included in this code module:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
@@ -28,8 +29,6 @@ BOOL                InitInstance(HINSTANCE, int);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
 
-// Global Variables for imgui:
-bool appRunning = true;
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
@@ -71,11 +70,18 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                 if (!startGame) {
                     mainMenu.createMainMenu(appRunning, startGame);
                     mainMenu.viewer.endWindow();
+                    if (gameManager) {
+                        delete gameManager;
+                        gameManager = nullptr;
+                    }
                 }
                 
                 // Gameplay
                 if (startGame) {
-                    gameManager.createGameBoard(appRunning, startGame);
+                    if (!gameManager) {
+                        gameManager = new GameManager;
+                    }
+                    gameManager->createGameBoard(appRunning, startGame);
                     viewer.endWindow();
                 }
             }
@@ -131,7 +137,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
    hInst = hInstance; // Store instance handle in our global variable
 
-   HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW^WS_THICKFRAME,
+   HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW ^ WS_THICKFRAME ^ WS_MAXIMIZEBOX,
       CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr, nullptr, hInstance, nullptr);
 
    if (!hWnd) return FALSE;

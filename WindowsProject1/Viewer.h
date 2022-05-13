@@ -105,4 +105,8 @@ public:
 	static Texture chessBlackChariot;
 	static Texture chessBlackHorse;
 	static Texture chessBlackSoldier;
+
+	// Possible move chess piece
+	static Texture possibleRed;
+	static Texture possibleBlack;
 };
