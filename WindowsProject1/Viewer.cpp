@@ -39,8 +39,8 @@ Viewer::Viewer (
     fonts.AddFontFromMemoryCompressedTTF ( tahoma_compressed_data, tahoma_compressed_size, 15 );
 
     auto& style{ ImGui::GetStyle () };
-    style.WindowRounding    = 6;
-    style.FrameRounding     = 6;
+    style.WindowRounding    = 10;
+    style.FrameRounding     = 10;
 }
 
 Viewer::~Viewer () noexcept {
@@ -112,11 +112,20 @@ Viewer::Frame::Frame ( const char* id, const Texture& texture ) noexcept {
 
     if ( texture.data ) {
 
-        const auto pos{ ImGui::GetCursorPos () };
+        const auto cursorPos{ ImGui::GetCursorPos () };
+        const auto framePos{ ImGui::GetWindowPos () + cursorPos };
 
-        ImGui::Image ( texture.data, ImGui::GetContentRegionAvail () );
+        ImGui::GetWindowDrawList ()->AddImageRounded (
+            texture.data,
+            framePos,
+            framePos + ImGui::GetContentRegionAvail (),
+            ImVec2{ 0, 0 },
+            ImVec2{ 1, 1 },
+            IM_COL32 ( 255, 255, 255, 255 ),
+            ImGui::GetStyle ().FrameRounding,
+            ImDrawFlags_RoundCornersAll );
 
-        ImGui::SetCursorPos ( pos );
+        ImGui::SetCursorPos ( cursorPos );
     }
 }
 
