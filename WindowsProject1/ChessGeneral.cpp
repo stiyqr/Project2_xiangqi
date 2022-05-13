@@ -8,14 +8,16 @@ ChessGeneral::ChessGeneral(const char* name) {
 
 	if (name == "redGeneralBtn") {
 		side = Side::RED;
-		curPosX = 4;
-		curPosY = 9;
+		rank = Rank::GENERAL;
+		curPos.x = 4;
+		curPos.y = 9;
 		img = &viewer.chessRedGeneral;
 	}
 	else if (name == "blackGeneralBtn") {
 		side = Side::BLACK;
-		curPosX = 4;
-		curPosY = 0;
+		rank = Rank::GENERAL;
+		curPos.x = 4;
+		curPos.y = 0;
 		img = &viewer.chessBlackGeneral;
 	}
 }

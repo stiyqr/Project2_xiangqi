@@ -55,6 +55,12 @@ public:
 		VOID onResize(WPARAM, LPARAM)noexcept;
 	};
 
+	class ID {
+	public:
+		ID(int);
+		~ID();
+	};
+
 	// Viewer functions
 	Viewer();
 	void render();
@@ -83,6 +89,20 @@ public:
 	static Texture backgroundGame;
 	static Texture buttonBackToMenuImg;
 	static Texture buttonBackToMenuHoverImg;
+
+	// Chess pieces
 	static Texture chessRedGeneral;
+	static Texture chessRedElephant;
+	static Texture chessRedAdvisor;
+	static Texture chessRedCannon;
+	static Texture chessRedChariot;
+	static Texture chessRedHorse;
+	static Texture chessRedSoldier;
 	static Texture chessBlackGeneral;
+	static Texture chessBlackElephant;
+	static Texture chessBlackAdvisor;
+	static Texture chessBlackCannon;
+	static Texture chessBlackChariot;
+	static Texture chessBlackHorse;
+	static Texture chessBlackSoldier;
 };

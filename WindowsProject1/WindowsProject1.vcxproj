@@ -147,11 +147,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="ChessAdvisor.h" />
     <ClInclude Include="Board.h" />
+    <ClInclude Include="ChessCannon.h" />
+    <ClInclude Include="ChessChariot.h" />
     <ClInclude Include="Chess.h" />
+    <ClInclude Include="ChessElephant.h" />
     <ClInclude Include="ChessGeneral.h" />
+    <ClInclude Include="ChessPieces.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="GameManager.h" />
+    <ClInclude Include="ChessHorse.h" />
     <ClInclude Include="imgui\imconfig.h" />
     <ClInclude Include="imgui\imgui.h" />
     <ClInclude Include="imgui\imgui_impl_dx9.h" />
@@ -162,14 +168,21 @@
     <ClInclude Include="imgui\imstb_truetype.h" />
     <ClInclude Include="MenuManager.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="ChessSoldier.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="Viewer.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ChessAdvisor.cpp" />
     <ClCompile Include="Board.cpp" />
     <ClCompile Include="Chess.cpp" />
+    <ClCompile Include="ChessCannon.cpp" />
+    <ClCompile Include="ChessChariot.cpp" />
+    <ClCompile Include="ChessElephant.cpp" />
     <ClCompile Include="ChessGeneral.cpp" />
+    <ClCompile Include="ChessHorse.cpp" />
+    <ClCompile Include="ChessSoldier.cpp" />
     <ClCompile Include="GameManager.cpp" />
     <ClCompile Include="imgui\imgui.cpp" />
     <ClCompile Include="imgui\imgui_demo.cpp" />

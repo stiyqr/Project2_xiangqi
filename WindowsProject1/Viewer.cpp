@@ -13,8 +13,21 @@ Viewer::Texture Viewer::buttonReadFileHoverImg;
 Viewer::Texture Viewer::backgroundGame;
 Viewer::Texture Viewer::buttonBackToMenuImg;
 Viewer::Texture Viewer::buttonBackToMenuHoverImg;
+
 Viewer::Texture Viewer::chessRedGeneral;
+Viewer::Texture Viewer::chessRedElephant;
+Viewer::Texture Viewer::chessRedAdvisor;
+Viewer::Texture Viewer::chessRedCannon;
+Viewer::Texture Viewer::chessRedChariot;
+Viewer::Texture Viewer::chessRedHorse;
+Viewer::Texture Viewer::chessRedSoldier;
 Viewer::Texture Viewer::chessBlackGeneral;
+Viewer::Texture Viewer::chessBlackElephant;
+Viewer::Texture Viewer::chessBlackAdvisor;
+Viewer::Texture Viewer::chessBlackCannon;
+Viewer::Texture Viewer::chessBlackChariot;
+Viewer::Texture Viewer::chessBlackHorse;
+Viewer::Texture Viewer::chessBlackSoldier;
 
 ///////////////////////////////////////////////////// Texture /////////////////////////////////////////////////////
 
@@ -171,7 +184,20 @@ void Viewer::DirectX::InitImgs() {
 
     // Initialize chess piece textures
     imgs.chessRedGeneral.create(TEXT("../assets\\pion\\chess red general.png"));
+    imgs.chessRedElephant.create(TEXT("../assets\\pion\\chess red elephant.png"));
+    imgs.chessRedAdvisor.create(TEXT("../assets\\pion\\chess red advisor.png"));
+    imgs.chessRedCannon.create(TEXT("../assets\\pion\\chess red cannon.png"));
+    imgs.chessRedChariot.create(TEXT("../assets\\pion\\chess red chariot.png"));
+    imgs.chessRedHorse.create(TEXT("../assets\\pion\\chess red horse.png"));
+    imgs.chessRedSoldier.create(TEXT("../assets\\pion\\chess red soldier.png"));
+
     imgs.chessBlackGeneral.create(TEXT("../assets\\pion\\chess black general.png"));
+    imgs.chessBlackElephant.create(TEXT("../assets\\pion\\chess black elephant.png"));
+    imgs.chessBlackAdvisor.create(TEXT("../assets\\pion\\chess black advisor.png"));
+    imgs.chessBlackCannon.create(TEXT("../assets\\pion\\chess black cannon.png"));
+    imgs.chessBlackChariot.create(TEXT("../assets\\pion\\chess black chariot.png"));
+    imgs.chessBlackHorse.create(TEXT("../assets\\pion\\chess black horse.png"));
+    imgs.chessBlackSoldier.create(TEXT("../assets\\pion\\chess black soldier.png"));
 }
 
 void Viewer::DirectX::onResize(WPARAM wParam, LPARAM lParam)noexcept {
@@ -181,6 +207,17 @@ void Viewer::DirectX::onResize(WPARAM wParam, LPARAM lParam)noexcept {
     direct3DParams.BackBufferWidth = LOWORD(lParam);
     direct3DParams.BackBufferHeight = HIWORD(lParam);
     ResetDevice();
+}
+
+
+///////////////////////////////////////////////////// Viewer Functions /////////////////////////////////////////////////////
+
+Viewer::ID::ID(int id) {
+    ImGui::PushID(id);
+}
+
+Viewer::ID::~ID() {
+    ImGui::PopID();
 }
 
 
@@ -263,3 +300,4 @@ void Viewer::createGameWindow(bool& appRunning, bool& startGame) {
 void Viewer::setButtonPos(float x, float y) {
     ImGui::SetCursorPos(ImVec2(x, y));
 }
+

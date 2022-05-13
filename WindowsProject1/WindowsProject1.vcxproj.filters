@@ -78,6 +78,27 @@
     <ClInclude Include="Board.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ChessElephant.h">
+      <Filter>Chess pieces</Filter>
+    </ClInclude>
+    <ClInclude Include="ChessAdvisor.h">
+      <Filter>Chess pieces</Filter>
+    </ClInclude>
+    <ClInclude Include="ChessCannon.h">
+      <Filter>Chess pieces</Filter>
+    </ClInclude>
+    <ClInclude Include="ChessChariot.h">
+      <Filter>Chess pieces</Filter>
+    </ClInclude>
+    <ClInclude Include="ChessHorse.h">
+      <Filter>Chess pieces</Filter>
+    </ClInclude>
+    <ClInclude Include="ChessSoldier.h">
+      <Filter>Chess pieces</Filter>
+    </ClInclude>
+    <ClInclude Include="ChessPieces.h">
+      <Filter>Chess pieces</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="WindowsProject1.cpp">
@@ -121,6 +142,24 @@
     </ClCompile>
     <ClCompile Include="Board.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ChessAdvisor.cpp">
+      <Filter>Chess pieces</Filter>
+    </ClCompile>
+    <ClCompile Include="ChessCannon.cpp">
+      <Filter>Chess pieces</Filter>
+    </ClCompile>
+    <ClCompile Include="ChessChariot.cpp">
+      <Filter>Chess pieces</Filter>
+    </ClCompile>
+    <ClCompile Include="ChessElephant.cpp">
+      <Filter>Chess pieces</Filter>
+    </ClCompile>
+    <ClCompile Include="ChessHorse.cpp">
+      <Filter>Chess pieces</Filter>
+    </ClCompile>
+    <ClCompile Include="ChessSoldier.cpp">
+      <Filter>Chess pieces</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
