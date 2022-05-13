@@ -136,11 +136,13 @@ Viewer::Frame::~Frame () noexcept {
     ImGui::EndChild ();
 }
 
-Viewer::Button::Button ( const char* id, const Texture& texture, const Texture& textureHovered, const ImVec2& position, const ImVec2& size ) noexcept {
+Viewer::Button::Button ( const char* id, const Texture& texture, const Texture& textureHovered, const ImVec2& position, const ImVec2& size, float rounding ) noexcept {
 
     assert ( texture && textureHovered );
 
     button = &buttons[id] ;
+
+    ImGui::PushStyleVar ( ImGuiStyleVar_FrameRounding, rounding );
 
     ImGui::PushStyleColor ( ImGuiCol_Button, IM_COL32 ( 0, 0, 0, 0 ) );
     ImGui::PushStyleColor ( ImGuiCol_ButtonActive, IM_COL32 ( 0, 0, 0, 0 ) );
@@ -154,6 +156,7 @@ Viewer::Button::Button ( const char* id, const Texture& texture, const Texture& 
 
 Viewer::Button::~Button () noexcept {
 
+    ImGui::PopStyleVar ();
     ImGui::PopStyleColor ( 3 );
 }
 
