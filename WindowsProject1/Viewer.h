@@ -15,11 +15,21 @@ public:
 	public:
 		Texture () = default;
 
+		Texture ( Texture&& ) = delete;
+		Texture ( const Texture& ) = delete;
+		Texture& operator=( Texture&& ) = delete;
+		Texture& operator=( const Texture& ) = delete;
+
+		constexpr operator bool () const noexcept { return _data != nullptr; }
+		constexpr auto& data () const noexcept { return _data; }
+		constexpr auto& size () const noexcept { return _size; }
+
 		void load ( const Viewer& viewer, const char* path ) noexcept;
 		void load ( const Viewer& viewer, const wchar_t* path ) noexcept;
 
-		ImVec2 size;
-		LPDIRECT3DTEXTURE9 data;
+	private:
+		ImVec2 _size;
+		LPDIRECT3DTEXTURE9 _data;
 	};
 
 	Viewer ( HWND ) noexcept;

@@ -75,18 +75,18 @@ void Viewer::resize (
 
 void Viewer::Texture::load ( const Viewer& viewer, const char* path ) noexcept {
 
-    assert ( D3DXCreateTextureFromFileA ( viewer.Direct3DDevice9, path, &data ) == S_OK );
+    assert ( D3DXCreateTextureFromFileA ( viewer.Direct3DDevice9, path, &_data ) == S_OK );
 
     D3DSURFACE_DESC desc;
-    assert ( data->GetLevelDesc ( 0, &desc ) == D3D_OK );
+    assert ( _data->GetLevelDesc ( 0, &desc ) == D3D_OK );
 
-    size.x = static_cast< float >( desc.Width );
-    size.y = static_cast< float >( desc.Height );
+    _size.x = static_cast< float >( desc.Width );
+    _size.y = static_cast< float >( desc.Height );
 }
 
 void Viewer::Texture::load ( const Viewer& viewer, const wchar_t* path ) noexcept {
 
-    assert ( D3DXCreateTextureFromFileW ( viewer.Direct3DDevice9, path, &data ) == S_OK );
+    assert ( D3DXCreateTextureFromFileW ( viewer.Direct3DDevice9, path, &_data ) == S_OK );
 }
 
 Viewer::Position::Position ( Type type ) noexcept {
@@ -105,18 +105,20 @@ Viewer::Position::Position ( Type type ) noexcept {
 
 Viewer::Frame::Frame ( const char* id, const Texture& texture ) noexcept {
 
+    assert ( texture );
+
     draw = ImGui::BeginChild ( id, ImGui::GetContentRegionAvail (), false, ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoScrollbar );
 
     if ( !draw )
         return;
 
-    if ( texture.data ) {
+    if ( texture.data () ) {
 
         const auto cursorPos{ ImGui::GetCursorPos () };
         const auto framePos{ ImGui::GetWindowPos () + cursorPos };
 
         ImGui::GetWindowDrawList ()->AddImageRounded (
-            texture.data,
+            texture.data (),
             framePos,
             framePos + ImGui::GetContentRegionAvail (),
             ImVec2{ 0, 0 },
@@ -136,6 +138,8 @@ Viewer::Frame::~Frame () noexcept {
 
 Viewer::Button::Button ( const char* id, const Texture& texture, const Texture& textureHovered, const ImVec2& position, const ImVec2& size ) noexcept {
 
+    assert ( texture && textureHovered );
+
     button = &buttons[id] ;
 
     ImGui::PushStyleColor ( ImGuiCol_Button, IM_COL32 ( 0, 0, 0, 0 ) );
@@ -144,7 +148,7 @@ Viewer::Button::Button ( const char* id, const Texture& texture, const Texture& 
 
     ImGui::SetCursorPos ( position );
 
-    button->isClicked = ImGui::ImageButton ( button->isHovered ? textureHovered.data : texture.data, size );
+    button->isClicked = ImGui::ImageButton ( button->isHovered ? textureHovered.data () : texture.data (), size );
     button->isHovered = ImGui::IsItemHovered ();
 }
 
