@@ -14,45 +14,78 @@ INT APIENTRY wWinMain (
     auto& viewer{ gameManager.viewer };
     viewer = std::make_unique<std::remove_reference_t<decltype( viewer )>::element_type> ( window->handle );
 
-    viewer->textures["background"].load ( *viewer, "../assets/mainmenu.png" );
+    viewer->textures["menu"].load ( *viewer, "../assets/menu.png" );
+    viewer->textures["board"].load ( *viewer, "../assets/board.png" );
 
-    viewer->textures["start"].load ( *viewer, "../assets/button startgame.png" );
-    viewer->textures["start-hover"].load ( *viewer, "../assets/button startgame hover.png" );
+    viewer->textures["btn-start"].load ( *viewer, "../assets/button_start.png" );
+    viewer->textures["btn-start-hover"].load ( *viewer, "../assets/button_start_dark.png" );
 
-    viewer->textures["exit"].load ( *viewer, "../assets/button exitgame.png" );
-    viewer->textures["exit-hover"].load ( *viewer, "../assets/button exitgame hover.png" );
+    viewer->textures["btn-exit"].load ( *viewer, "../assets/button_exit.png" );
+    viewer->textures["btn-exit-hover"].load ( *viewer, "../assets/button_exit_dark.png" );
 
-    viewer->textures["read"].load ( *viewer, "../assets/button readfile.png" );
-    viewer->textures["read-hover"].load ( *viewer, "../assets/button readfile hover.png" );
+    viewer->textures["btn-read"].load ( *viewer, "../assets/button_read.png" );
+    viewer->textures["btn-read-hover"].load ( *viewer, "../assets/button_read_dark.png" );
+
+    viewer->textures["btn-back"].load ( *viewer, "../assets/button_back.png" );
+    viewer->textures["btn-back-hover"].load ( *viewer, "../assets/button_back_dark.png" );
 
     auto render = [] ( GameManager& gameManager ) {
 
+        static bool startGame = false;
+
         auto& viewer{ gameManager.viewer };
 
-        Viewer::Frame menu{ "##menu", viewer->textures["background"] };
-        
-        if ( menu ) {
-            const ImVec2 buttonSize{ 270, 70 };
+        if ( !startGame ) {
 
-            Viewer::Position pos{ Viewer::Position::Type::CENTER };
-            pos.data ().y *= 1.75f;
+            Viewer::Frame menu{ "##menu", viewer->textures["menu"] };
 
-            ImVec2 btnPos = pos.data ();
-            btnPos -= buttonSize * .5f;
-            Viewer::Button start{ "##start", viewer->textures["start"], viewer->textures["start-hover"], btnPos, buttonSize };
+            if ( menu ) {
 
-            btnPos = pos.data ();
-            btnPos.x *= 1.5f;
-            btnPos -= buttonSize * .5f;
-            Viewer::Button exit{ "##exit", viewer->textures["exit"], viewer->textures["exit-hover"], btnPos, buttonSize };
+                const ImVec2 btnSize{ 270, 70 };
 
-            btnPos = pos.data ();
-            btnPos.x *= .5f;
-            btnPos -= buttonSize * .5f;
-            Viewer::Button read{ "##read", viewer->textures["read"], viewer->textures["read-hover"], btnPos, buttonSize };
+                Viewer::Position pos{ Viewer::Position::Type::CENTER };
+                pos.data ().y *= 1.75f;
 
-            if ( exit.data ().isClicked )
-                gameManager.window->running = false;
+                ImVec2 btnPos = pos.data ();
+                btnPos -= btnSize * .5f;
+                Viewer::Button btnRead{ "##btn-read", viewer->textures["btn-read"], viewer->textures["btn-read-hover"], btnPos, btnSize };
+
+                btnPos = pos.data ();
+                btnPos.x *= 1.5f;
+                btnPos -= btnSize * .5f;
+                Viewer::Button btnExit{ "##btn-exit", viewer->textures["btn-exit"], viewer->textures["btn-exit-hover"], btnPos, btnSize };
+
+                btnPos = pos.data ();
+                btnPos.x *= .5f;
+                btnPos -= btnSize * .5f;
+                Viewer::Button btnStart{ "##btn-start", viewer->textures["btn-start"], viewer->textures["btn-start-hover"], btnPos, btnSize };
+
+                if ( btnStart.data ().isClicked )
+                    startGame = true;
+
+                if ( btnExit.data ().isClicked )
+                    gameManager.window->running = false;
+            }
+        }
+        else {
+
+            Viewer::Frame board ( "##board", viewer->textures["board"] );
+
+            const ImVec2 buttonSize{ 315, 50 };
+
+            if ( board ) {
+
+                Viewer::Position pos{ Viewer::Position::Type::CENTER };
+                pos.data ().x *= 1.55f;
+                pos.data ().y *= 1.25f;
+
+                ImVec2 btnPos = pos.data ();
+                btnPos -= buttonSize * .5f;
+                Viewer::Button btnBack{ "##btn-back", viewer->textures["btn-back"], viewer->textures["btn-back-hover"], btnPos, buttonSize };
+
+                if ( btnBack.data ().isClicked )
+                    startGame = false;
+            }
         }
     };
 
