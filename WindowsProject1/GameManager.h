@@ -6,14 +6,13 @@
 
 class GameManager {
 public:
-	Viewer viewer;
 	std::vector<Chess*> on_board;
-	Board board;
 	Chess::Side current_player = Chess::Side::RED;
+	Board board;
+	Viewer viewer;
 
 public:
 	GameManager();
 
 	void createGameBoard(bool&, bool&);
-	void displayGameBoard(bool&, bool&);
 };

@@ -7,5 +7,4 @@ public:
 	ChessGeneral(const char*);
 
 	void updateAllPossibleMove(std::vector<Chess*>) override;
-	//void renderAllPossibleMove();
 };

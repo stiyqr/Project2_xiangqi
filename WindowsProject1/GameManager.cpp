@@ -127,21 +127,3 @@ void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
 		startGame = false;
 	}
 }
-
-void GameManager::displayGameBoard(bool& appRunning, bool& startGame) {
-	ImVec2 screenSize = viewer.createWindow(appRunning, viewer.backgroundGame);
-
-	viewer.setButtonPos(800, 370);
-	Viewer::Button backToMenuButton("backToMenuBtn", viewer.buttonBackToMenuImg, viewer.buttonBackToMenuHoverImg, Viewer::Button::Type::MAINMENU);
-
-	// Chess pieces
-	for (int i = 0; i < on_board.size(); i++) {
-		viewer.setButtonPos(board.xPosition[on_board[i]->curPos.x], board.yPosition[on_board[i]->curPos.y]);
-		on_board[i];
-	}
-
-	// Mouse click controls
-	if (backToMenuButton) {
-		startGame = false;
-	}
-}
