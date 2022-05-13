@@ -90,6 +90,7 @@ public:
 	class Button {
 	public:
 		Button ( const char* id, const Texture& texture, const Texture& textureHovered, const ImVec2& position, const ImVec2& size, float rounding = ImGui::GetStyle().FrameRounding ) noexcept;
+		Button ( const char* id, const ImVec4& color, const ImVec4& colorActive, const ImVec4& colorHovered, const ImVec2& position, const ImVec2& size, float rounding = ImGui::GetStyle ().FrameRounding ) noexcept;
 		~Button () noexcept;
 
 		struct Data { bool isClicked, isHovered; };

@@ -136,7 +136,13 @@ Viewer::Frame::~Frame () noexcept {
     ImGui::EndChild ();
 }
 
-Viewer::Button::Button ( const char* id, const Texture& texture, const Texture& textureHovered, const ImVec2& position, const ImVec2& size, float rounding ) noexcept {
+Viewer::Button::Button (
+    const char*     id,
+    const Texture&  texture,
+    const Texture&  textureHovered,
+    const ImVec2&   position,
+    const ImVec2&   size,
+    float           rounding ) noexcept {
 
     assert ( texture && textureHovered );
 
@@ -151,6 +157,29 @@ Viewer::Button::Button ( const char* id, const Texture& texture, const Texture& 
     ImGui::SetCursorPos ( position );
 
     button->isClicked = ImGui::ImageButton ( button->isHovered ? textureHovered.data () : texture.data (), size );
+    button->isHovered = ImGui::IsItemHovered ();
+}
+
+Viewer::Button::Button (
+    const char*     id,
+    const ImVec4&   color,
+    const ImVec4&   colorActive,
+    const ImVec4&   colorHovered,
+    const ImVec2&   position,
+    const ImVec2&   size,
+    float           rounding ) noexcept {
+
+    button = &buttons[id];
+
+    ImGui::PushStyleVar ( ImGuiStyleVar_FrameRounding, rounding );
+
+    ImGui::PushStyleColor ( ImGuiCol_Button, color );
+    ImGui::PushStyleColor ( ImGuiCol_ButtonActive, colorActive );
+    ImGui::PushStyleColor ( ImGuiCol_ButtonHovered, colorHovered );
+
+    ImGui::SetCursorPos ( position );
+
+    button->isClicked = ImGui::Button ( id, size );
     button->isHovered = ImGui::IsItemHovered ();
 }
 
