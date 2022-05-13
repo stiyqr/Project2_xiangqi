@@ -8,7 +8,7 @@ public:
 	//std::vector
 
 public:
-	//GameManager();
+	GameManager();
 
-	//void createGameBoard();
+	void createGameBoard(bool&, bool&);
 };

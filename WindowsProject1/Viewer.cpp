@@ -1,20 +1,19 @@
 #include "Viewer.h"
 
-//Static Members
-//Viewer::DirectX Viewer::directx;
-//Main Menu
-//Viewer::Texture backgroundMenu;
-//Viewer::Texture buttonStartGameImg;
-//Viewer::Texture buttonExitGameImg;
-//Viewer::Texture buttonReadFileImg;
-//Viewer::Texture buttonStartGameHoverImg;
-//Viewer::Texture buttonExitGameHoverImg;
-//Viewer::Texture buttonReadFileHoverImg;
-//
-////Gameplay
-//Viewer::Texture backgroundGame;
-//Viewer::Texture buttonBackToMenuImg;
-//Viewer::Texture chessRedGeneral;
+
+// Static declaration
+Viewer::Texture Viewer::backgroundMenu;
+Viewer::Texture Viewer::buttonStartGameImg;
+Viewer::Texture Viewer::buttonExitGameImg;
+Viewer::Texture Viewer::buttonReadFileImg;
+Viewer::Texture Viewer::buttonStartGameHoverImg;
+Viewer::Texture Viewer::buttonExitGameHoverImg;
+Viewer::Texture Viewer::buttonReadFileHoverImg;
+
+Viewer::Texture Viewer::backgroundGame;
+Viewer::Texture Viewer::buttonBackToMenuImg;
+Viewer::Texture Viewer::buttonBackToMenuHoverImg;
+Viewer::Texture Viewer::chessRedGeneral;
 
 ///////////////////////////////////////////////////// Texture /////////////////////////////////////////////////////
 
@@ -40,33 +39,38 @@ Viewer::Button::Button(const char* name, Type type) {
         ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ ImColor{69, 63, 57, 0} });
         isClicked = ImGui::Button(name, ImVec2(200, 50));
     }
-    else if (type == Type::CIRCLE) {
-        buttonType = Type::CIRCLE;
-        ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 50);
-        isClicked = ImGui::Button(name, ImVec2(100, 100));
+    //else if (type == Type::CIRCLE) {
+    //    buttonType = Type::CIRCLE;
+    //    ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 50);
+    //    isClicked = ImGui::Button(name, ImVec2(100, 100));
 
-    }
+    //}
 }
 
 Viewer::Button::Button(const char* id, Texture img, Texture img2, Type type) {
     if (type == Type::MAINMENU) {
         buttonType = Type::MAINMENU;
-        ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 50);
+        ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 10);
         ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ ImColor{139, 129, 119, 0} });
         ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ ImColor{255, 231, 0, 0} });
         ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ ImColor{255, 255, 255, 0} });
         isClicked = ImGui::ImageButton(mainMenuHover[id] ? img2() : img(), ImVec2(200, 50));
         mainMenuHover[id] = ImGui::IsItemHovered();
     }
+    if (type == Type::CIRCLE) {
+        buttonType = Type::CIRCLE;
+        ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 25);
+        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ ImColor{0,0,0,0} });
+        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ ImColor{0,0,0,0} });
+        ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ ImColor{0,0,0,0} });
+        isClicked = ImGui::ImageButton(img(), ImVec2(40, 40));
+    }
 }
 
 // Destructor
 Viewer::Button::~Button() {
-    if (buttonType == Type::MAINMENU) {
-        ImGui::PopStyleVar();
-        ImGui::PopStyleColor(3);
-    }
-    else ImGui::PopStyleVar();
+    ImGui::PopStyleVar();
+    ImGui::PopStyleColor(3);
 }
 
 Viewer::Button::operator bool()const { return isClicked; }
@@ -80,7 +84,7 @@ Viewer::DirectX::DirectX(Viewer& viewer) : imgs(viewer) {}
 
 BOOL Viewer::DirectX::CreateDeviceD3D(HWND hWnd) {
 
-    //static const auto once = [&]() noexcept -> BOOL {
+    static const auto once = [&]() noexcept -> BOOL {
 
         if ((direct3D9 = Direct3DCreate9(D3D_SDK_VERSION)) == NULL)
             return FALSE;
@@ -98,9 +102,9 @@ BOOL Viewer::DirectX::CreateDeviceD3D(HWND hWnd) {
             return FALSE;
 
         return TRUE;
-    //}();
+    }();
 
-    //return once;
+    return once;
 }
 
 VOID Viewer::DirectX::CleanupDeviceD3D() {
@@ -133,6 +137,7 @@ BOOL Viewer::DirectX::InitDisplay(HWND hWnd) {
     ImGui_ImplDX9_Init(direct3DDevice9);
 
     InitImgs();
+    //InitImgsGame();
 
     // Initialize font
     auto& io = ImGui::GetIO();
@@ -142,21 +147,30 @@ BOOL Viewer::DirectX::InitDisplay(HWND hWnd) {
 }
 
 void Viewer::DirectX::InitImgs() {
+    //Main Menu
     // Initialize background textures
-    imgs.backgroundMenu.create(TEXT("../../assets\\mainmenu.png"));
-    imgs.backgroundGame.create(TEXT("../../assets\\gameboard.png"));
+    imgs.backgroundMenu.create(TEXT("../assets\\mainmenu.png"));
+    imgs.backgroundGame.create(TEXT("../assets\\gameboard.png"));
 
     // Initialize button textures
-    imgs.buttonStartGameImg.create(TEXT("../../assets\\button startgame.png"));
-    imgs.buttonExitGameImg.create(TEXT("../../assets\\button exitgame.png"));
-    imgs.buttonReadFileImg.create(TEXT("../../assets\\button readfile.png"));
-    imgs.buttonStartGameHoverImg.create(TEXT("../../assets\\button startgame hover.png"));
-    imgs.buttonExitGameHoverImg.create(TEXT("../../assets\\button exitgame hover.png"));
-    imgs.buttonReadFileHoverImg.create(TEXT("../../assets\\button readfile hover.png"));
-    imgs.buttonBackToMenuImg.create(TEXT("../../assets\\button backtomenu.png"));
+    imgs.buttonStartGameImg.create(TEXT("../assets\\button startgame.png"));
+    imgs.buttonExitGameImg.create(TEXT("../assets\\button exitgame.png"));
+    imgs.buttonReadFileImg.create(TEXT("../assets\\button readfile.png"));
+    imgs.buttonStartGameHoverImg.create(TEXT("../assets\\button startgame hover.png"));
+    imgs.buttonExitGameHoverImg.create(TEXT("../assets\\button exitgame hover.png"));
+    imgs.buttonReadFileHoverImg.create(TEXT("../assets\\button readfile hover.png"));
+    
+
+    // Gameplay
+    // Initialize background texture
+    imgs.backgroundGame.create(TEXT("../assets\\gameboard.png"));
+
+    // Initialize button textures
+    imgs.buttonBackToMenuImg.create(TEXT("../assets\\button backtomenu.png"));
+    imgs.buttonBackToMenuHoverImg.create(TEXT("../assets\\button backtomenu hover.png"));
 
     // Initialize chess piece textures
-    //imgs.chessRedGeneral.create(TEXT(""))
+    imgs.chessRedGeneral.create(TEXT("../assets\\pion\\chess red general.png"));
 }
 
 void Viewer::DirectX::onResize(WPARAM wParam, LPARAM lParam)noexcept {

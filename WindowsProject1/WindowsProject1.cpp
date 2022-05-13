@@ -7,6 +7,8 @@
 
 #include "Viewer.h"
 #include "MenuManager.h"
+#include "GameManager.h"
+#include "Chess.h"
 
 #define MAX_LOADSTRING 100
 
@@ -17,6 +19,8 @@ WCHAR szTitle[MAX_LOADSTRING];                  // The title bar text
 WCHAR szWindowClass[MAX_LOADSTRING];            // the main window class name
 Viewer viewer;                                  // for GUI
 MenuManager mainMenu;                           // for Main Menu
+GameManager gameManager;                        // for Game Manager
+Chess chess;                                    // for chess pieces
 
 // Forward declarations of functions included in this code module:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
@@ -65,19 +69,18 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
                 // Main Menu
                 if (!startGame) {
-                    //mainMenu.viewer.createMenuWindow(appRunning, startGame);
                     mainMenu.createMainMenu(appRunning, startGame);
                     mainMenu.viewer.endWindow();
                 }
                 
                 // Gameplay
                 if (startGame) {
-                    viewer.createGameWindow(appRunning, startGame);
+                    gameManager.createGameBoard(appRunning, startGame);
                     viewer.endWindow();
                 }
             }
 
-            ImGui::ShowDemoWindow();
+            //ImGui::ShowDemoWindow();
         }
         viewer.endRender();
     }
@@ -134,7 +137,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    if (!hWnd) return FALSE;
 
    viewer.directx.InitDisplay(hWnd);
-   mainMenu.viewer.directx.InitImgs();
+   viewer.directx.InitImgs();
 
    ShowWindow(hWnd, nCmdShow);
    UpdateWindow(hWnd);

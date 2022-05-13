@@ -71,16 +71,17 @@ public:
 
 	// Textures
 	//Main Menu
-	Texture backgroundMenu;
-	Texture buttonStartGameImg;
-	Texture buttonExitGameImg;
-	Texture buttonReadFileImg;
-	Texture buttonStartGameHoverImg;
-	Texture buttonExitGameHoverImg;
-	Texture buttonReadFileHoverImg;
+	static Texture backgroundMenu;
+	static Texture buttonStartGameImg;
+	static Texture buttonExitGameImg;
+	static Texture buttonReadFileImg;
+	static Texture buttonStartGameHoverImg;
+	static Texture buttonExitGameHoverImg;
+	static Texture buttonReadFileHoverImg;
 
 	//Gameplay
-	Texture backgroundGame;
-	Texture buttonBackToMenuImg;
-	Texture chessRedGeneral;
+	static Texture backgroundGame;
+	static Texture buttonBackToMenuImg;
+	static Texture buttonBackToMenuHoverImg;
+	static Texture chessRedGeneral;
 };

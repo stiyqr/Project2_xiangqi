@@ -19,6 +19,9 @@
     <Filter Include="win">
       <UniqueIdentifier>{fc31b84b-2418-4958-b087-e088147aa3d4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Chess pieces">
+      <UniqueIdentifier>{173e0971-ac59-426d-bf21-d5578fb88a62}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -69,6 +72,9 @@
     <ClInclude Include="Chess.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ChessGeneral.h">
+      <Filter>Chess pieces</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="WindowsProject1.cpp">
@@ -106,6 +112,9 @@
     </ClCompile>
     <ClCompile Include="Chess.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ChessGeneral.cpp">
+      <Filter>Chess pieces</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
