@@ -106,6 +106,8 @@ void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
 					if (current_player == Chess::Side::RED) current_player = Chess::Side::BLACK;
 					else current_player = Chess::Side::RED;
 
+					// check for check or checkmate
+
 					break;
 				}
 				else if (backBtn) {

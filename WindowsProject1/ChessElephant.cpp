@@ -41,7 +41,7 @@ void ChessElephant::updateAllPossibleMove(std::vector<Chess*>on_board) {
 					}
 					else {
 						// the piece is enemy
-						allPossibleMove.emplace_back(curPos.x - i, curPos.y - i);
+						if (i % 2 == 0) allPossibleMove.emplace_back(curPos.x - i, curPos.y - i);
 						mustBreak = true;
 						break;
 					}
@@ -49,7 +49,7 @@ void ChessElephant::updateAllPossibleMove(std::vector<Chess*>on_board) {
 			}
 			if (mustBreak) break;
 
-			allPossibleMove.emplace_back(curPos.x - i, curPos.y - i);
+			if (i % 2 == 0) allPossibleMove.emplace_back(curPos.x - i, curPos.y - i);
 			i++;
 		}
 		// upper right
@@ -65,7 +65,7 @@ void ChessElephant::updateAllPossibleMove(std::vector<Chess*>on_board) {
 					}
 					else {
 						// the piece is enemy
-						allPossibleMove.emplace_back(curPos.x + i, curPos.y - i);
+						if (i % 2 == 0) allPossibleMove.emplace_back(curPos.x + i, curPos.y - i);
 						mustBreak = true;
 						break;
 					}
@@ -73,7 +73,7 @@ void ChessElephant::updateAllPossibleMove(std::vector<Chess*>on_board) {
 			}
 			if (mustBreak) break;
 
-			allPossibleMove.emplace_back(curPos.x + i, curPos.y - i);
+			if (i % 2 == 0) allPossibleMove.emplace_back(curPos.x + i, curPos.y - i);
 			i++;
 		}
 		// lower left
@@ -89,7 +89,7 @@ void ChessElephant::updateAllPossibleMove(std::vector<Chess*>on_board) {
 					}
 					else {
 						// the piece is enemy
-						allPossibleMove.emplace_back(curPos.x - i, curPos.y + i);
+						if (i % 2 == 0) allPossibleMove.emplace_back(curPos.x - i, curPos.y + i);
 						mustBreak = true;
 						break;
 					}
@@ -97,7 +97,7 @@ void ChessElephant::updateAllPossibleMove(std::vector<Chess*>on_board) {
 			}
 			if (mustBreak) break;
 
-			allPossibleMove.emplace_back(curPos.x - i, curPos.y + i);
+			if (i % 2 == 0) allPossibleMove.emplace_back(curPos.x - i, curPos.y + i);
 			i++;
 		}
 		// lower right
@@ -113,7 +113,7 @@ void ChessElephant::updateAllPossibleMove(std::vector<Chess*>on_board) {
 					}
 					else {
 						// the piece is enemy
-						allPossibleMove.emplace_back(curPos.x + i, curPos.y + i);
+						if (i % 2 == 0) allPossibleMove.emplace_back(curPos.x + i, curPos.y + i);
 						mustBreak = true;
 						break;
 					}
@@ -121,7 +121,7 @@ void ChessElephant::updateAllPossibleMove(std::vector<Chess*>on_board) {
 			}
 			if (mustBreak) break;
 
-			allPossibleMove.emplace_back(curPos.x + i, curPos.y + i);
+			if (i % 2 == 0) allPossibleMove.emplace_back(curPos.x + i, curPos.y + i);
 			i++;
 		}
 	}
@@ -139,7 +139,7 @@ void ChessElephant::updateAllPossibleMove(std::vector<Chess*>on_board) {
 					}
 					else {
 						// the piece is enemy
-						allPossibleMove.emplace_back(curPos.x - i, curPos.y - i);
+						if (i % 2 == 0) allPossibleMove.emplace_back(curPos.x - i, curPos.y - i);
 						mustBreak = true;
 						break;
 					}
@@ -147,7 +147,7 @@ void ChessElephant::updateAllPossibleMove(std::vector<Chess*>on_board) {
 			}
 			if (mustBreak) break;
 
-			allPossibleMove.emplace_back(curPos.x - i, curPos.y - i);
+			if (i % 2 == 0) allPossibleMove.emplace_back(curPos.x - i, curPos.y - i);
 			i++;
 		}
 		// upper right
@@ -163,7 +163,7 @@ void ChessElephant::updateAllPossibleMove(std::vector<Chess*>on_board) {
 					}
 					else {
 						// the piece is enemy
-						allPossibleMove.emplace_back(curPos.x + i, curPos.y - i);
+						if (i % 2 == 0) allPossibleMove.emplace_back(curPos.x + i, curPos.y - i);
 						mustBreak = true;
 						break;
 					}
@@ -171,7 +171,7 @@ void ChessElephant::updateAllPossibleMove(std::vector<Chess*>on_board) {
 			}
 			if (mustBreak) break;
 
-			allPossibleMove.emplace_back(curPos.x + i, curPos.y - i);
+			if (i % 2 == 0) allPossibleMove.emplace_back(curPos.x + i, curPos.y - i);
 			i++;
 		}
 		// lower left
@@ -187,7 +187,7 @@ void ChessElephant::updateAllPossibleMove(std::vector<Chess*>on_board) {
 					}
 					else {
 						// the piece is enemy
-						allPossibleMove.emplace_back(curPos.x - i, curPos.y + i);
+						if (i % 2 == 0) allPossibleMove.emplace_back(curPos.x - i, curPos.y + i);
 						mustBreak = true;
 						break;
 					}
@@ -195,7 +195,7 @@ void ChessElephant::updateAllPossibleMove(std::vector<Chess*>on_board) {
 			}
 			if (mustBreak) break;
 
-			allPossibleMove.emplace_back(curPos.x - i, curPos.y + i);
+			if (i % 2 == 0) allPossibleMove.emplace_back(curPos.x - i, curPos.y + i);
 			i++;
 		}
 		// lower right
@@ -211,7 +211,7 @@ void ChessElephant::updateAllPossibleMove(std::vector<Chess*>on_board) {
 					}
 					else {
 						// the piece is enemy
-						allPossibleMove.emplace_back(curPos.x + i, curPos.y + i);
+						if (i % 2 == 0) allPossibleMove.emplace_back(curPos.x + i, curPos.y + i);
 						mustBreak = true;
 						break;
 					}
@@ -219,7 +219,7 @@ void ChessElephant::updateAllPossibleMove(std::vector<Chess*>on_board) {
 			}
 			if (mustBreak) break;
 
-			allPossibleMove.emplace_back(curPos.x + i, curPos.y + i);
+			if (i % 2 == 0) allPossibleMove.emplace_back(curPos.x + i, curPos.y + i);
 			i++;
 		}
 	}

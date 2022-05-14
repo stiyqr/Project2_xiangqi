@@ -30,127 +30,176 @@ void ChessCannon::updateAllPossibleMove(std::vector<Chess*> on_board) {
 	// up
 	int i = 1;
 	int found = 0;
-	bool skipOne = false, isEnemy = false;;
+	bool isEnemy = false;
+	// check for enemy
 	while (curPos.x >= 0 && curPos.x <= 8 && curPos.y - i >= 0) {
 		for (int j = 0; j < on_board.size(); j++) {
+			// found another piece
 			if (curPos.x == on_board[j]->curPos.x && curPos.y - i == on_board[j]->curPos.y) {
 				found++;
 
-				if (found >= 2 && side != on_board[j]->side) isEnemy = true;
-				else skipOne = true;
-
-				break;
+				if (found >= 2 && side != on_board[j]->side) {
+					if (on_board[j]->rank != Chess::Rank::GENERAL) isEnemy = true;
+					break;
+				}
 			}
 		}
 
-		if (skipOne) {
-			skipOne = false;
-			i++;
-			continue;
-		}
-
-		if (found >= 2) {
-			if (isEnemy) allPossibleMove.emplace_back(curPos.x, curPos.y - i);
+		if (found >= 2 && isEnemy) {
+			allPossibleMove.emplace_back(curPos.x, curPos.y - i);
 			break;
 		}
 
-		if (found) allPossibleMove.emplace_back(curPos.x, curPos.y - i);
 		i++;
 	}
+
+	// if no enemy
+	i = 1;
+	if (!isEnemy) {
+		bool mustBreak = false;
+		while (curPos.x >= 0 && curPos.x <= 8 && curPos.y - i >= 0) {
+			for (int j = 0; j < on_board.size(); j++) {
+				if (curPos.x == on_board[j]->curPos.x && curPos.y - i == on_board[j]->curPos.y) {
+					mustBreak = true;
+					break;
+				}
+			}
+			if (mustBreak) break;
+
+			allPossibleMove.emplace_back(curPos.x, curPos.y - i);
+			i++;
+		}
+	}
+
 
 	// down
 	i = 1;
 	found = 0;
-	skipOne = false;
 	isEnemy = false;
+	// check for enemy
 	while (curPos.x >= 0 && curPos.x <= 8 && curPos.y + i <= 9) {
 		for (int j = 0; j < on_board.size(); j++) {
 			if (curPos.x == on_board[j]->curPos.x && curPos.y + i == on_board[j]->curPos.y) {
 				found++;
 
-				if (found >= 2 && side != on_board[j]->side) isEnemy = true;
-				else skipOne = true;
-
-				break;
+				if (found >= 2 && side != on_board[j]->side) {
+					if (on_board[j]->rank != Chess::Rank::GENERAL) isEnemy = true;
+					break;
+				}
 			}
 		}
 
-		if (skipOne) {
-			skipOne = false;
-			i++;
-			continue;
-		}
-
-		if (found >= 2) {
-			if (isEnemy) allPossibleMove.emplace_back(curPos.x, curPos.y + i);
+		if (found >= 2 && isEnemy) {
+			allPossibleMove.emplace_back(curPos.x, curPos.y + i);
 			break;
 		}
 
-		if (found) allPossibleMove.emplace_back(curPos.x, curPos.y + i);
 		i++;
 	}
+
+	// if no enemy
+	i = 1;
+	if (!isEnemy) {
+		bool mustBreak = false;
+		while (curPos.x >= 0 && curPos.x <= 8 && curPos.y + i <= 9) {
+			for (int j = 0; j < on_board.size(); j++) {
+				if (curPos.x == on_board[j]->curPos.x && curPos.y + i == on_board[j]->curPos.y) {
+					mustBreak = true;
+					break;
+				}
+			}
+			if (mustBreak) break;
+
+			allPossibleMove.emplace_back(curPos.x, curPos.y + i);
+			i++;
+		}
+	}
+
 
 	// left
 	i = 1;
 	found = 0;
-	skipOne = false;
 	isEnemy = false;
+	// check for enemy
 	while (curPos.x >= 0 && curPos.x <= 8 && curPos.x - i >= 0) {
 		for (int j = 0; j < on_board.size(); j++) {
 			if (curPos.x - i == on_board[j]->curPos.x && curPos.y == on_board[j]->curPos.y) {
 				found++;
 
-				if (found >= 2 && side != on_board[j]->side) isEnemy = true;
-				else skipOne = true;
-
-				break;
+				if (found >= 2 && side != on_board[j]->side) {
+					if (on_board[j]->rank != Chess::Rank::GENERAL) isEnemy = true;
+					break;
+				}
 			}
 		}
 
-		if (skipOne) {
-			skipOne = false;
-			i++;
-			continue;
-		}
-
-		if (found >= 2) {
-			if (isEnemy) allPossibleMove.emplace_back(curPos.x - i, curPos.y);
+		if (found >= 2 && isEnemy) {
+			allPossibleMove.emplace_back(curPos.x - i, curPos.y);
 			break;
 		}
 
-		if (found) allPossibleMove.emplace_back(curPos.x - i, curPos.y);
 		i++;
 	}
+
+	// if no enemy
+	i = 1;
+	if (!isEnemy) {
+		bool mustBreak = false;
+		while (curPos.y >= 0 && curPos.y <= 9 && curPos.x - i >= 0) {
+			for (int j = 0; j < on_board.size(); j++) {
+				if (curPos.x - i == on_board[j]->curPos.x && curPos.y == on_board[j]->curPos.y) {
+					mustBreak = true;
+					break;
+				}
+			}
+			if (mustBreak) break;
+
+			allPossibleMove.emplace_back(curPos.x - i, curPos.y);
+			i++;
+		}
+	}
+
 
 	// right
 	i = 1;
 	found = 0;
-	skipOne = false;
 	isEnemy = false;
+	// check for enemy
 	while (curPos.x >= 0 && curPos.x <= 8 && curPos.x + i <= 8) {
 		for (int j = 0; j < on_board.size(); j++) {
 			if (curPos.x + i == on_board[j]->curPos.x && curPos.y == on_board[j]->curPos.y) {
 				found++;
 
-				if (found >= 2 && side != on_board[j]->side) isEnemy = true;
-				else skipOne = true;
-
-				break;
+				if (found >= 2 && side != on_board[j]->side) {
+					if (on_board[j]->rank != Chess::Rank::GENERAL) isEnemy = true;
+					break;
+				}
 			}
 		}
 
-		if (skipOne) {
-			skipOne = false;
-			i++;
-			continue;
-		}
-
-		if (found >= 2) {
-			if (isEnemy) allPossibleMove.emplace_back(curPos.x + i, curPos.y);
+		if (found >= 2 && isEnemy) {
+			allPossibleMove.emplace_back(curPos.x + i, curPos.y);
 			break;
 		}
 
-		if (found) allPossibleMove.emplace_back(curPos.x + i, curPos.y);
 		i++;
+	}
+
+	// if no enemy
+	i = 1;
+	if (!isEnemy) {
+		bool mustBreak = false;
+		while (curPos.y >= 0 && curPos.y <= 9 && curPos.x + i <= 8) {
+			for (int j = 0; j < on_board.size(); j++) {
+				if (curPos.x + i == on_board[j]->curPos.x && curPos.y == on_board[j]->curPos.y) {
+					mustBreak = true;
+					break;
+				}
+			}
+			if (mustBreak) break;
+
+			allPossibleMove.emplace_back(curPos.x + i, curPos.y);
+			i++;
+		}
 	}
 }
