@@ -18,7 +18,7 @@ public:
 
 public:
 	Viewer viewer;
-	GameManager* gameManagerDummy;
+	GameManager* gmDummy;
 	std::deque<Reader> reader;
 	bool isReading = false;
 
@@ -28,6 +28,7 @@ public:
 	// Functions
 	void createMainMenu(bool&, bool&);
 	void readFileMenu(bool&);
+	void readFile2(bool&);
 
 	std::wstring openfilename(const TCHAR* filter = TEXT("(*.txt) Text Files\0*.txt\0"));
 
