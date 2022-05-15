@@ -3,6 +3,7 @@
 #include "Chess.h"
 #include "Board.h"
 #include <vector>
+#include <fstream>
 
 class GameManager {
 public:
@@ -13,6 +14,7 @@ public:
 	bool inCheckmate = false;
 	bool inStalemate = false;
 	bool startNewGame = false;
+	std::ofstream logFile;
 
 public:
 	GameManager();

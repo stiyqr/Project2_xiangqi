@@ -4,6 +4,8 @@
 #include "framework.h"
 #include "main.h"
 #include "resource.h"
+#include <string>
+#include <commdlg.h>
 
 #include "Viewer.h"
 #include "MenuManager.h"
@@ -17,6 +19,7 @@
 HINSTANCE hInst;                                // current instance
 WCHAR szTitle[MAX_LOADSTRING];                  // The title bar text
 WCHAR szWindowClass[MAX_LOADSTRING];            // the main window class name
+HWND hWnd;
 Viewer viewer;                                  // for GUI
 MenuManager mainMenu;                           // for Main Menu
 GameManager* gameManager = nullptr;             // for Game Manager
@@ -74,11 +77,16 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                         startGame = true;
                     }
                     else {
-                        mainMenu.createMainMenu(appRunning, startGame);
-                        mainMenu.viewer.endWindow();
-                        if (gameManager) {
-                            delete gameManager;
-                            gameManager = nullptr;
+                        if (mainMenu.isReading == false) {
+                            mainMenu.createMainMenu(appRunning, startGame);
+                            mainMenu.viewer.endWindow();
+                            if (gameManager) {
+                                delete gameManager;
+                                gameManager = nullptr;
+                            }
+                        }
+                        else {
+                            mainMenu.readFileMenu(appRunning);
                         }
                     }
                 }
@@ -145,7 +153,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
    hInst = hInstance; // Store instance handle in our global variable
 
-   HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW ^ WS_THICKFRAME ^ WS_MAXIMIZEBOX,
+   hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW ^ WS_THICKFRAME ^ WS_MAXIMIZEBOX,
       CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr, nullptr, hInstance, nullptr);
 
    if (!hWnd) return FALSE;
@@ -196,3 +204,31 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     return 0;
 }
 
+#if !UNICODE
+string openfilename(const TCHAR* filter) {
+#else
+std::wstring MenuManager::openfilename(const TCHAR* filter) {
+#endif
+
+    OPENFILENAME ofn{};
+    TCHAR fileName[MAX_PATH]{};
+
+    ofn.lStructSize = sizeof ofn;
+    ofn.hwndOwner = hWnd;
+    ofn.lpstrFilter = filter;
+    ofn.lpstrFile = fileName;
+    ofn.nMaxFile = MAX_PATH;
+    ofn.Flags = OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
+    ofn.lpstrDefExt = TEXT("");;
+
+#if !UNICODE
+    string fileNameStr;
+#else
+    std::wstring fileNameStr;
+#endif;
+
+    if (GetOpenFileName(&ofn))
+        fileNameStr = fileName;
+
+    return fileNameStr;
+}

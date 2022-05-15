@@ -1,8 +1,11 @@
 #include "GameManager.h"
 #include "ChessPieces.h"
 #include <vector>
+#include <fstream>
 
 GameManager::GameManager() {
+	logFile.open("logFile.txt");
+
 	// Black chess pieces
 	on_board.emplace_back(new ChessGeneral("blackGeneralBtn"));
 	on_board.emplace_back(new ChessAdvisor("blackAdvisorBtn", 3, 0));
@@ -248,6 +251,15 @@ void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
 						on_board.erase(on_board.begin() + enemyIndex);
 					}
 
+					// output Log
+					if (current_player == Chess::Side::RED) {
+						logFile << "1 ";
+					}
+					else {
+						logFile << "2 ";
+					}
+					logFile << mover->curPos.x << mover->curPos.y << mover->allPossibleMove[i].x << mover->allPossibleMove[i].y << "\n";
+
 					mover->curPos.x = mover->allPossibleMove[i].x;
 					mover->curPos.y = mover->allPossibleMove[i].y;
 
@@ -294,9 +306,11 @@ void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
 	// Button click controls
 	if (exitBoardButton) {
 		startGame = false;
+		logFile.close();
 	}
 	else if (surrenderButton) {
 		inCheckmate = true;
+		logFile.close();
 	}
 
 	if (inCheckmate) {
@@ -320,9 +334,11 @@ void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
 			if (playAgainButton) {
 				startNewGame = true;
 				startGame = false;
+				logFile.close();
 			}
 			else if (backToMenuButton) {
 				startGame = false;
+				logFile.close();
 			}
 		}
 		viewer.endExtraWindow();
@@ -349,9 +365,11 @@ void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
 			if (playAgainButton) {
 				startNewGame = true;
 				startGame = false;
+				logFile.close();
 			}
 			else if (backToMenuButton) {
 				startGame = false;
+				logFile.close();
 			}
 		}
 		viewer.endExtraWindow();
