@@ -68,11 +68,18 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
                 // Main Menu
                 if (!startGame) {
-                    mainMenu.createMainMenu(appRunning, startGame);
-                    mainMenu.viewer.endWindow();
-                    if (gameManager) {
+                    if (gameManager && gameManager->startNewGame == true) {
                         delete gameManager;
                         gameManager = nullptr;
+                        startGame = true;
+                    }
+                    else {
+                        mainMenu.createMainMenu(appRunning, startGame);
+                        mainMenu.viewer.endWindow();
+                        if (gameManager) {
+                            delete gameManager;
+                            gameManager = nullptr;
+                        }
                     }
                 }
                 
@@ -84,6 +91,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                     gameManager->createGameBoard(appRunning, startGame);
                     viewer.endWindow();
                 }
+
             }
 
             //ImGui::ShowDemoWindow();

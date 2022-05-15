@@ -11,8 +11,20 @@ Viewer::Texture Viewer::buttonExitGameHoverImg;
 Viewer::Texture Viewer::buttonReadFileHoverImg;
 
 Viewer::Texture Viewer::backgroundGame;
+Viewer::Texture Viewer::backgroundRedWin;
+Viewer::Texture Viewer::backgroundBlackWin;
+Viewer::Texture Viewer::backgroundCheck;
+Viewer::Texture Viewer::backgroundCheckmate;
+Viewer::Texture Viewer::backgroundStalemate;
+
 Viewer::Texture Viewer::buttonBackToMenuImg;
 Viewer::Texture Viewer::buttonBackToMenuHoverImg;
+Viewer::Texture Viewer::buttonPlayAgainImg;
+Viewer::Texture Viewer::buttonPlayAgainHoverImg;
+Viewer::Texture Viewer::buttonSurrenderImg;
+Viewer::Texture Viewer::buttonSurrenderHoverImg;
+Viewer::Texture Viewer::buttonExitBoardImg;
+Viewer::Texture Viewer::buttonExitBoardHoverImg;
 
 Viewer::Texture Viewer::chessRedGeneral;
 Viewer::Texture Viewer::chessRedElephant;
@@ -47,22 +59,22 @@ std::unordered_map<std::string, bool> Viewer::Button::mainMenuHover;
 
 Viewer::Button::Button() {}
 
-Viewer::Button::Button(const char* name, Type type) {
-    if (type == Type::MAINMENU) {
-        buttonType = Type::MAINMENU;
-        ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 6);
-        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ ImColor{139, 129, 119, 0} });
-        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ ImColor{100, 93, 85, 0} });
-        ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ ImColor{69, 63, 57, 0} });
-        isClicked = ImGui::Button(name, ImVec2(200, 50));
-    }
-    //else if (type == Type::CIRCLE) {
-    //    buttonType = Type::CIRCLE;
-    //    ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 50);
-    //    isClicked = ImGui::Button(name, ImVec2(100, 100));
-
-    //}
-}
+//Viewer::Button::Button(const char* name, Type type) {
+//    if (type == Type::MAINMENU) {
+//        buttonType = Type::MAINMENU;
+//        ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 6);
+//        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ ImColor{139, 129, 119, 0} });
+//        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ ImColor{100, 93, 85, 0} });
+//        ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ ImColor{69, 63, 57, 0} });
+//        isClicked = ImGui::Button(name, ImVec2(200, 50));
+//    }
+//    else if (type == Type::CIRCLE) {
+//        buttonType = Type::CIRCLE;
+//        ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 50);
+//        isClicked = ImGui::Button(name, ImVec2(100, 100));
+//
+//    }
+//}
 
 Viewer::Button::Button(const char* id, Texture img, Texture img2, Type type) {
     if (type == Type::MAINMENU) {
@@ -157,7 +169,7 @@ BOOL Viewer::DirectX::InitDisplay(HWND hWnd) {
 
     // Initialize font
     auto& io = ImGui::GetIO();
-    io.Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\tahoma.ttf", 20);
+    io.Fonts->AddFontFromFileTTF("../assets\\tahoma.ttf", 20);
 
     return TRUE;
 }
@@ -180,12 +192,24 @@ void Viewer::DirectX::InitImgs() {
     // Gameplay
     // Initialize background texture
     imgs.backgroundGame.create(TEXT("../assets\\gameboard.png"));
+    imgs.backgroundRedWin.create(TEXT("../assets\\background red win.png"));
+    imgs.backgroundBlackWin.create(TEXT("../assets\\background black win.png"));
+    imgs.backgroundCheck.create(TEXT("../assets\\background check.png"));
+    imgs.backgroundCheckmate.create(TEXT("../assets\\background checkmate.png"));
+    imgs.backgroundStalemate.create(TEXT("../assets\\background stalemate.png"));
 
     // Initialize button textures
     imgs.buttonBackToMenuImg.create(TEXT("../assets\\button backtomenu.png"));
     imgs.buttonBackToMenuHoverImg.create(TEXT("../assets\\button backtomenu hover.png"));
+    imgs.buttonPlayAgainImg.create(TEXT("../assets\\button playagain.png"));
+    imgs.buttonPlayAgainHoverImg.create(TEXT("../assets\\button playagain hover.png"));
+    imgs.buttonSurrenderImg.create(TEXT("../assets\\button surrender.png"));
+    imgs.buttonSurrenderHoverImg.create(TEXT("../assets\\button surrender hover.png"));
+    imgs.buttonExitBoardImg.create(TEXT("../assets\\button exitboard.png"));
+    imgs.buttonExitBoardHoverImg.create(TEXT("../assets\\button exitboard hover.png"));
 
     // Initialize chess piece textures
+    // red pieces
     imgs.chessRedGeneral.create(TEXT("../assets\\pion\\chess red general.png"));
     imgs.chessRedElephant.create(TEXT("../assets\\pion\\chess red elephant.png"));
     imgs.chessRedAdvisor.create(TEXT("../assets\\pion\\chess red advisor.png"));
@@ -194,6 +218,7 @@ void Viewer::DirectX::InitImgs() {
     imgs.chessRedHorse.create(TEXT("../assets\\pion\\chess red horse.png"));
     imgs.chessRedSoldier.create(TEXT("../assets\\pion\\chess red soldier.png"));
 
+    // black pieces
     imgs.chessBlackGeneral.create(TEXT("../assets\\pion\\chess black general.png"));
     imgs.chessBlackElephant.create(TEXT("../assets\\pion\\chess black elephant.png"));
     imgs.chessBlackAdvisor.create(TEXT("../assets\\pion\\chess black advisor.png"));
@@ -202,6 +227,7 @@ void Viewer::DirectX::InitImgs() {
     imgs.chessBlackHorse.create(TEXT("../assets\\pion\\chess black horse.png"));
     imgs.chessBlackSoldier.create(TEXT("../assets\\pion\\chess black soldier.png"));
 
+    // possible move piece
     imgs.possibleRed.create(TEXT("../assets\\pion\\possible red.png"));
     imgs.possibleBlack.create(TEXT("../assets\\pion\\possible black.png"));
 }
@@ -216,7 +242,7 @@ void Viewer::DirectX::onResize(WPARAM wParam, LPARAM lParam)noexcept {
 }
 
 
-///////////////////////////////////////////////////// Viewer Functions /////////////////////////////////////////////////////
+///////////////////////////////////////////////////// ID /////////////////////////////////////////////////////
 
 Viewer::ID::ID(int id) {
     ImGui::PushID(id);
@@ -315,12 +341,16 @@ ImVec2 Viewer::getCursorPos()
     return position;
 }
 
-void Viewer::makeMoveWindow() {
+void Viewer::makeExtraWindow() {
     ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0, 0, 0, 0.2));
-    ImGui::BeginChild("##movement windown", ImGui::GetContentRegionAvail(), false, ImGuiWindowFlags_NoScrollbar);
+    ImGui::BeginChild("##extra window", ImGui::GetContentRegionAvail(), false, ImGuiWindowFlags_NoScrollbar);
 }
 
-void Viewer::endMoveWindow() {
+void Viewer::endExtraWindow() {
     ImGui::EndChild();
     ImGui::PopStyleColor();
+}
+
+void Viewer::addWindowImage(Texture img) {
+    ImGui::Image(img(), ImGui::GetContentRegionAvail());
 }

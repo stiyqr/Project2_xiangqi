@@ -1,4 +1,5 @@
 #include "ChessAdvisor.h"
+#include "GameManager.h"
 #include "Viewer.h"
 
 ChessAdvisor::ChessAdvisor() {}

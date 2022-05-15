@@ -71,8 +71,9 @@ public:
 	void createGameWindow(bool&, bool&);
 	void setButtonPos(float, float);
 	ImVec2 getCursorPos();
-	void makeMoveWindow();
-	void endMoveWindow();
+	void makeExtraWindow();
+	void endExtraWindow();
+	void addWindowImage(Texture);
 
 public:
 	DirectX directx;
@@ -88,9 +89,23 @@ public:
 	static Texture buttonReadFileHoverImg;
 
 	//Gameplay
+	// Backgrounds
 	static Texture backgroundGame;
+	static Texture backgroundRedWin;
+	static Texture backgroundBlackWin;
+	static Texture backgroundCheck;
+	static Texture backgroundCheckmate;
+	static Texture backgroundStalemate;
+
+	// Buttons
 	static Texture buttonBackToMenuImg;
 	static Texture buttonBackToMenuHoverImg;
+	static Texture buttonPlayAgainImg;
+	static Texture buttonPlayAgainHoverImg;
+	static Texture buttonSurrenderImg;
+	static Texture buttonSurrenderHoverImg;
+	static Texture buttonExitBoardImg;
+	static Texture buttonExitBoardHoverImg;
 
 	// Chess pieces
 	static Texture chessRedGeneral;

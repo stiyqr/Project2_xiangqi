@@ -10,9 +10,15 @@ public:
 	Chess::Side current_player = Chess::Side::RED;
 	Board board;
 	Viewer viewer;
+	bool inCheckmate = false;
+	bool inStalemate = false;
+	bool startNewGame = false;
 
 public:
 	GameManager();
 
 	void createGameBoard(bool&, bool&);
+	bool isCheck(Chess::Side, std::vector<Chess*>);
+	bool isCheckmate(Chess::Side, std::vector<Chess*>);
+	bool isStalemate(Chess::Side, std::vector<Chess*>);
 };

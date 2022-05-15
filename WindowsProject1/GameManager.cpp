@@ -45,12 +45,18 @@ GameManager::GameManager() {
 }
 
 void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
+	static bool inCheckWarning = false, inCheckmateWarning = false, inStalemateWarning = false;
+
 	ImVec2 screenSize = viewer.createWindow(appRunning, viewer.backgroundGame);
-	auto position = viewer.getCursorPos();
+	auto windowPos = viewer.getCursorPos();
+	float middle_x = (screenSize.x / 2) - 100;
+	float middle_y = (screenSize.y / 2) + 140;
 
 	// Control buttons
 	viewer.setButtonPos(800, 370);
-	Viewer::Button backToMenuButton("backToMenuBtn", viewer.buttonBackToMenuImg, viewer.buttonBackToMenuHoverImg, Viewer::Button::Type::MAINMENU);
+	Viewer::Button exitBoardButton("exitBoardBtn", viewer.buttonExitBoardImg, viewer.buttonExitBoardHoverImg, Viewer::Button::Type::MAINMENU);
+	viewer.setButtonPos(800, 280);
+	Viewer::Button surrenderButton("surrenderBtn", viewer.buttonSurrenderImg, viewer.buttonSurrenderHoverImg, Viewer::Button::Type::MAINMENU);
 
 	// Chess pieces
 	static Chess* mover = nullptr;
@@ -66,20 +72,76 @@ void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
 		}
 	}
 
+
+	if (inCheckWarning) {
+		viewer.setButtonPos(windowPos.x, windowPos.y);
+		viewer.makeExtraWindow();
+		viewer.addWindowImage(viewer.backgroundCheck);
+		viewer.endExtraWindow();
+
+		auto& io = ImGui::GetIO();
+		static auto curDuration = 0.f;
+		curDuration += io.DeltaTime;
+		if (curDuration >= 2.5) {
+			inCheckWarning = false;
+			curDuration = 0;
+		}
+	}
+
+	if (inCheckmateWarning) {
+		viewer.setButtonPos(windowPos.x, windowPos.y);
+		viewer.makeExtraWindow();
+
+		viewer.addWindowImage(viewer.backgroundCheckmate);
+		viewer.endExtraWindow();
+
+		auto& io = ImGui::GetIO();
+		static auto curDuration = 0.f;
+		curDuration += io.DeltaTime;
+		if (curDuration >= 2.5) {
+			inCheckmateWarning = false;
+			inCheckmate = true;
+			curDuration = 0;
+		}
+	}
+
+	if (inStalemateWarning) {
+		viewer.setButtonPos(windowPos.x, windowPos.y);
+		viewer.makeExtraWindow();
+
+		viewer.addWindowImage(viewer.backgroundStalemate);
+		viewer.endExtraWindow();
+
+		auto& io = ImGui::GetIO();
+		static auto curDuration = 0.f;
+		curDuration += io.DeltaTime;
+		if (curDuration >= 2.5) {
+			inStalemateWarning = false;
+			inStalemate = true;
+			curDuration = 0;
+		}
+	}
+
+
 	if (mover != nullptr) {
-		viewer.setButtonPos(position.x, position.y);
-		viewer.makeMoveWindow();
+		viewer.setButtonPos(windowPos.x, windowPos.y);
+		viewer.makeExtraWindow();
 		{
 			viewer.setButtonPos(board.xPosition[mover->curPos.x], board.yPosition[mover->curPos.y]);
 			Viewer::Button backBtn("back", *(mover->img), *(mover->img), Viewer::Button::Type::CIRCLE);
 
+			// check if each move is enemy or friend, or check position
 			for (int i = 0; i < mover->allPossibleMove.size(); i++) {
-				bool isFriend = false, isEnemy = false;
+				bool isEnemy = false;
 				int enemyIndex = 0;
 				for (int j = 0; j < on_board.size(); j++) {
 					if (mover->allPossibleMove[i] == on_board[j]->curPos) {
 						if (on_board[j]->side == mover->side) {
-							isFriend = true;
+							mover->allPossibleMove.erase(mover->allPossibleMove.begin() + i);
+
+							if (mover->allPossibleMove.empty()) break;
+							i--;
+							continue;
 						}
 						else {
 							isEnemy = true;
@@ -88,7 +150,39 @@ void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
 					}
 				}
 
-				if (isFriend) continue;
+				if (mover->allPossibleMove.empty()) continue;
+
+				// pieces cannot move to positions that put their general in check position
+				Chess::Position originalPos = mover->curPos;
+				mover->curPos = mover->allPossibleMove[i];
+
+				if (mover->side == Chess::Side::RED) {
+					if (isCheck(Chess::Side::BLACK, on_board)) {
+						mover->curPos = originalPos;
+						mover->allPossibleMove.erase(mover->allPossibleMove.begin() + i);
+
+						if (mover->allPossibleMove.empty()) break;
+						i--;
+						continue;
+					}
+					else {
+						mover->curPos = originalPos;
+					}
+				}
+				else {
+					if (isCheck(Chess::Side::RED, on_board)) {
+						mover->curPos = originalPos;
+						mover->allPossibleMove.erase(mover->allPossibleMove.begin() + i);
+
+						if (mover->allPossibleMove.empty()) break;
+						i--;
+						continue;
+					}
+					else {
+						mover->curPos = originalPos;
+					}
+				}
+				
 
 				Viewer::ID id(i);
 				viewer.setButtonPos(board.xPosition[mover->allPossibleMove[i].x], board.yPosition[mover->allPossibleMove[i].y]);
@@ -101,13 +195,31 @@ void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
 
 					mover->curPos.x = mover->allPossibleMove[i].x;
 					mover->curPos.y = mover->allPossibleMove[i].y;
-					mover = nullptr;
+
+					// check if there is a check or checkmate
+					if (isCheck(current_player, on_board)) {
+						// check mate
+						if (isCheckmate(current_player, on_board)) {
+							inCheckmateWarning = true;
+						}
+						// check only
+						else {
+							inCheckWarning = true;
+						}
+					}
+					else {
+						inCheckWarning = false;
+					}
+
+					// check for stalemate
+					if (isStalemate(current_player, on_board)) {
+						inStalemateWarning = true;
+					}
 
 					if (current_player == Chess::Side::RED) current_player = Chess::Side::BLACK;
 					else current_player = Chess::Side::RED;
 
-					// check for check or checkmate
-
+					mover = nullptr;
 					break;
 				}
 				else if (backBtn) {
@@ -117,15 +229,333 @@ void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
 			}
 			if (backBtn) mover = nullptr;
 		}
-		viewer.endMoveWindow();
+		viewer.endExtraWindow();
 		//mover->renderAllPossibleMove();
 	}
 
 
-
-
-	// Mouse click controls
-	if (backToMenuButton) {
+	// Button click controls
+	if (exitBoardButton) {
 		startGame = false;
+	}
+	else if (surrenderButton) {
+		viewer.setButtonPos(windowPos.x, windowPos.y);
+		viewer.makeExtraWindow();
+		{
+			if (current_player == Chess::Side::RED) {
+				viewer.addWindowImage(viewer.backgroundBlackWin);
+			}
+			else if (current_player == Chess::Side::BLACK) {
+				viewer.addWindowImage(viewer.backgroundRedWin);
+			}
+
+			// create new game or exit button
+			float middle_x = (screenSize.x / 2) - 100;
+			float middle_y = (screenSize.y / 2) + 90;
+			viewer.setButtonPos(middle_x - 150, middle_y + 50);
+			Viewer::Button playAgainButton("playAgainBtn", viewer.buttonPlayAgainImg, viewer.buttonPlayAgainHoverImg, Viewer::Button::Type::MAINMENU);
+			viewer.setButtonPos(middle_x + 150, middle_y + 50);
+			Viewer::Button backToMenuButton("backToMenuBtn", viewer.buttonBackToMenuImg, viewer.buttonBackToMenuHoverImg, Viewer::Button::Type::MAINMENU);
+
+			// button controls
+			if (playAgainButton) {
+				startGame = false;
+			}
+			else if (backToMenuButton) {
+				startGame = false;
+			}
+		}
+		viewer.endExtraWindow();
+	}
+
+	if (inCheckmate) {
+		viewer.setButtonPos(windowPos.x, windowPos.y);
+		viewer.makeExtraWindow();
+		{
+			// red wins
+			if (current_player == Chess::Side::BLACK) {
+				viewer.addWindowImage(viewer.backgroundRedWin);
+			}
+			// black wins
+			else {
+				viewer.addWindowImage(viewer.backgroundBlackWin);
+			}
+
+			viewer.setButtonPos(middle_x - 150, middle_y);
+			Viewer::Button playAgainButton("playAgainBtn", viewer.buttonPlayAgainImg, viewer.buttonPlayAgainHoverImg, Viewer::Button::Type::MAINMENU);
+			viewer.setButtonPos(middle_x + 150, middle_y);
+			Viewer::Button backToMenuButton("backToMenuBtn", viewer.buttonBackToMenuImg, viewer.buttonBackToMenuHoverImg, Viewer::Button::Type::MAINMENU);
+
+			if (playAgainButton) {
+				startNewGame = true;
+				startGame = false;
+			}
+			else if (backToMenuButton) {
+				startGame = false;
+			}
+		}
+		viewer.endExtraWindow();
+	}
+
+	if (inStalemate) {
+		viewer.setButtonPos(windowPos.x, windowPos.y);
+		viewer.makeExtraWindow();
+		{
+			// red wins
+			if (current_player == Chess::Side::BLACK) {
+				viewer.addWindowImage(viewer.backgroundRedWin);
+			}
+			// black wins
+			else {
+				viewer.addWindowImage(viewer.backgroundBlackWin);
+			}
+
+			viewer.setButtonPos(middle_x - 150, middle_y);
+			Viewer::Button playAgainButton("playAgainBtn", viewer.buttonPlayAgainImg, viewer.buttonPlayAgainHoverImg, Viewer::Button::Type::MAINMENU);
+			viewer.setButtonPos(middle_x + 150, middle_y);
+			Viewer::Button backToMenuButton("backToMenuBtn", viewer.buttonBackToMenuImg, viewer.buttonBackToMenuHoverImg, Viewer::Button::Type::MAINMENU);
+
+			if (playAgainButton) {
+				startNewGame = true;
+				startGame = false;
+			}
+			else if (backToMenuButton) {
+				startGame = false;
+			}
+		}
+		viewer.endExtraWindow();
+	}
+}
+
+bool GameManager::isCheck(Chess::Side side, std::vector<Chess*> on_board) {
+	// check if black is in check (red is attacking)
+	if (side == Chess::Side::RED) {
+		// check possible move of every red piece
+		for (int i = 0; i < on_board.size(); i++) {
+			if (on_board[i]->side == Chess::Side::BLACK) continue;
+
+			on_board[i]->updateAllPossibleMove(on_board);
+
+			// compare each possible move to each piece's position
+			for (int j = 0; j < on_board[i]->allPossibleMove.size(); j++) {
+				for (int k = 0; k < on_board.size(); k++) {
+					// if possible move and a other piece position is the same, check if it's the other side's general
+					if (on_board[i]->allPossibleMove[j] == on_board[k]->curPos) {
+						if (on_board[k]->rank == Chess::Rank::GENERAL && on_board[k]->side != on_board[i]->side) {
+							return true;
+						}
+					}
+				}
+			}
+		}
+		return false;
+	}
+	// check if red is in check (black is attacking)
+	else if (side == Chess::Side::BLACK) {
+		// check possible move of every black piece
+		for (int i = 0; i < on_board.size(); i++) {
+			if (on_board[i]->side == Chess::Side::RED) continue;
+
+			on_board[i]->updateAllPossibleMove(on_board);
+
+			// compare each possible move to each piece's position
+			for (int j = 0; j < on_board[i]->allPossibleMove.size(); j++) {
+				for (int k = 0; k < on_board.size(); k++) {
+					// if possible move and a other piece position is the same, check if it's the other side's general
+					if (on_board[i]->allPossibleMove[j] == on_board[k]->curPos) {
+						if (on_board[k]->rank == Chess::Rank::GENERAL && on_board[k]->side != on_board[i]->side) {
+							return true;
+						}
+					}
+				}
+			}
+		}
+		return false;
+	}
+}
+
+// Pre: the opponent is in check
+bool GameManager::isCheckmate(Chess::Side side, std::vector<Chess*> on_board) {
+	// black is in check (red is attacking)
+	if (side == Chess::Side::RED) {
+		// check every possible move of black pieces
+		for (int i = 0; i < on_board.size(); i++) {
+			if (on_board[i]->side == Chess::Side::RED) continue;
+
+			on_board[i]->updateAllPossibleMove(on_board);
+			Chess::Position originalPos = on_board[i]->curPos;
+
+			// move each piece to each possible move and check if black is still in check
+			for (int j = 0; j < on_board[i]->allPossibleMove.size(); j++) {
+
+				// move the piece to each possible move
+				on_board[i]->curPos = on_board[i]->allPossibleMove[j];
+
+				// check if the general is not in check anymore
+				if (!isCheck(Chess::Side::RED, on_board)) {
+					on_board[i]->curPos = originalPos;
+					return false;
+				}
+			}
+
+			// move the piece back to its original position
+			on_board[i]->curPos = originalPos;
+		}
+		// the general is still in check even after moving every piece, return true
+		return true;
+	}
+	// red is in check (black is attacking)
+	else if (side == Chess::Side::BLACK) {
+		// check every possible move of red pieces
+		for (int i = 0; i < on_board.size(); i++) {
+			if (on_board[i]->side == Chess::Side::BLACK) continue;
+
+			on_board[i]->updateAllPossibleMove(on_board);
+			Chess::Position originalPos = on_board[i]->curPos;
+
+			// move each piece to each possible move and check if red is still in check
+			for (int j = 0; j < on_board[i]->allPossibleMove.size(); j++) {
+
+				// move the piece to each possible move
+				on_board[i]->curPos = on_board[i]->allPossibleMove[j];
+
+				// check if the general is not in check anymore
+				if (!isCheck(Chess::Side::BLACK, on_board)) {
+					on_board[i]->curPos = originalPos;
+					return false;
+				}
+			}
+
+			// move the piece back to its original position
+			on_board[i]->curPos = originalPos;
+		}
+		// the general is still in check even after moving every piece, return true
+		return true;
+	}
+}
+
+bool GameManager::isStalemate(Chess::Side side, std::vector<Chess*>on_board) {
+	// check if black is in stalemate (red is attacking)
+	if (side == Chess::Side::RED) {
+		for (int k = 0; k < on_board.size(); k++) {
+			if (on_board[k]->side == Chess::Side::RED) continue;
+
+			// update each piece's possible move
+			on_board[k]->updateAllPossibleMove(on_board);
+
+			// check if each move is enemy or friend, or check position
+			for (int i = 0; i < on_board[k]->allPossibleMove.size(); i++) {
+
+				if (on_board[k]->allPossibleMove.empty()) continue;
+
+				for (int j = 0; j < on_board.size(); j++) {
+					if (on_board[k]->allPossibleMove[i] == on_board[j]->curPos) {
+						if (on_board[j]->side == on_board[k]->side) {
+							on_board[k]->allPossibleMove.erase(on_board[k]->allPossibleMove.begin() + i);
+
+							if (on_board[k]->allPossibleMove.empty()) break;
+							i--;
+							continue;
+						}
+					}
+				}
+
+				if (on_board[k]->allPossibleMove.empty()) continue;
+
+				// pieces cannot move to positions that put their general in check position
+				Chess::Position originalPos = on_board[k]->curPos;
+				on_board[k]->curPos = on_board[k]->allPossibleMove[i];
+
+				if (on_board[k]->side == Chess::Side::RED) {
+					if (isCheck(Chess::Side::BLACK, on_board)) {
+						on_board[k]->curPos = originalPos;
+						on_board[k]->allPossibleMove.erase(on_board[k]->allPossibleMove.begin() + i);
+
+						if (on_board[k]->allPossibleMove.empty()) break;
+						i--;
+						continue;
+					}
+					else {
+						on_board[k]->curPos = originalPos;
+					}
+				}
+				else {
+					if (isCheck(Chess::Side::RED, on_board)) {
+						on_board[k]->curPos = originalPos;
+						on_board[k]->allPossibleMove.erase(on_board[k]->allPossibleMove.begin() + i);
+
+						if (on_board[k]->allPossibleMove.empty()) break;
+						i--;
+						continue;
+					}
+					else {
+						on_board[k]->curPos = originalPos;
+					}
+				}
+			}
+
+			if (on_board[k]->allPossibleMove.size() > 0) return false;
+		}
+		return true;
+	}
+	// check if red is in stalemate (black is attacking)
+	else {
+		for (int k = 0; k < on_board.size(); k++) {
+			if (on_board[k]->side == Chess::Side::BLACK) continue;
+
+			// update each piece's possible move
+			on_board[k]->updateAllPossibleMove(on_board);
+
+			// check if each move is enemy or friend, or check position
+			for (int i = 0; i < on_board[k]->allPossibleMove.size(); i++) {
+				for (int j = 0; j < on_board.size(); j++) {
+					if (on_board[k]->allPossibleMove[i] == on_board[j]->curPos) {
+						if (on_board[j]->side == on_board[k]->side) {
+							on_board[k]->allPossibleMove.erase(on_board[k]->allPossibleMove.begin() + i);
+
+							if (on_board[k]->allPossibleMove.empty()) break;
+							i--;
+							continue;
+						}
+					}
+				}
+
+				if (on_board[k]->allPossibleMove.empty()) continue;
+
+				// pieces cannot move to positions that put their general in check position
+				Chess::Position originalPos = on_board[k]->curPos;
+				on_board[k]->curPos = on_board[k]->allPossibleMove[i];
+
+				if (on_board[k]->side == Chess::Side::RED) {
+					if (isCheck(Chess::Side::BLACK, on_board)) {
+						on_board[k]->curPos = originalPos;
+						on_board[k]->allPossibleMove.erase(on_board[k]->allPossibleMove.begin() + i);
+
+						if (on_board[k]->allPossibleMove.empty()) break;
+						i--;
+						continue;
+					}
+					else {
+						on_board[k]->curPos = originalPos;
+					}
+				}
+				else {
+					if (isCheck(Chess::Side::RED, on_board)) {
+						on_board[k]->curPos = originalPos;
+						on_board[k]->allPossibleMove.erase(on_board[k]->allPossibleMove.begin() + i);
+
+						if (on_board[k]->allPossibleMove.empty()) break;
+						i--;
+						continue;
+					}
+					else {
+						on_board[k]->curPos = originalPos;
+					}
+				}
+			}
+
+			if (on_board[k]->allPossibleMove.size() > 0) return false;
+		}
+		return true;
 	}
 }
