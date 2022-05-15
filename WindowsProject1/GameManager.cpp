@@ -132,6 +132,7 @@ void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
 
 			// check if each move is enemy or friend, or check position
 			for (int i = 0; i < mover->allPossibleMove.size(); i++) {
+				bool mustContinue = false;
 				bool isEnemy = false;
 				int enemyIndex = 0;
 				for (int j = 0; j < on_board.size(); j++) {
@@ -142,7 +143,8 @@ void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
 
 							if (mover->allPossibleMove.empty()) break;
 							i--;
-							continue;
+							mustContinue = true;
+							break;
 						}
 						// possible move overlaps with enemy
 						else {
@@ -151,6 +153,7 @@ void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
 						}
 					}
 				}
+				if (mustContinue) continue;
 
 				if (mover->allPossibleMove.empty()) continue;
 
@@ -160,12 +163,37 @@ void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
 
 				if (mover->side == Chess::Side::RED) {
 					if (isCheck(Chess::Side::BLACK, on_board)) {
-						mover->curPos = originalPos;
-						mover->allPossibleMove.erase(mover->allPossibleMove.begin() + i);
+						bool eatEnemy = false;
 
-						if (mover->allPossibleMove.empty()) break;
-						i--;
-						continue;
+						for (int j = 0; j < on_board.size(); j++) {
+							if (mover->curPos == on_board[j]->curPos) {
+								Chess eaten = *on_board[j];
+								eaten.updateAllPossibleMove(on_board);
+
+								for (int k = 0; k < eaten.allPossibleMove.size(); k++) {
+									for (int l = 0; l < on_board.size(); l++) {
+										if (eaten.allPossibleMove[k] == on_board[l]->curPos) {
+											if (on_board[l]->rank == Chess::Rank::GENERAL && on_board[l]->side == Chess::Side::RED) {
+												eatEnemy = true;
+												break;
+											}
+										}
+									}
+									if (eatEnemy) break;
+								}
+							}
+							if (eatEnemy) break;
+						}
+
+						mover->curPos = originalPos;
+
+						if (!eatEnemy || mover->rank == Chess::Rank::GENERAL) {
+							mover->allPossibleMove.erase(mover->allPossibleMove.begin() + i);
+
+							if (mover->allPossibleMove.empty()) break;
+							i--;
+							continue;
+						}
 					}
 					else {
 						mover->curPos = originalPos;
@@ -173,12 +201,37 @@ void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
 				}
 				else {
 					if (isCheck(Chess::Side::RED, on_board)) {
-						mover->curPos = originalPos;
-						mover->allPossibleMove.erase(mover->allPossibleMove.begin() + i);
+						bool eatEnemy = false;
 
-						if (mover->allPossibleMove.empty()) break;
-						i--;
-						continue;
+						for (int j = 0; j < on_board.size(); j++) {
+							if (mover->curPos == on_board[j]->curPos) {
+								Chess eaten = *on_board[j];
+								eaten.updateAllPossibleMove(on_board);
+
+								for (int k = 0; k < eaten.allPossibleMove.size(); k++) {
+									for (int l = 0; l < on_board.size(); l++) {
+										if (eaten.allPossibleMove[k] == on_board[l]->curPos) {
+											if (on_board[l]->rank == Chess::Rank::GENERAL && on_board[l]->side == Chess::Side::BLACK) {
+												eatEnemy = true;
+												break;
+											}
+										}
+									}
+									if (eatEnemy) break;
+								}
+							}
+							if (eatEnemy) break;
+						}
+
+						mover->curPos = originalPos;
+
+						if (!eatEnemy || mover->rank == Chess::Rank::GENERAL) {
+							mover->allPossibleMove.erase(mover->allPossibleMove.begin() + i);
+
+							if (mover->allPossibleMove.empty()) break;
+							i--;
+							continue;
+						}
 					}
 					else {
 						mover->curPos = originalPos;
@@ -214,8 +267,10 @@ void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
 					}
 
 					// check for stalemate
-					if (isStalemate(current_player, on_board)) {
-						inStalemateWarning = true;
+					if (!inCheckWarning && !inCheckmateWarning) {
+						if (isStalemate(current_player, on_board)) {
+							inStalemateWarning = true;
+						}
 					}
 
 					if (current_player == Chess::Side::RED) current_player = Chess::Side::BLACK;
