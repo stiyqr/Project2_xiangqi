@@ -136,6 +136,7 @@ void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
 				int enemyIndex = 0;
 				for (int j = 0; j < on_board.size(); j++) {
 					if (mover->allPossibleMove[i] == on_board[j]->curPos) {
+						// possible move overlaps with friend
 						if (on_board[j]->side == mover->side) {
 							mover->allPossibleMove.erase(mover->allPossibleMove.begin() + i);
 
@@ -143,6 +144,7 @@ void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
 							i--;
 							continue;
 						}
+						// possible move overlaps with enemy
 						else {
 							isEnemy = true;
 							enemyIndex = j;
@@ -239,33 +241,7 @@ void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
 		startGame = false;
 	}
 	else if (surrenderButton) {
-		viewer.setButtonPos(windowPos.x, windowPos.y);
-		viewer.makeExtraWindow();
-		{
-			if (current_player == Chess::Side::RED) {
-				viewer.addWindowImage(viewer.backgroundBlackWin);
-			}
-			else if (current_player == Chess::Side::BLACK) {
-				viewer.addWindowImage(viewer.backgroundRedWin);
-			}
-
-			// create new game or exit button
-			float middle_x = (screenSize.x / 2) - 100;
-			float middle_y = (screenSize.y / 2) + 90;
-			viewer.setButtonPos(middle_x - 150, middle_y + 50);
-			Viewer::Button playAgainButton("playAgainBtn", viewer.buttonPlayAgainImg, viewer.buttonPlayAgainHoverImg, Viewer::Button::Type::MAINMENU);
-			viewer.setButtonPos(middle_x + 150, middle_y + 50);
-			Viewer::Button backToMenuButton("backToMenuBtn", viewer.buttonBackToMenuImg, viewer.buttonBackToMenuHoverImg, Viewer::Button::Type::MAINMENU);
-
-			// button controls
-			if (playAgainButton) {
-				startGame = false;
-			}
-			else if (backToMenuButton) {
-				startGame = false;
-			}
-		}
-		viewer.endExtraWindow();
+		inCheckmate = true;
 	}
 
 	if (inCheckmate) {
@@ -445,6 +421,7 @@ bool GameManager::isStalemate(Chess::Side side, std::vector<Chess*>on_board) {
 
 			// check if each move is enemy or friend, or check position
 			for (int i = 0; i < on_board[k]->allPossibleMove.size(); i++) {
+				bool mustContinue = false;
 
 				if (on_board[k]->allPossibleMove.empty()) continue;
 
@@ -455,10 +432,13 @@ bool GameManager::isStalemate(Chess::Side side, std::vector<Chess*>on_board) {
 
 							if (on_board[k]->allPossibleMove.empty()) break;
 							i--;
-							continue;
+							mustContinue = true;
+							break;
 						}
 					}
 				}
+
+				if (mustContinue) continue;
 
 				if (on_board[k]->allPossibleMove.empty()) continue;
 
@@ -508,6 +488,8 @@ bool GameManager::isStalemate(Chess::Side side, std::vector<Chess*>on_board) {
 
 			// check if each move is enemy or friend, or check position
 			for (int i = 0; i < on_board[k]->allPossibleMove.size(); i++) {
+				bool mustContinue = false;
+
 				for (int j = 0; j < on_board.size(); j++) {
 					if (on_board[k]->allPossibleMove[i] == on_board[j]->curPos) {
 						if (on_board[j]->side == on_board[k]->side) {
@@ -515,10 +497,13 @@ bool GameManager::isStalemate(Chess::Side side, std::vector<Chess*>on_board) {
 
 							if (on_board[k]->allPossibleMove.empty()) break;
 							i--;
-							continue;
+							mustContinue = true;
+							break;
 						}
 					}
 				}
+
+				if (mustContinue) continue;
 
 				if (on_board[k]->allPossibleMove.empty()) continue;
 
