@@ -18,6 +18,7 @@ public:
 
 public:
 	GameManager();
+	GameManager(std::string);
 
 	void createGameBoard(bool&, bool&);
 	bool isCheck(Chess::Side, std::vector<Chess*>);

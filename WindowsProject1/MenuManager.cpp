@@ -10,6 +10,7 @@ MenuManager::MenuManager() {}
 void MenuManager::createMainMenu(bool& appRunning, bool& startGame) {
 	static bool loadingGame = false;
 
+	// create main menu window
 	ImVec2 screenSize = viewer.createWindow(appRunning, viewer.backgroundMenu);
 	auto windowPos = viewer.getCursorPos();
 	float middle_x = (screenSize.x / 2) - 100;
@@ -30,6 +31,10 @@ void MenuManager::createMainMenu(bool& appRunning, bool& startGame) {
 	// make Load Game button
 	viewer.setButtonPos(middle_x + 150, middle_y - 50);
 	Viewer::Button loadGameButton("loadFileBtn", viewer.buttonLoadGameImg, viewer.buttonLoadGameHoverImg, Viewer::Button::Type::MAINMENU);
+
+	// make Log Replay button
+	viewer.setButtonPos(middle_x - 150, middle_y - 50);
+	Viewer::Button logReplayButton("logReplayBtn", viewer.buttonLogReplayImg, viewer.buttonLogReplayHoverImg, Viewer::Button::Type::MAINMENU);
 
 	// Button click controls
 	if (startGameButton) {
@@ -64,12 +69,37 @@ void MenuManager::createMainMenu(bool& appRunning, bool& startGame) {
 	}
 	else if (loadGameButton) {
 		loadingGame = true;
+		isLoading = true;
+	}
+	else if (logReplayButton) {
+		std::ifstream file("logFile.txt");
+
+		if (!file.good())
+			return;
+
+		char line[99];
+		while (file.getline(line, 99)) {
+			std::vector<int> data;
+			for (auto& i : line) {
+				if (i >= '0' && i <= '9')
+					data.emplace_back(i - '0');
+			}
+			reader.emplace_back(data[0], data[1], data[2], data[3], data[4]);
+		}
+
+		file.close();
+
+		if (reader.empty()) return;
+
+		gmDummy = new GameManager;
+
+		isReading = true;
 	}
 
-	if (loadingGame) {
-		viewer.setButtonPos(windowPos.x, windowPos.y);
-		loadGameMenu(loadingGame);
-	}
+	//if (loadingGame) {
+	//	viewer.setButtonPos(windowPos.x, windowPos.y);
+	//	loadGameMenu(loadingGame);
+	//}
 }
 
 void MenuManager::readFileMenu(bool& appRunning) {
@@ -293,9 +323,10 @@ void MenuManager::readFile(bool& appRunning) {
 	viewer.endWindow();
 }
 
-void MenuManager::loadGameMenu(bool& loadingGame) {
-	viewer.makeExtraWindow();
-	viewer.addWindowImage(viewer.backgroundLoadGame);
+GameManager* MenuManager::loadGameMenu(bool& appRunning, bool& startGame) {
+	GameManager* gameManager = nullptr;
+
+	viewer.createWindow(appRunning, viewer.backgroundLoadGame);
 	{
 		viewer.setButtonPos(170, 250);
 		Viewer::Button loadSlot1("loadSlot1", viewer.buttonSave1Img, viewer.buttonSave1HoverImg, Viewer::Button::Type::SAVESLOT);
@@ -306,24 +337,39 @@ void MenuManager::loadGameMenu(bool& loadingGame) {
 		viewer.setButtonPos(450, 450);
 		Viewer::Button exitSaveMenuButton("exitSaveMenuBtn", viewer.buttonExitBoardImg, viewer.buttonExitBoardHoverImg, Viewer::Button::Type::MAINMENU);
 
-
 		if (loadSlot1) {
-			loadGame("savefile1.txt");
-			loadingGame = false;
+			std::ifstream file("savefile1.txt");
+			if (file.is_open()) {
+				gameManager = new GameManager("savefile1.txt");
+				isLoading = false;
+				startGame = true;
+			}
 		}
 		else if (loadSlot2) {
-			loadGame("savefile2.txt");
-			loadingGame = false;
+			std::ifstream file("savefile2.txt");
+			if (file.is_open()) {
+				gameManager = new GameManager("savefile2.txt");
+				isLoading = false;
+				startGame = true;
+			}
 		}
 		else if (loadSlot3) {
-			loadGame("savefile3.txt");
-			loadingGame = false;
+			std::ifstream file("savefile3.txt");
+			if (file.is_open()) {
+				gameManager = new GameManager("savefile3.txt");
+				isLoading = false;
+				startGame = true;
+			}
 		}
 		else if (exitSaveMenuButton) {
-			loadingGame = false;
+			isLoading = false;
 		}
+
 	}
-	viewer.endExtraWindow();
+	//viewer.endExtraWindow();
+	viewer.endWindow();
+
+	return gameManager;
 }
 
 void MenuManager::loadGame(std::string filename) {

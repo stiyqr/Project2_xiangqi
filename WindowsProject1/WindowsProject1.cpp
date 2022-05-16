@@ -78,7 +78,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                     }
                     else {
                         // stay in main menu, delete last Game Manager
-                        if (mainMenu.isReading == false) {
+                        if (mainMenu.isReading == false && mainMenu.isLoading == false) {
                             mainMenu.createMainMenu(appRunning, startGame);
                             mainMenu.viewer.endWindow();
                             if (gameManager) {
@@ -86,7 +86,12 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                                 gameManager = nullptr;
                             }
                         }
-                        else {
+                        else if (mainMenu.isLoading == true) {
+                            // load file
+                            if (gameManager) delete gameManager;
+                            gameManager = mainMenu.loadGameMenu(appRunning, startGame);
+                        }
+                        else if (mainMenu.isReading == true) {
                             // read file
                             mainMenu.readFile(appRunning);
                         }

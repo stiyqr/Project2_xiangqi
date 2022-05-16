@@ -22,6 +22,7 @@ public:
 	GameManager* gmDummy;
 	std::deque<Reader> reader;
 	bool isReading = false;
+	bool isLoading = false;
 
 public:
 	MenuManager();
@@ -31,6 +32,6 @@ public:
 	void readFileMenu(bool&);
 	void readFile(bool&);
 	std::wstring openfilename(const TCHAR* filter = TEXT("(*.txt) Text Files\0*.txt\0"));
-	void loadGameMenu(bool&);
+	GameManager* loadGameMenu(bool&, bool&);
 	void loadGame(std::string);
 };

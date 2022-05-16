@@ -48,6 +48,86 @@ GameManager::GameManager() {
 	on_board.emplace_back(new ChessSoldier("redSoldierBtn", 8, 6));
 }
 
+GameManager::GameManager(std::string filename) {
+	logFile.open("logFile.txt");
+
+	std::ifstream file{ filename };
+
+	if (file.good()) {
+		nlohmann::json js = nlohmann::json::parse(file, nullptr, false, true);
+
+		js["player"]["current_player"].get_to(current_player);
+
+		for (int i = 0; i < on_board.size(); i++) {
+			Chess::Side side;
+			Chess::Rank rank;
+			int x, y;
+
+			js["chess_piece_" + std::to_string(i)]["side"].get_to(side);
+			js["chess_piece_" + std::to_string(i)]["rank"].get_to(rank);
+			js["chess_piece_" + std::to_string(i)]["pos_x"].get_to(x);
+			js["chess_piece_" + std::to_string(i)]["pos_y"].get_to(y);
+
+			if (rank == Chess::Rank::GENERAL) {
+				if (side == Chess::Side::RED) {
+					on_board.emplace_back(new ChessGeneral("redGeneralBtn", x, y));
+				}
+				else if (side == Chess::Side::BLACK) {
+					on_board.emplace_back(new ChessGeneral("blackGeneralBtn", x, y));
+				}
+			}
+			else if (rank == Chess::Rank::ADVISOR) {
+				if (side == Chess::Side::RED) {
+					on_board.emplace_back(new ChessAdvisor("redAdvisorBtn", x, y));
+				}
+				else if (side == Chess::Side::BLACK) {
+					on_board.emplace_back(new ChessAdvisor("blackAdvisorBtn", x, y));
+				}
+			}
+			else if (rank == Chess::Rank::CANNON) {
+				if (side == Chess::Side::RED) {
+					on_board.emplace_back(new ChessCannon("redCannonBtn", x, y));
+				}
+				else if (side == Chess::Side::BLACK) {
+					on_board.emplace_back(new ChessCannon("blackCannonBtn", x, y));
+				}
+			}
+			else if (rank == Chess::Rank::CHARIOT) {
+				if (side == Chess::Side::RED) {
+					on_board.emplace_back(new ChessChariot("redChariotBtn", x, y));
+				}
+				else if (side == Chess::Side::BLACK) {
+					on_board.emplace_back(new ChessChariot("blackChariotBtn", x, y));
+				}
+			}
+			else if (rank == Chess::Rank::ELEPHANT) {
+				if (side == Chess::Side::RED) {
+					on_board.emplace_back(new ChessElephant("redElephantBtn", x, y));
+				}
+				else if (side == Chess::Side::BLACK) {
+					on_board.emplace_back(new ChessElephant("blackElephantBtn", x, y));
+				}
+			}
+			else if (rank == Chess::Rank::HORSE) {
+				if (side == Chess::Side::RED) {
+					on_board.emplace_back(new ChessHorse("redHorseBtn", x, y));
+				}
+				else if (side == Chess::Side::BLACK) {
+					on_board.emplace_back(new ChessHorse("blackHorseBtn", x, y));
+				}
+			}
+			else if (rank == Chess::Rank::SOLDIER) {
+				if (side == Chess::Side::RED) {
+					on_board.emplace_back(new ChessSoldier("redSoldierBtn", x, y));
+				}
+				else if (side == Chess::Side::BLACK) {
+					on_board.emplace_back(new ChessSoldier("blackSoldierBtn", x, y));
+				}
+			}
+		}
+	}
+}
+
 void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
 	static bool inCheckWarning = false, inCheckmateWarning = false, inStalemateWarning = false, savingGame = false;
 

@@ -12,7 +12,7 @@
   "side": 1
  },
  "chess_piece_10": {
-  "pos_x": 7,
+  "pos_x": 5,
   "pos_y": 2,
   "rank": 5,
   "side": 1
@@ -43,7 +43,7 @@
  },
  "chess_piece_15": {
   "pos_x": 8,
-  "pos_y": 3,
+  "pos_y": 4,
   "rank": 6,
   "side": 1
  },
@@ -96,8 +96,8 @@
   "side": 0
  },
  "chess_piece_23": {
-  "pos_x": 0,
-  "pos_y": 9,
+  "pos_x": 8,
+  "pos_y": 8,
   "rank": 4,
   "side": 0
  },
@@ -127,7 +127,7 @@
  },
  "chess_piece_28": {
   "pos_x": 2,
-  "pos_y": 6,
+  "pos_y": 5,
   "rank": 6,
   "side": 0
  },
@@ -192,6 +192,6 @@
   "side": 1
  },
  "player": {
-  "current_player": 0
+  "current_player": 1
  }
 }

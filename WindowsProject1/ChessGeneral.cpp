@@ -24,6 +24,27 @@ ChessGeneral::ChessGeneral(const char* name) {
 	}
 }
 
+ChessGeneral::ChessGeneral(const char* name, int x, int y) {
+	id = name;
+
+	if (name == "redGeneralBtn") {
+		side = Side::RED;
+		rank = Rank::GENERAL;
+		curPos.x = x;
+		curPos.y = y;
+		img = &viewer.chessRedGeneral;
+		moveImg = &viewer.possibleRed;
+	}
+	else if (name == "blackGeneralBtn") {
+		side = Side::BLACK;
+		rank = Rank::GENERAL;
+		curPos.x = x;
+		curPos.y = y;
+		img = &viewer.chessBlackGeneral;
+		moveImg = &viewer.possibleBlack;
+	}
+}
+
 void ChessGeneral::updateAllPossibleMove(std::vector<Chess*>on_board) {
 	allPossibleMove.clear();
 

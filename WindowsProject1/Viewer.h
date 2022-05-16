@@ -89,6 +89,8 @@ public:
 	static Texture buttonReadFileHoverImg;
 	static Texture buttonLoadGameImg;
 	static Texture buttonLoadGameHoverImg;
+	static Texture buttonLogReplayImg;
+	static Texture buttonLogReplayHoverImg;
 
 	/////////////// Gameplay ///////////////
 	// Backgrounds

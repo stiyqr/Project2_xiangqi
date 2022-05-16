@@ -13,6 +13,8 @@ Viewer::Texture Viewer::buttonExitGameHoverImg;
 Viewer::Texture Viewer::buttonReadFileHoverImg;
 Viewer::Texture Viewer::buttonLoadGameImg;
 Viewer::Texture Viewer::buttonLoadGameHoverImg;
+Viewer::Texture Viewer::buttonLogReplayImg;
+Viewer::Texture Viewer::buttonLogReplayHoverImg;
 
 /////////////// Gameplay ///////////////
 Viewer::Texture Viewer::backgroundGame;
@@ -196,6 +198,8 @@ void Viewer::DirectX::InitImgs() {
     imgs.buttonReadFileHoverImg.create(TEXT("../assets\\button readfile hover.png"));
     imgs.buttonLoadGameImg.create(TEXT("../assets\\button loadgame.png"));
     imgs.buttonLoadGameHoverImg.create(TEXT("../assets\\button loadgame hover.png"));
+    imgs.buttonLogReplayImg.create(TEXT("../assets\\button logreplay.png"));
+    imgs.buttonLogReplayHoverImg.create(TEXT("../assets\\button logreplay hover.png"));
     
 
     /////////////// Gameplay ///////////////
