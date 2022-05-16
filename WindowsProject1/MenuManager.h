@@ -31,6 +31,6 @@ public:
 	void readFileMenu(bool&);
 	void readFile(bool&);
 	std::wstring openfilename(const TCHAR* filter = TEXT("(*.txt) Text Files\0*.txt\0"));
-
-
+	void loadGameMenu(bool&);
+	void loadGame(std::string);
 };

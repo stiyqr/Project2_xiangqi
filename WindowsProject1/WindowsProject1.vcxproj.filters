@@ -99,6 +99,9 @@
     <ClInclude Include="ChessPieces.h">
       <Filter>Chess pieces</Filter>
     </ClInclude>
+    <ClInclude Include="json.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="WindowsProject1.cpp">

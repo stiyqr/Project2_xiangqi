@@ -19,13 +19,14 @@
 HINSTANCE hInst;                                // current instance
 WCHAR szTitle[MAX_LOADSTRING];                  // The title bar text
 WCHAR szWindowClass[MAX_LOADSTRING];            // the main window class name
-HWND hWnd;
+HWND hWnd;                                      // for window
 Viewer viewer;                                  // for GUI
 MenuManager mainMenu;                           // for Main Menu
 GameManager* gameManager = nullptr;             // for Game Manager
 Chess chess;                                    // for chess pieces
 bool appRunning = true;                         // game is running
 
+// Windows Project given template
 // Forward declarations of functions included in this code module:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
@@ -40,8 +41,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 {
     UNREFERENCED_PARAMETER(hPrevInstance);
     UNREFERENCED_PARAMETER(lpCmdLine);
-
-    // TODO: Place code here.
 
     // Initialize global strings
     LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
@@ -71,12 +70,14 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
                 // Main Menu
                 if (!startGame) {
+                    // starting new game right away, delete last Game Manager
                     if (gameManager && gameManager->startNewGame == true) {
                         delete gameManager;
                         gameManager = nullptr;
                         startGame = true;
                     }
                     else {
+                        // stay in main menu, delete last Game Manager
                         if (mainMenu.isReading == false) {
                             mainMenu.createMainMenu(appRunning, startGame);
                             mainMenu.viewer.endWindow();
@@ -86,6 +87,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                             }
                         }
                         else {
+                            // read file
                             mainMenu.readFile(appRunning);
                         }
                     }
@@ -93,16 +95,15 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                 
                 // Gameplay
                 if (startGame) {
+                    // make a new Game Manager if not yet existed
                     if (!gameManager) {
                         gameManager = new GameManager;
                     }
+                    // create new game
                     gameManager->createGameBoard(appRunning, startGame);
                     viewer.endWindow();
                 }
-
             }
-
-            //ImGui::ShowDemoWindow();
         }
         viewer.endRender();
     }

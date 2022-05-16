@@ -1,5 +1,6 @@
 #include "GameManager.h"
 #include "ChessPieces.h"
+#include "json.h"
 #include <vector>
 #include <fstream>
 
@@ -78,7 +79,7 @@ void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
 
 	if (savingGame) {
 		viewer.setButtonPos(windowPos.x, windowPos.y);
-		saveGameMenu(appRunning, savingGame);
+		saveGameMenu(savingGame);
 	}
 
 	// Chess pieces
@@ -628,7 +629,7 @@ bool GameManager::isStalemate(Chess::Side side, std::vector<Chess*>on_board) {
 	}
 }
 
-void GameManager::saveGameMenu(bool& appRunning, bool& savingGame) {
+void GameManager::saveGameMenu(bool& savingGame) {
 	viewer.makeExtraWindow();
 	viewer.addWindowImage(viewer.backgroundLoadGame);
 	{
@@ -642,17 +643,38 @@ void GameManager::saveGameMenu(bool& appRunning, bool& savingGame) {
 		Viewer::Button exitSaveMenuButton("exitSaveMenuBtn", viewer.buttonExitBoardImg, viewer.buttonExitBoardHoverImg, Viewer::Button::Type::MAINMENU);
 
 		if (saveSlot1) {
-
+			saveGame("savefile1.txt");
+			savingGame = false;
 		}
 		else if (saveSlot2) {
-
+			saveGame("savefile2.txt");
+			savingGame = false;
 		}
 		else if (saveSlot3) {
-
+			saveGame("savefile3.txt");
+			savingGame = false;
 		}
 		else if (exitSaveMenuButton) {
 			savingGame = false;
 		}
 	}
 	viewer.endExtraWindow();
+}
+
+void GameManager::saveGame(std::string filename) {
+	nlohmann::json js;
+
+	js["player"]["current_player"] = current_player;
+	
+	for (int i = 0; i < on_board.size(); i++) {
+		js["chess_piece_" + std::to_string(i)]["side"] = on_board[i]->side;
+		js["chess_piece_" + std::to_string(i)]["rank"] = on_board[i]->rank;
+		js["chess_piece_" + std::to_string(i)]["pos_x"] = on_board[i]->curPos.x;
+		js["chess_piece_" + std::to_string(i)]["pos_y"] = on_board[i]->curPos.y;
+	}
+
+	std::ofstream writeFile{ filename };
+	if (writeFile.good()) {
+		writeFile << std::setw(1) << js;
+	}
 }

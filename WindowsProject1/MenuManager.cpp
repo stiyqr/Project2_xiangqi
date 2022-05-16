@@ -1,5 +1,6 @@
 #include "MenuManager.h"
 #include "GameManager.h"
+#include "json.h"
 #include <deque>
 #include <fstream>
 
@@ -7,7 +8,10 @@ MenuManager::MenuManager() {}
 
 // Functions
 void MenuManager::createMainMenu(bool& appRunning, bool& startGame) {
+	static bool loadingGame = false;
+
 	ImVec2 screenSize = viewer.createWindow(appRunning, viewer.backgroundMenu);
+	auto windowPos = viewer.getCursorPos();
 	float middle_x = (screenSize.x / 2) - 100;
 	float middle_y = (screenSize.y / 2) + 90;
 
@@ -23,6 +27,11 @@ void MenuManager::createMainMenu(bool& appRunning, bool& startGame) {
 	viewer.setButtonPos(middle_x - 300, middle_y + 50);
 	Viewer::Button readFileButton("readFileBtn", viewer.buttonReadFileImg, viewer.buttonReadFileHoverImg, Viewer::Button::Type::MAINMENU);
 
+	// make Load Game button
+	viewer.setButtonPos(middle_x + 150, middle_y - 50);
+	Viewer::Button loadGameButton("loadFileBtn", viewer.buttonLoadGameImg, viewer.buttonLoadGameHoverImg, Viewer::Button::Type::MAINMENU);
+
+	// Button click controls
 	if (startGameButton) {
 		startGame = true;
 	}
@@ -52,6 +61,14 @@ void MenuManager::createMainMenu(bool& appRunning, bool& startGame) {
 		gmDummy = new GameManager;
 
 		isReading = true;
+	}
+	else if (loadGameButton) {
+		loadingGame = true;
+	}
+
+	if (loadingGame) {
+		viewer.setButtonPos(windowPos.x, windowPos.y);
+		loadGameMenu(loadingGame);
 	}
 }
 
@@ -274,6 +291,52 @@ void MenuManager::readFile(bool& appRunning) {
 		}
 	}
 	viewer.endWindow();
+}
+
+void MenuManager::loadGameMenu(bool& loadingGame) {
+	viewer.makeExtraWindow();
+	viewer.addWindowImage(viewer.backgroundLoadGame);
+	{
+		viewer.setButtonPos(170, 250);
+		Viewer::Button loadSlot1("loadSlot1", viewer.buttonSave1Img, viewer.buttonSave1HoverImg, Viewer::Button::Type::SAVESLOT);
+		viewer.setButtonPos(450, 250);
+		Viewer::Button loadSlot2("loadSlot2", viewer.buttonSave2Img, viewer.buttonSave2HoverImg, Viewer::Button::Type::SAVESLOT);
+		viewer.setButtonPos(750, 250);
+		Viewer::Button loadSlot3("loadSlot3", viewer.buttonSave3Img, viewer.buttonSave3HoverImg, Viewer::Button::Type::SAVESLOT);
+		viewer.setButtonPos(450, 450);
+		Viewer::Button exitSaveMenuButton("exitSaveMenuBtn", viewer.buttonExitBoardImg, viewer.buttonExitBoardHoverImg, Viewer::Button::Type::MAINMENU);
+
+
+		if (loadSlot1) {
+			loadGame("savefile1.txt");
+			loadingGame = false;
+		}
+		else if (loadSlot2) {
+			loadGame("savefile2.txt");
+			loadingGame = false;
+		}
+		else if (loadSlot3) {
+			loadGame("savefile3.txt");
+			loadingGame = false;
+		}
+		else if (exitSaveMenuButton) {
+			loadingGame = false;
+		}
+	}
+	viewer.endExtraWindow();
+}
+
+void MenuManager::loadGame(std::string filename) {
+	std::ifstream file{ filename };
+
+	if (file.good()) {
+
+		nlohmann::json js = nlohmann::json::parse(file, nullptr, false, true);
+
+		if (!js.is_discarded()) {
+
+		}
+	}
 }
 
 
