@@ -86,7 +86,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                             }
                         }
                         else {
-                            mainMenu.readFile2(appRunning);
+                            mainMenu.readFile(appRunning);
                         }
                     }
                 }

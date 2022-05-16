@@ -98,17 +98,7 @@ void MenuManager::readFileMenu(bool& appRunning) {
 	viewer.endWindow();
 }
 
-MenuManager::Reader::Reader(int playerNum, int x1, int y1, int x2, int y2) {
-	if (playerNum == 1) playerSide = Chess::Side::RED;
-	else playerSide = Chess::Side::BLACK;
-
-	startPos.x = x1;
-	startPos.y = y1;
-	endPos.x = x2;
-	endPos.y = y2;
-}
-
-void MenuManager::readFile2(bool& appRunning) {
+void MenuManager::readFile(bool& appRunning) {
 	auto screenSize = viewer.createWindow(appRunning, viewer.backgroundGame);
 	{
 		auto windowPos = viewer.getCursorPos();
@@ -129,8 +119,8 @@ void MenuManager::readFile2(bool& appRunning) {
 			viewer.setButtonPos(gmDummy->board.xPosition[gmDummy->on_board[i]->curPos.x], gmDummy->board.yPosition[gmDummy->on_board[i]->curPos.y]);
 			Viewer::Button thisBtn(gmDummy->on_board[i]->id, *(gmDummy->on_board[i]->img), *(gmDummy->on_board[i]->img), Viewer::Button::Type::CIRCLE);
 
+			// get the moving piece
 			if (!reader.empty() && gmDummy->on_board[i]->curPos == reader[0].startPos) {
-				gmDummy->on_board[i]->updateAllPossibleMove(gmDummy->on_board);
 				mover = gmDummy->on_board[i];
 			}
 		}
@@ -138,14 +128,76 @@ void MenuManager::readFile2(bool& appRunning) {
 		if (!reader.empty()) {
 			static bool inCheckWarning = false, inCheckmateWarning = false, inStalemateWarning = false;
 
+			////////////////////////////////////////// Check/Checkmate/Stalemate Warning //////////////////////////////////////////
+			// display check warning for 1.25 seconds
+			if (inCheckWarning) {
+				viewer.setButtonPos(windowPos.x, windowPos.y);
+				viewer.makeExtraWindow();
+				// check warning image
+				viewer.addWindowImage(viewer.backgroundCheck);
+				viewer.endExtraWindow();
+
+				auto& io = ImGui::GetIO();
+				static auto curDurationCheck = 0.f;
+				curDurationCheck += io.DeltaTime;
+				if (curDurationCheck >= 1.25) {
+					// reset state after 1.25 seconds
+					inCheckWarning = false;
+					curDurationCheck = 0;
+				}
+			}
+			
+			// display checkmate warning for 1.25 seconds
+			if (inCheckmateWarning) {
+				viewer.setButtonPos(windowPos.x, windowPos.y);
+				viewer.makeExtraWindow();
+				// checkmate warning image
+				viewer.addWindowImage(viewer.backgroundCheckmate);
+				viewer.endExtraWindow();
+
+				auto& io = ImGui::GetIO();
+				static auto curDurationCheckmate = 0.f;
+				curDurationCheckmate += io.DeltaTime;
+				if (curDurationCheckmate >= 1.25) {
+					// reset state after 1.25 seconds
+					inCheckmateWarning = false;
+					gmDummy->inCheckmate = true;
+					curDurationCheckmate = 0;
+				}
+			}
+
+			// display stalemate warning for 1.25 seconds
+			if (inStalemateWarning) {
+				viewer.setButtonPos(windowPos.x, windowPos.y);
+				viewer.makeExtraWindow();
+				// stalemate warning image
+				viewer.addWindowImage(viewer.backgroundStalemate);
+				viewer.endExtraWindow();
+
+				auto& io = ImGui::GetIO();
+				static auto curDurationStalemate = 0.f;
+				curDurationStalemate += io.DeltaTime;
+				if (curDurationStalemate >= 1.25) {
+					// reset state after 1.25 seconds
+					inStalemateWarning = false;
+					gmDummy->inStalemate = true;
+					curDurationStalemate = 0;
+				}
+			}
+
+			//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+			// render next move every 2.5 seconds
 			auto& io = ImGui::GetIO();
 			static auto curDuration = 0.f;
-			if (!inCheckWarning && !inCheckmateWarning && !inStalemateWarning) curDuration += io.DeltaTime;
+			curDuration += io.DeltaTime;
 			if (curDuration >= 2.5) {
 
+				// if a piece is selected, render next movement
 				if (mover != nullptr) {
 					bool isEnemy = false;
 					int enemyIndex = 0;
+					// check if next move overlaps with other chess piece (to be eaten)
 					for (int j = 0; j < gmDummy->on_board.size(); j++) {
 						if (reader[0].endPos == gmDummy->on_board[j]->curPos) {
 							// next move overlaps with enemy
@@ -157,15 +209,14 @@ void MenuManager::readFile2(bool& appRunning) {
 						}
 					}
 
+					// if next move overlaps with enemy, eat (erase) enemy
 					if (isEnemy) {
 						gmDummy->on_board.erase(gmDummy->on_board.begin() + enemyIndex);
 					}
 
-
+					// move piece to end position
 					mover->curPos.x = reader[0].endPos.x;
 					mover->curPos.y = reader[0].endPos.y;
-
-
 
 					// check if there is a check or checkmate
 					if (gmDummy->isCheck(gmDummy->current_player, gmDummy->on_board)) {
@@ -178,6 +229,7 @@ void MenuManager::readFile2(bool& appRunning) {
 							inCheckWarning = true;
 						}
 					}
+					// no check or checkmate
 					else {
 						inCheckWarning = false;
 					}
@@ -189,80 +241,48 @@ void MenuManager::readFile2(bool& appRunning) {
 						}
 					}
 
+					// change player side
 					if (gmDummy->current_player == Chess::Side::RED) gmDummy->current_player = Chess::Side::BLACK;
 					else gmDummy->current_player = Chess::Side::RED;
 
-
-
+					// deselect chess piece, pop reader deque
 					mover = nullptr;
 					reader.pop_front();
 				}
 
+				// reset duration
 				curDuration = 0;
 			}
 
 
-			if (inCheckWarning) {
-				viewer.setButtonPos(windowPos.x, windowPos.y);
-				viewer.makeExtraWindow();
-				viewer.addWindowImage(viewer.backgroundCheck);
-				viewer.endExtraWindow();
-
-				auto& io = ImGui::GetIO();
-				static auto curDurationCheck = 0.f;
-				curDurationCheck += io.DeltaTime;
-				if (curDurationCheck >= 2.5) {
-					inCheckWarning = false;
-					curDurationCheck = 0;
-				}
-			}
-
-			if (inCheckmateWarning) {
-				viewer.setButtonPos(windowPos.x, windowPos.y);
-				viewer.makeExtraWindow();
-
-				viewer.addWindowImage(viewer.backgroundCheckmate);
-				viewer.endExtraWindow();
-
-				auto& io = ImGui::GetIO();
-				static auto curDurationCheckmate = 0.f;
-				curDurationCheckmate += io.DeltaTime;
-				if (curDurationCheckmate >= 2.5) {
-					inCheckmateWarning = false;
-					gmDummy->inCheckmate = true;
-					curDurationCheckmate = 0;
-				}
-			}
-
-			if (inStalemateWarning) {
-				viewer.setButtonPos(windowPos.x, windowPos.y);
-				viewer.makeExtraWindow();
-
-				viewer.addWindowImage(viewer.backgroundStalemate);
-				viewer.endExtraWindow();
-
-				auto& io = ImGui::GetIO();
-				static auto curDurationStalemate = 0.f;
-				curDurationStalemate += io.DeltaTime;
-				if (curDurationStalemate >= 2.5) {
-					inStalemateWarning = false;
-					gmDummy->inStalemate = true;
-					curDurationStalemate = 0;
-				}
-			}
+			
 		}
 		else {
+			// render last move after 2.5 seconds
 			auto& io = ImGui::GetIO();
 			static auto curDuration = 0.f;
 			curDuration += io.DeltaTime;
 			if (curDuration >= 2.5) {
 
+				// reset reading state
 				isReading = false;
 				delete gmDummy;
 
+				// reset duration
 				curDuration = 0;
 			}
 		}
 	}
 	viewer.endWindow();
+}
+
+
+MenuManager::Reader::Reader(int playerNum, int x1, int y1, int x2, int y2) {
+	if (playerNum == 1) playerSide = Chess::Side::RED;
+	else playerSide = Chess::Side::BLACK;
+
+	startPos.x = x1;
+	startPos.y = y1;
+	endPos.x = x2;
+	endPos.y = y2;
 }

@@ -2,15 +2,21 @@
 
 
 // Static declaration
+/////////////// Main Menu ///////////////
 Viewer::Texture Viewer::backgroundMenu;
+Viewer::Texture Viewer::backgroundLoadGame;
 Viewer::Texture Viewer::buttonStartGameImg;
 Viewer::Texture Viewer::buttonExitGameImg;
 Viewer::Texture Viewer::buttonReadFileImg;
 Viewer::Texture Viewer::buttonStartGameHoverImg;
 Viewer::Texture Viewer::buttonExitGameHoverImg;
 Viewer::Texture Viewer::buttonReadFileHoverImg;
+Viewer::Texture Viewer::buttonLoadGameImg;
+Viewer::Texture Viewer::buttonLoadGameHoverImg;
 
+/////////////// Gameplay ///////////////
 Viewer::Texture Viewer::backgroundGame;
+Viewer::Texture Viewer::backgroundSaveGame;
 Viewer::Texture Viewer::backgroundRedWin;
 Viewer::Texture Viewer::backgroundBlackWin;
 Viewer::Texture Viewer::backgroundCheck;
@@ -25,7 +31,16 @@ Viewer::Texture Viewer::buttonSurrenderImg;
 Viewer::Texture Viewer::buttonSurrenderHoverImg;
 Viewer::Texture Viewer::buttonExitBoardImg;
 Viewer::Texture Viewer::buttonExitBoardHoverImg;
+Viewer::Texture Viewer::buttonSaveGameImg;
+Viewer::Texture Viewer::buttonSaveGameHoverImg;
+Viewer::Texture Viewer::buttonSave1Img;
+Viewer::Texture Viewer::buttonSave2Img;
+Viewer::Texture Viewer::buttonSave3Img;
+Viewer::Texture Viewer::buttonSave1HoverImg;
+Viewer::Texture Viewer::buttonSave2HoverImg;
+Viewer::Texture Viewer::buttonSave3HoverImg;
 
+/////////////// Chess Pieces ///////////////
 Viewer::Texture Viewer::chessRedGeneral;
 Viewer::Texture Viewer::chessRedElephant;
 Viewer::Texture Viewer::chessRedAdvisor;
@@ -55,26 +70,9 @@ auto& Viewer::Texture::operator()() { return data; }
 
 ///////////////////////////////////////////////////// Button /////////////////////////////////////////////////////
 
-std::unordered_map<std::string, bool> Viewer::Button::mainMenuHover;
+std::unordered_map<std::string, bool> Viewer::Button::mainMenuHover, Viewer::Button::saveSlotHover;
 
 Viewer::Button::Button() {}
-
-//Viewer::Button::Button(const char* name, Type type) {
-//    if (type == Type::MAINMENU) {
-//        buttonType = Type::MAINMENU;
-//        ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 6);
-//        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ ImColor{139, 129, 119, 0} });
-//        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ ImColor{100, 93, 85, 0} });
-//        ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ ImColor{69, 63, 57, 0} });
-//        isClicked = ImGui::Button(name, ImVec2(200, 50));
-//    }
-//    else if (type == Type::CIRCLE) {
-//        buttonType = Type::CIRCLE;
-//        ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 50);
-//        isClicked = ImGui::Button(name, ImVec2(100, 100));
-//
-//    }
-//}
 
 Viewer::Button::Button(const char* id, Texture img, Texture img2, Type type) {
     if (type == Type::MAINMENU) {
@@ -93,6 +91,15 @@ Viewer::Button::Button(const char* id, Texture img, Texture img2, Type type) {
         ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ ImColor{0,0,0,0} });
         ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ ImColor{0,0,0,0} });
         isClicked = ImGui::ImageButton(img(), ImVec2(40, 40));
+    }
+    if (type == Type::SAVESLOT) {
+        buttonType = Type::SAVESLOT;
+        ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 100);
+        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ ImColor{0,0,0,0} });
+        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ ImColor{0,0,0,0} });
+        ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ ImColor{0,0,0,0} });
+        isClicked = ImGui::ImageButton(saveSlotHover[id] ? img2() : img(), ImVec2(200, 100));
+        saveSlotHover[id] = ImGui::IsItemHovered();
     }
 }
 
@@ -175,10 +182,10 @@ BOOL Viewer::DirectX::InitDisplay(HWND hWnd) {
 }
 
 void Viewer::DirectX::InitImgs() {
-    //Main Menu
+    /////////////// Main Menu ///////////////
     // Initialize background textures
     imgs.backgroundMenu.create(TEXT("../assets\\mainmenu.png"));
-    imgs.backgroundGame.create(TEXT("../assets\\gameboard.png"));
+    imgs.backgroundLoadGame.create(TEXT("../assets\\background loadgame.png"));
 
     // Initialize button textures
     imgs.buttonStartGameImg.create(TEXT("../assets\\button startgame.png"));
@@ -187,11 +194,14 @@ void Viewer::DirectX::InitImgs() {
     imgs.buttonStartGameHoverImg.create(TEXT("../assets\\button startgame hover.png"));
     imgs.buttonExitGameHoverImg.create(TEXT("../assets\\button exitgame hover.png"));
     imgs.buttonReadFileHoverImg.create(TEXT("../assets\\button readfile hover.png"));
+    imgs.buttonLoadGameImg.create(TEXT("../assets\\button loadgame.png"));
+    imgs.buttonLoadGameHoverImg.create(TEXT("../assets\\button loadgame hover.png"));
     
 
-    // Gameplay
+    /////////////// Gameplay ///////////////
     // Initialize background texture
     imgs.backgroundGame.create(TEXT("../assets\\gameboard.png"));
+    imgs.backgroundSaveGame.create(TEXT("../assets\\background savegame.png"));
     imgs.backgroundRedWin.create(TEXT("../assets\\background red win.png"));
     imgs.backgroundBlackWin.create(TEXT("../assets\\background black win.png"));
     imgs.backgroundCheck.create(TEXT("../assets\\background check.png"));
@@ -207,9 +217,17 @@ void Viewer::DirectX::InitImgs() {
     imgs.buttonSurrenderHoverImg.create(TEXT("../assets\\button surrender hover.png"));
     imgs.buttonExitBoardImg.create(TEXT("../assets\\button exitboard.png"));
     imgs.buttonExitBoardHoverImg.create(TEXT("../assets\\button exitboard hover.png"));
+    imgs.buttonSaveGameImg.create(TEXT("../assets\\button savegame.png"));
+    imgs.buttonSaveGameHoverImg.create(TEXT("../assets\\button savegame hover.png"));
+    imgs.buttonSave1Img.create(TEXT("../assets\\button save1.png"));
+    imgs.buttonSave2Img.create(TEXT("../assets\\button save2.png"));
+    imgs.buttonSave3Img.create(TEXT("../assets\\button save3.png"));
+    imgs.buttonSave1HoverImg.create(TEXT("../assets\\button save1 hover.png"));
+    imgs.buttonSave2HoverImg.create(TEXT("../assets\\button save2 hover.png"));
+    imgs.buttonSave3HoverImg.create(TEXT("../assets\\button save3 hover.png"));
 
-    // Initialize chess piece textures
-    // red pieces
+    /////////////// Chess Pieces ///////////////
+    // Initialize red chess piece textures
     imgs.chessRedGeneral.create(TEXT("../assets\\pion\\chess red general.png"));
     imgs.chessRedElephant.create(TEXT("../assets\\pion\\chess red elephant.png"));
     imgs.chessRedAdvisor.create(TEXT("../assets\\pion\\chess red advisor.png"));
@@ -218,7 +236,7 @@ void Viewer::DirectX::InitImgs() {
     imgs.chessRedHorse.create(TEXT("../assets\\pion\\chess red horse.png"));
     imgs.chessRedSoldier.create(TEXT("../assets\\pion\\chess red soldier.png"));
 
-    // black pieces
+    // Initialize black chess piece textures
     imgs.chessBlackGeneral.create(TEXT("../assets\\pion\\chess black general.png"));
     imgs.chessBlackElephant.create(TEXT("../assets\\pion\\chess black elephant.png"));
     imgs.chessBlackAdvisor.create(TEXT("../assets\\pion\\chess black advisor.png"));
@@ -227,7 +245,7 @@ void Viewer::DirectX::InitImgs() {
     imgs.chessBlackHorse.create(TEXT("../assets\\pion\\chess black horse.png"));
     imgs.chessBlackSoldier.create(TEXT("../assets\\pion\\chess black soldier.png"));
 
-    // possible move piece
+    // Initialize possible move textures
     imgs.possibleRed.create(TEXT("../assets\\pion\\possible red.png"));
     imgs.possibleBlack.create(TEXT("../assets\\pion\\possible black.png"));
 }
@@ -317,18 +335,6 @@ ImVec2 Viewer::createWindow(bool& appRunning, Texture background) {
 void Viewer::endWindow() {
     ImGui::End();
     ImGui::PopStyleVar();
-}
-
-void Viewer::createGameWindow(bool& appRunning, bool& startGame) {
-    // Game Board's window settings
-    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{});
-    ImGui::Begin("##MainMenu", &appRunning, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize);
-
-    // Set background
-    ImVec2 screenSize = ImGui::GetContentRegionAvail();
-    float middle_x = (screenSize.x / 2) - 100;
-    float middle_y = (screenSize.y / 2) + 90;
-    ImGui::Image(backgroundGame(), screenSize);
 }
 
 void Viewer::setButtonPos(float x, float y) {

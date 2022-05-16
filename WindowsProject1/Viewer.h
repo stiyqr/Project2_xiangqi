@@ -18,9 +18,9 @@ public:
 	private:
 		bool isClicked = false;
 		std::string id;
-		static std::unordered_map<std::string, bool>mainMenuHover;
+		static std::unordered_map<std::string, bool>mainMenuHover, saveSlotHover;
 	public:
-		enum class Type { MAINMENU, CIRCLE };
+		enum class Type { MAINMENU, CIRCLE, SAVESLOT };
 		Type buttonType;
 
 		// Constructor
@@ -68,7 +68,6 @@ public:
 	void endAll();
 	ImVec2 createWindow(bool&, Texture);
 	void endWindow();
-	void createGameWindow(bool&, bool&);
 	void setButtonPos(float, float);
 	ImVec2 getCursorPos();
 	void makeExtraWindow();
@@ -79,18 +78,22 @@ public:
 	DirectX directx;
 
 	// Textures
-	//Main Menu
+	/////////////// Main Menu ///////////////
 	static Texture backgroundMenu;
+	static Texture backgroundLoadGame;
 	static Texture buttonStartGameImg;
 	static Texture buttonExitGameImg;
 	static Texture buttonReadFileImg;
 	static Texture buttonStartGameHoverImg;
 	static Texture buttonExitGameHoverImg;
 	static Texture buttonReadFileHoverImg;
+	static Texture buttonLoadGameImg;
+	static Texture buttonLoadGameHoverImg;
 
-	//Gameplay
+	/////////////// Gameplay ///////////////
 	// Backgrounds
 	static Texture backgroundGame;
+	static Texture backgroundSaveGame;
 	static Texture backgroundRedWin;
 	static Texture backgroundBlackWin;
 	static Texture backgroundCheck;
@@ -106,8 +109,16 @@ public:
 	static Texture buttonSurrenderHoverImg;
 	static Texture buttonExitBoardImg;
 	static Texture buttonExitBoardHoverImg;
+	static Texture buttonSaveGameImg;
+	static Texture buttonSaveGameHoverImg;
+	static Texture buttonSave1Img;
+	static Texture buttonSave2Img;
+	static Texture buttonSave3Img;
+	static Texture buttonSave1HoverImg;
+	static Texture buttonSave2HoverImg;
+	static Texture buttonSave3HoverImg;
 
-	// Chess pieces
+	/////////////// Chess pieces ///////////////
 	static Texture chessRedGeneral;
 	static Texture chessRedElephant;
 	static Texture chessRedAdvisor;

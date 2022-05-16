@@ -48,7 +48,7 @@ GameManager::GameManager() {
 }
 
 void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
-	static bool inCheckWarning = false, inCheckmateWarning = false, inStalemateWarning = false;
+	static bool inCheckWarning = false, inCheckmateWarning = false, inStalemateWarning = false, savingGame = false;
 
 	ImVec2 screenSize = viewer.createWindow(appRunning, viewer.backgroundGame);
 	auto windowPos = viewer.getCursorPos();
@@ -60,6 +60,26 @@ void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
 	Viewer::Button exitBoardButton("exitBoardBtn", viewer.buttonExitBoardImg, viewer.buttonExitBoardHoverImg, Viewer::Button::Type::MAINMENU);
 	viewer.setButtonPos(800, 280);
 	Viewer::Button surrenderButton("surrenderBtn", viewer.buttonSurrenderImg, viewer.buttonSurrenderHoverImg, Viewer::Button::Type::MAINMENU);
+	viewer.setButtonPos(800, 190);
+	Viewer::Button saveGameButton("saveGameBtn", viewer.buttonSaveGameImg, viewer.buttonSaveGameHoverImg, Viewer::Button::Type::MAINMENU);
+
+	// Button click controls
+	if (exitBoardButton) {
+		startGame = false;
+		logFile.close();
+	}
+	else if (surrenderButton) {
+		inCheckmate = true;
+		logFile.close();
+	}
+	else if (saveGameButton) {
+		savingGame = true;
+	}
+
+	if (savingGame) {
+		viewer.setButtonPos(windowPos.x, windowPos.y);
+		saveGameMenu(appRunning, savingGame);
+	}
 
 	// Chess pieces
 	static Chess* mover = nullptr;
@@ -302,16 +322,6 @@ void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
 		//mover->renderAllPossibleMove();
 	}
 
-
-	// Button click controls
-	if (exitBoardButton) {
-		startGame = false;
-		logFile.close();
-	}
-	else if (surrenderButton) {
-		inCheckmate = true;
-		logFile.close();
-	}
 
 	if (inCheckmate) {
 		viewer.setButtonPos(windowPos.x, windowPos.y);
@@ -616,4 +626,33 @@ bool GameManager::isStalemate(Chess::Side side, std::vector<Chess*>on_board) {
 		}
 		return true;
 	}
+}
+
+void GameManager::saveGameMenu(bool& appRunning, bool& savingGame) {
+	viewer.makeExtraWindow();
+	viewer.addWindowImage(viewer.backgroundLoadGame);
+	{
+		viewer.setButtonPos(170, 250);
+		Viewer::Button saveSlot1("saveSlot1", viewer.buttonSave1Img, viewer.buttonSave1HoverImg, Viewer::Button::Type::SAVESLOT);
+		viewer.setButtonPos(450, 250);
+		Viewer::Button saveSlot2("saveSlot2", viewer.buttonSave2Img, viewer.buttonSave2HoverImg, Viewer::Button::Type::SAVESLOT);
+		viewer.setButtonPos(750, 250);
+		Viewer::Button saveSlot3("saveSlot3", viewer.buttonSave3Img, viewer.buttonSave3HoverImg, Viewer::Button::Type::SAVESLOT);
+		viewer.setButtonPos(450, 450);
+		Viewer::Button exitSaveMenuButton("exitSaveMenuBtn", viewer.buttonExitBoardImg, viewer.buttonExitBoardHoverImg, Viewer::Button::Type::MAINMENU);
+
+		if (saveSlot1) {
+
+		}
+		else if (saveSlot2) {
+
+		}
+		else if (saveSlot3) {
+
+		}
+		else if (exitSaveMenuButton) {
+			savingGame = false;
+		}
+	}
+	viewer.endExtraWindow();
 }

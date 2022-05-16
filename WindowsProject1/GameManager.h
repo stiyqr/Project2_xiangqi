@@ -23,4 +23,5 @@ public:
 	bool isCheck(Chess::Side, std::vector<Chess*>);
 	bool isCheckmate(Chess::Side, std::vector<Chess*>);
 	bool isStalemate(Chess::Side, std::vector<Chess*>);
+	void saveGameMenu(bool&, bool&);
 };

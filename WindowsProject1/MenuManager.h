@@ -4,6 +4,7 @@
 #include <string>
 #include <deque>
 
+// forward declaration
 class GameManager;
 
 class MenuManager
@@ -28,8 +29,7 @@ public:
 	// Functions
 	void createMainMenu(bool&, bool&);
 	void readFileMenu(bool&);
-	void readFile2(bool&);
-
+	void readFile(bool&);
 	std::wstring openfilename(const TCHAR* filter = TEXT("(*.txt) Text Files\0*.txt\0"));
 
 
