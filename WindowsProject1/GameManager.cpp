@@ -58,10 +58,12 @@ GameManager::GameManager(std::string filename) {
 
 		js["player"]["current_player"].get_to(current_player);
 
-		for (int i = 0; i < on_board.size(); i++) {
+		for (int i = 0; i < 32; i++) {
 			Chess::Side side;
 			Chess::Rank rank;
 			int x, y;
+
+			if (!js.contains("chess_piece_" + std::to_string(i))) break;
 
 			js["chess_piece_" + std::to_string(i)]["side"].get_to(side);
 			js["chess_piece_" + std::to_string(i)]["rank"].get_to(rank);
