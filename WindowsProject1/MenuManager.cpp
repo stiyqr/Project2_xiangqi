@@ -27,11 +27,11 @@ void MenuManager::createMainMenu(bool& appRunning, bool& startGame) {
 	Viewer::Button readFileButton("readFileBtn", viewer.buttonReadFileImg, viewer.buttonReadFileHoverImg, Viewer::Button::Type::MAINMENU);
 
 	// make Load Game button
-	viewer.setButtonPos(middle_x + 150, middle_y - 50);
+	viewer.setButtonPos(middle_x + 150, middle_y + 105);
 	Viewer::Button loadGameButton("loadFileBtn", viewer.buttonLoadGameImg, viewer.buttonLoadGameHoverImg, Viewer::Button::Type::MAINMENU);
 
 	// make Log Replay button
-	viewer.setButtonPos(middle_x - 150, middle_y - 50);
+	viewer.setButtonPos(middle_x - 150, middle_y + 105);
 	Viewer::Button logReplayButton("logReplayBtn", viewer.buttonLogReplayImg, viewer.buttonLogReplayHoverImg, Viewer::Button::Type::MAINMENU);
 
 	// Button click controls
@@ -133,7 +133,7 @@ void MenuManager::readFile(bool& appRunning) {
 				viewer.addWindowImage(viewer.backgroundCheck);
 				viewer.endExtraWindow();
 
-				auto& io = ImGui::GetIO();
+				auto& io = viewer.getData();
 				static auto curDurationCheck = 0.f;
 				curDurationCheck += io.DeltaTime;
 				if (curDurationCheck >= 1.25) {
@@ -151,7 +151,7 @@ void MenuManager::readFile(bool& appRunning) {
 				viewer.addWindowImage(viewer.backgroundCheckmate);
 				viewer.endExtraWindow();
 
-				auto& io = ImGui::GetIO();
+				auto& io = viewer.getData();
 				static auto curDurationCheckmate = 0.f;
 				curDurationCheckmate += io.DeltaTime;
 				if (curDurationCheckmate >= 1.25) {
@@ -170,7 +170,7 @@ void MenuManager::readFile(bool& appRunning) {
 				viewer.addWindowImage(viewer.backgroundStalemate);
 				viewer.endExtraWindow();
 
-				auto& io = ImGui::GetIO();
+				auto& io = viewer.getData();
 				static auto curDurationStalemate = 0.f;
 				curDurationStalemate += io.DeltaTime;
 				if (curDurationStalemate >= 1.25) {
@@ -184,7 +184,7 @@ void MenuManager::readFile(bool& appRunning) {
 			//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 			// render next move every 2.5 seconds
-			auto& io = ImGui::GetIO();
+			auto& io = viewer.getData();
 			static auto curDuration = 0.f;
 			curDuration += io.DeltaTime;
 			if (curDuration >= 2.5) {
@@ -255,7 +255,7 @@ void MenuManager::readFile(bool& appRunning) {
 		}
 		else {
 			// render last move after 2.5 seconds
-			auto& io = ImGui::GetIO();
+			auto& io = viewer.getData();
 			static auto curDuration = 0.f;
 			curDuration += io.DeltaTime;
 			if (curDuration >= 2.5) {
@@ -327,11 +327,11 @@ GameManager* MenuManager::loadGameMenu(bool& appRunning, bool& startGame) {
 		if (displayWarning) {
 			viewer.setButtonPos(0, 0);
 			viewer.makeExtraWindow();
-			viewer.setButtonPos(470, 380);
-			ImGui::Text("No saved file in this slot");
+			viewer.setButtonPos(471, 380);
+			viewer.addText("No saved file in this slot");
 			viewer.endExtraWindow();
 
-			auto& io = ImGui::GetIO();
+			auto& io = viewer.getData();
 			static auto curDuration = 0.f;
 			curDuration += io.DeltaTime;
 			if (curDuration >= 1) {

@@ -73,6 +73,8 @@ public:
 	void makeExtraWindow();
 	void endExtraWindow();
 	void addWindowImage(Texture);
+	void addText(const char*);
+	ImGuiIO& getData();
 
 public:
 	DirectX directx;

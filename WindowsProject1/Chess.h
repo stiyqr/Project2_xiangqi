@@ -33,5 +33,4 @@ public:
 	Chess();
 
 	virtual void updateAllPossibleMove(std::vector<Chess*>);
-	virtual void renderAllPossibleMove();
 };

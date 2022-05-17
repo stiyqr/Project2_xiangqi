@@ -364,3 +364,12 @@ void Viewer::endExtraWindow() {
 void Viewer::addWindowImage(Texture img) {
     ImGui::Image(img(), ImGui::GetContentRegionAvail());
 }
+
+void Viewer::addText(const char* text) {
+    ImGui::Text(text);
+}
+
+// get ImGui's global data
+ImGuiIO& Viewer::getData() {
+    return ImGui::GetIO();
+}

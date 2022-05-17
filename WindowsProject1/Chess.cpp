@@ -22,7 +22,3 @@ Chess::Chess() {}
 void Chess::updateAllPossibleMove(std::vector<Chess*>on_board) {
 	// override in child class
 }
-
-void Chess::renderAllPossibleMove() {
-	// override in child class
-}

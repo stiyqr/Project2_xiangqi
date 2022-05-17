@@ -170,6 +170,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
    if (!hWnd) return FALSE;
 
+   // Initialize all display
    viewer.directx.InitDisplay(hWnd);
 
    ShowWindow(hWnd, nCmdShow);

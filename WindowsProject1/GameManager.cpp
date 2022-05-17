@@ -184,7 +184,7 @@ void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
 		viewer.addWindowImage(viewer.backgroundCheck);
 		viewer.endExtraWindow();
 
-		auto& io = ImGui::GetIO();
+		auto& io = viewer.getData();
 		static auto curDuration = 0.f;
 		curDuration += io.DeltaTime;
 		if (curDuration >= 2.5) {
@@ -200,7 +200,7 @@ void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
 		viewer.addWindowImage(viewer.backgroundCheckmate);
 		viewer.endExtraWindow();
 
-		auto& io = ImGui::GetIO();
+		auto& io = viewer.getData();
 		static auto curDuration = 0.f;
 		curDuration += io.DeltaTime;
 		if (curDuration >= 2.5) {
@@ -217,7 +217,7 @@ void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
 		viewer.addWindowImage(viewer.backgroundStalemate);
 		viewer.endExtraWindow();
 
-		auto& io = ImGui::GetIO();
+		auto& io = viewer.getData();
 		static auto curDuration = 0.f;
 		curDuration += io.DeltaTime;
 		if (curDuration >= 2.5) {
