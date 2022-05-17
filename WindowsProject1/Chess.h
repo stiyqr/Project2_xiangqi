@@ -18,13 +18,13 @@ public:
 		bool operator==(Position);
 	};
 
-	const char* id;
-	Side side;
-	Rank rank;
+	const char* id{};
+	Side side{};
+	Rank rank{};
 	bool isDead = false;
 	Viewer viewer;
-	Viewer::Texture* img;
-	Viewer::Texture* moveImg;
+	Viewer::Texture* img{};
+	Viewer::Texture* moveImg{};
 	Position curPos;
 	Position animPos;
 	float animProg = 1;

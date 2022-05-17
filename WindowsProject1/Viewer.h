@@ -21,7 +21,7 @@ public:
 		static std::unordered_map<std::string, bool>mainMenuHover, saveSlotHover;
 	public:
 		enum class Type { MAINMENU, CIRCLE, SAVESLOT };
-		Type buttonType;
+		Type buttonType{};
 
 		// Constructor
 		Button();
@@ -38,9 +38,9 @@ public:
 	class DirectX {
 	public:
 		// Global Variables for directx 9:
-		LPDIRECT3D9					direct3D9;
+		LPDIRECT3D9					direct3D9{};
 		static LPDIRECT3DDEVICE9	direct3DDevice9;
-		D3DPRESENT_PARAMETERS		direct3DParams;
+		D3DPRESENT_PARAMETERS		direct3DParams{};
 		Viewer& imgs;
 
 	public:
@@ -76,7 +76,15 @@ public:
 	void makeExtraWindow();
 	void endExtraWindow();
 	void addWindowImage(Texture);
-	void addText(const char*);
+
+	// Intent: add a text
+	// Pre: pass the desired text
+	// Post: text added
+	template <typename ...Args>
+	void addText(Args&& ...args) {
+		ImGui::Text(args...);
+	}
+
 	ImGuiIO& getData();
 
 public:

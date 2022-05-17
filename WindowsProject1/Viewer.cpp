@@ -433,13 +433,6 @@ void Viewer::addWindowImage(Texture img) {
     ImGui::Image(img(), ImGui::GetContentRegionAvail());
 }
 
-// Intent: add a text
-// Pre: pass the desired text
-// Post: text added
-void Viewer::addText(const char* text) {
-    ImGui::Text(text);
-}
-
 // Intent: get ImGui's global data
 // Pre: none
 // Post: return ImGui's data global variable

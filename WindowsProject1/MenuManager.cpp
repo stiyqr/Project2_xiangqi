@@ -4,7 +4,9 @@
 #include <deque>
 #include <fstream>
 
-MenuManager::MenuManager() {}
+MenuManager::MenuManager() {
+	gmDummy = nullptr;
+}
 
 // Functions
 void MenuManager::createMainMenu(bool& appRunning, bool& startGame) {

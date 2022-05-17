@@ -146,6 +146,12 @@ void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
 	float middle_x = (screenSize.x / 2) - 100;
 	float middle_y = (screenSize.y / 2) + 140;
 
+	// Display timer
+	auto& io = viewer.getData();
+	timer += io.DeltaTime;
+	viewer.setButtonPos(830, 20);
+	viewer.addText("Timer: %.2f", timer);
+
 	// Control buttons
 	viewer.setButtonPos(800, 370);
 	Viewer::Button exitBoardButton("exitBoardBtn", viewer.buttonExitBoardImg, viewer.buttonExitBoardHoverImg, Viewer::Button::Type::MAINMENU);
@@ -565,6 +571,8 @@ bool GameManager::isCheck(Chess::Side side, std::vector<Chess*> on_board) {
 		}
 		return false;
 	}
+
+	return false;
 }
 
 // Pre: the opponent is in check
@@ -625,6 +633,8 @@ bool GameManager::isCheckmate(Chess::Side side, std::vector<Chess*> on_board) {
 		// the general is still in check even after moving every piece, return true
 		return true;
 	}
+
+	return false;
 }
 
 bool GameManager::isStalemate(Chess::Side side, std::vector<Chess*>on_board) {
