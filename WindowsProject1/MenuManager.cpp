@@ -8,8 +8,6 @@ MenuManager::MenuManager() {}
 
 // Functions
 void MenuManager::createMainMenu(bool& appRunning, bool& startGame) {
-	static bool loadingGame = false;
-
 	// create main menu window
 	ImVec2 screenSize = viewer.createWindow(appRunning, viewer.backgroundMenu);
 	auto windowPos = viewer.getCursorPos();
@@ -68,7 +66,6 @@ void MenuManager::createMainMenu(bool& appRunning, bool& startGame) {
 		isReading = true;
 	}
 	else if (loadGameButton) {
-		loadingGame = true;
 		isLoading = true;
 	}
 	else if (logReplayButton) {
@@ -95,11 +92,6 @@ void MenuManager::createMainMenu(bool& appRunning, bool& startGame) {
 
 		isReading = true;
 	}
-
-	//if (loadingGame) {
-	//	viewer.setButtonPos(windowPos.x, windowPos.y);
-	//	loadGameMenu(loadingGame);
-	//}
 }
 
 void MenuManager::readFileMenu(bool& appRunning) {
@@ -155,7 +147,7 @@ void MenuManager::readFile(bool& appRunning) {
 
 		if (exitReaderButton) {
 			reader.clear();
-			delete gmDummy;
+			//delete gmDummy;
 			isReading = false;
 		}
 
@@ -313,7 +305,7 @@ void MenuManager::readFile(bool& appRunning) {
 
 				// reset reading state
 				isReading = false;
-				delete gmDummy;
+				//delete gmDummy;
 
 				// reset duration
 				curDuration = 0;

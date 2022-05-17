@@ -4,9 +4,9 @@
 #include <vector>
 #include <fstream>
 
-GameManager::GameManager() {
-	logFile.open("logFile.txt");
+std::ofstream GameManager::logFile;
 
+GameManager::GameManager() {
 	// Black chess pieces
 	on_board.emplace_back(new ChessGeneral("blackGeneralBtn"));
 	on_board.emplace_back(new ChessAdvisor("blackAdvisorBtn", 3, 0));
@@ -49,7 +49,6 @@ GameManager::GameManager() {
 }
 
 GameManager::GameManager(std::string filename) {
-	logFile.open("logFile.txt");
 
 	std::ifstream file{ filename };
 
@@ -402,7 +401,6 @@ void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
 			if (backBtn) mover = nullptr;
 		}
 		viewer.endExtraWindow();
-		//mover->renderAllPossibleMove();
 	}
 
 

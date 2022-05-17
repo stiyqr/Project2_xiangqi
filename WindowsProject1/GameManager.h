@@ -14,7 +14,7 @@ public:
 	bool inCheckmate = false;
 	bool inStalemate = false;
 	bool startNewGame = false;
-	std::ofstream logFile;
+	static std::ofstream logFile;
 
 public:
 	GameManager();

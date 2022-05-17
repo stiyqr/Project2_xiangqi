@@ -66,7 +66,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         {
             if (appRunning) {
                 // Main Menu or Gameplay
-                static bool startGame = false;
+                static bool startGame = false, newGame = false;
 
                 // Main Menu
                 if (!startGame) {
@@ -75,12 +75,15 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                         delete gameManager;
                         gameManager = nullptr;
                         startGame = true;
+                        newGame = true;
                     }
                     else {
-                        // stay in main menu, delete last Game Manager
+                        // stay in main menu
                         if (mainMenu.isReading == false && mainMenu.isLoading == false) {
                             mainMenu.createMainMenu(appRunning, startGame);
                             mainMenu.viewer.endWindow();
+                            if (startGame) newGame = true;
+                            // delete Game Manager if exist
                             if (gameManager) {
                                 delete gameManager;
                                 gameManager = nullptr;
@@ -90,6 +93,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                             // load file
                             if (gameManager) delete gameManager;
                             gameManager = mainMenu.loadGameMenu(appRunning, startGame);
+                            newGame = true;
                         }
                         else if (mainMenu.isReading == true) {
                             // read file
@@ -100,11 +104,13 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                 
                 // Gameplay
                 if (startGame) {
-                    // make a new Game Manager if not yet existed
-                    if (!gameManager) {
-                        gameManager = new GameManager;
+                    // refresh log file
+                    if (newGame) {
+                        GameManager::logFile.open("logFile.txt");
+                        newGame = false;
                     }
                     // create new game
+                    if (!gameManager) gameManager = new GameManager;
                     gameManager->createGameBoard(appRunning, startGame);
                     viewer.endWindow();
                 }
