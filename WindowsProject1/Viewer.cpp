@@ -1,7 +1,7 @@
 #include "Viewer.h"
 
 
-// Static declaration
+// Initialize static variables
 /////////////// Main Menu ///////////////
 Viewer::Texture Viewer::backgroundMenu;
 Viewer::Texture Viewer::backgroundLoadGame;
@@ -17,6 +17,7 @@ Viewer::Texture Viewer::buttonLogReplayImg;
 Viewer::Texture Viewer::buttonLogReplayHoverImg;
 
 /////////////// Gameplay ///////////////
+// backgrounds
 Viewer::Texture Viewer::backgroundGame;
 Viewer::Texture Viewer::backgroundSaveGame;
 Viewer::Texture Viewer::backgroundRedWin;
@@ -24,7 +25,7 @@ Viewer::Texture Viewer::backgroundBlackWin;
 Viewer::Texture Viewer::backgroundCheck;
 Viewer::Texture Viewer::backgroundCheckmate;
 Viewer::Texture Viewer::backgroundStalemate;
-
+// buttons
 Viewer::Texture Viewer::buttonBackToMenuImg;
 Viewer::Texture Viewer::buttonBackToMenuHoverImg;
 Viewer::Texture Viewer::buttonPlayAgainImg;
@@ -57,26 +58,32 @@ Viewer::Texture Viewer::chessBlackCannon;
 Viewer::Texture Viewer::chessBlackChariot;
 Viewer::Texture Viewer::chessBlackHorse;
 Viewer::Texture Viewer::chessBlackSoldier;
-
+// possible moves
 Viewer::Texture Viewer::possibleRed;
 Viewer::Texture Viewer::possibleBlack;
 
 ///////////////////////////////////////////////////// Texture /////////////////////////////////////////////////////
 
+// Intent: create Texture from file
+// Pre: pass file name
+// Post: create Texture from file
 void Viewer::Texture::create(CONST TCHAR* fileName) {
     assert(D3DXCreateTextureFromFile(DirectX::direct3DDevice9, fileName, &this->data) == S_OK);
 }
 
+// overload operator () to return Texture's data
 auto& Viewer::Texture::operator()() { return data; }
 
 
 ///////////////////////////////////////////////////// Button /////////////////////////////////////////////////////
 
+// Initialize static maps
 std::unordered_map<std::string, bool> Viewer::Button::mainMenuHover, Viewer::Button::saveSlotHover;
 
+// Constructors
 Viewer::Button::Button() {}
 
-Viewer::Button::Button(const char* id, Texture img, Texture img2, Type type) {
+Viewer::Button::Button(const char* id, Texture img, Texture img2, Type type, float alpha) {
     if (type == Type::MAINMENU) {
         buttonType = Type::MAINMENU;
         ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 10);
@@ -89,6 +96,7 @@ Viewer::Button::Button(const char* id, Texture img, Texture img2, Type type) {
     if (type == Type::CIRCLE) {
         buttonType = Type::CIRCLE;
         ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 25);
+        ImGui::PushStyleVar(ImGuiStyleVar_Alpha, alpha);
         ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ ImColor{0,0,0,0} });
         ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ ImColor{0,0,0,0} });
         ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ ImColor{0,0,0,0} });
@@ -107,10 +115,14 @@ Viewer::Button::Button(const char* id, Texture img, Texture img2, Type type) {
 
 // Destructor
 Viewer::Button::~Button() {
+    if (buttonType == Type::CIRCLE) {
+        ImGui::PopStyleVar();
+    }
     ImGui::PopStyleVar();
     ImGui::PopStyleColor(3);
 }
 
+// overload operator bool for clicking button
 Viewer::Button::operator bool()const { return isClicked; }
 
 ///////////////////////////////////////////////////// DirectX9 /////////////////////////////////////////////////////
@@ -118,11 +130,17 @@ Viewer::Button::operator bool()const { return isClicked; }
 // Initialize static variable
 LPDIRECT3DDEVICE9 Viewer::DirectX::direct3DDevice9 = NULL;
 
+// Constructor
 Viewer::DirectX::DirectX(Viewer& viewer) : imgs(viewer) {}
 
+// Intent: create Direct 3D
+// Pre: pass current window handle
+// Post: Direct 3D created
 BOOL Viewer::DirectX::CreateDeviceD3D(HWND hWnd) {
-
+    // call this only once
     static const auto once = [&]() noexcept -> BOOL {
+
+        // Create Direct3D and set parameters and create device
 
         if ((direct3D9 = Direct3DCreate9(D3D_SDK_VERSION)) == NULL)
             return FALSE;
@@ -145,11 +163,17 @@ BOOL Viewer::DirectX::CreateDeviceD3D(HWND hWnd) {
     return once;
 }
 
+// Intent: clean up Direct 3D
+// Pre: none
+// Post: Direct 3D released
 VOID Viewer::DirectX::CleanupDeviceD3D() {
     if (direct3DDevice9) { direct3DDevice9->Release(); direct3DDevice9 = NULL; }
     if (direct3D9) { direct3D9->Release(); direct3D9 = NULL; }
 }
 
+// Intent: handle window resize rendering
+// Pre: none
+// Post: handle window resize rendering
 VOID Viewer::DirectX::ResetDevice() {
 
     ImGui_ImplDX9_InvalidateDeviceObjects();
@@ -161,6 +185,9 @@ VOID Viewer::DirectX::ResetDevice() {
     ImGui_ImplDX9_CreateDeviceObjects();
 }
 
+// Intent: initialize DirectX and ImGui rendering
+// Pre: none
+// Post: DirectX and ImGui rendering initialized
 BOOL Viewer::DirectX::InitDisplay(HWND hWnd) {
     // Initialize Direct3D
     if (!CreateDeviceD3D(hWnd)) {
@@ -174,6 +201,7 @@ BOOL Viewer::DirectX::InitDisplay(HWND hWnd) {
     ImGui_ImplWin32_Init(hWnd);
     ImGui_ImplDX9_Init(direct3DDevice9);
 
+    // Initialize images
     InitImgs();
 
     // Initialize font
@@ -183,6 +211,7 @@ BOOL Viewer::DirectX::InitDisplay(HWND hWnd) {
     return TRUE;
 }
 
+// Intent: 
 void Viewer::DirectX::InitImgs() {
     /////////////// Main Menu ///////////////
     // Initialize background textures
@@ -254,6 +283,9 @@ void Viewer::DirectX::InitImgs() {
     imgs.possibleBlack.create(TEXT("../assets\\pion\\possible black.png"));
 }
 
+// Intent: handle window resize
+// Pre: none
+// Post: handle window resize
 void Viewer::DirectX::onResize(WPARAM wParam, LPARAM lParam)noexcept {
     if (!direct3DDevice9 || wParam == SIZE_MINIMIZED) return;
 
@@ -266,10 +298,12 @@ void Viewer::DirectX::onResize(WPARAM wParam, LPARAM lParam)noexcept {
 
 ///////////////////////////////////////////////////// ID /////////////////////////////////////////////////////
 
+// Constructor
 Viewer::ID::ID(int id) {
     ImGui::PushID(id);
 }
 
+// Destructor
 Viewer::ID::~ID() {
     ImGui::PopID();
 }
@@ -277,8 +311,12 @@ Viewer::ID::~ID() {
 
 ///////////////////////////////////////////////////// Viewer Functions /////////////////////////////////////////////////////
 
+// Constructor
 Viewer::Viewer() : directx(*this) {}
 
+// Intent: prepare ImGui to render new frame
+// Pre: none
+// Post: ImGui prepared to render new frame
 void Viewer::render() {
     // Start the Dear ImGui frame
     ImGui_ImplDX9_NewFrame();
@@ -291,6 +329,9 @@ void Viewer::render() {
     ImGui::SetNextWindowPos(ImVec2{ 0,0 }, ImGuiCond_Always);
 }
 
+// Intent: clear previous frame and render current frame, also check if Direct 3D device still exist
+// Pre: ImGui is rendering
+// Post: previous frame cleared
 void Viewer::endRender() {
     ImGui::EndFrame();
 
@@ -312,6 +353,9 @@ void Viewer::endRender() {
         directx.ResetDevice();
 }
 
+// Intent: clean up ImGui and DirectX
+// Pre: ImGui and DirectX is running
+// Post: ImGui and DirectX stop running
 void Viewer::endAll() {
     ImGui_ImplDX9_Shutdown();
     ImGui_ImplWin32_Shutdown();
@@ -320,6 +364,9 @@ void Viewer::endAll() {
     directx.CleanupDeviceD3D();
 }
 
+// Intent: create new window
+// Pre: pass appRunning bool (the app is still running) and window's background Texture
+// Post: a new window created, return window's screen size
 ImVec2 Viewer::createWindow(bool& appRunning, Texture background) {
     // Main Menu's window settings
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{});
@@ -336,40 +383,66 @@ ImVec2 Viewer::createWindow(bool& appRunning, Texture background) {
     return screenSize;
 }
 
+// Intent: clean up window style and end window
+// Pre: a window is running
+// Post: the window ended
 void Viewer::endWindow() {
     ImGui::End();
     ImGui::PopStyleVar();
 }
 
+// Intent: set cursor position to put buttons or other things
+// Pre: pass the desired cursor position
+// Post: cursor is in desired position
 void Viewer::setButtonPos(float x, float y) {
     ImGui::SetCursorPos(ImVec2(x, y));
 }
+void Viewer::setButtonPos(const ImVec2& pos) {
+    ImGui::SetCursorPos(pos);
+}
 
+// Intent: get current cursor position
+// Pre: none
+// Post: return current cursor position
 ImVec2 Viewer::getCursorPos()
 {
     auto position = ImGui::GetCursorPos();
     return position;
 }
 
+// Intent: make an extra window on top of the current window
+// Pre: none
+// Post: an extra window created on top of the current window
 void Viewer::makeExtraWindow() {
     ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0, 0, 0, 0.2));
     ImGui::BeginChild("##extra window", ImGui::GetContentRegionAvail(), false, ImGuiWindowFlags_NoScrollbar);
 }
 
+// Intent: clean up style and end current extra window
+// Pre: an extra window is running
+// Post: extra window ended
 void Viewer::endExtraWindow() {
     ImGui::EndChild();
     ImGui::PopStyleColor();
 }
 
+// Intent: add a image for a window-sized background
+// Pre: add the desired Texture
+// Post: window background image added
 void Viewer::addWindowImage(Texture img) {
     ImGui::Image(img(), ImGui::GetContentRegionAvail());
 }
 
+// Intent: add a text
+// Pre: pass the desired text
+// Post: text added
 void Viewer::addText(const char* text) {
     ImGui::Text(text);
 }
 
-// get ImGui's global data
+// Intent: get ImGui's global data
+// Pre: none
+// Post: return ImGui's data global variable
 ImGuiIO& Viewer::getData() {
     return ImGui::GetIO();
 }

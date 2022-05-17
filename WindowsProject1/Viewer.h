@@ -25,11 +25,12 @@ public:
 
 		// Constructor
 		Button();
-		Button(const char*, Type);
-		Button(const char*, Texture, Texture, Type);
+		Button(const char*, Texture, Texture, Type, float = 1);
 
+		// Destructor
 		~Button();
 
+		// Overload
 		operator bool()const;
 	};
 
@@ -43,7 +44,7 @@ public:
 		Viewer& imgs;
 
 	public:
-		DirectX();
+		// Constructor
 		DirectX(Viewer&);
 
 		// Functions
@@ -55,6 +56,7 @@ public:
 		VOID onResize(WPARAM, LPARAM)noexcept;
 	};
 
+	// Class for ID to differentiate ImGui widgets
 	class ID {
 	public:
 		ID(int);
@@ -69,6 +71,7 @@ public:
 	ImVec2 createWindow(bool&, Texture);
 	void endWindow();
 	void setButtonPos(float, float);
+	void setButtonPos(const ImVec2&);
 	ImVec2 getCursorPos();
 	void makeExtraWindow();
 	void endExtraWindow();
