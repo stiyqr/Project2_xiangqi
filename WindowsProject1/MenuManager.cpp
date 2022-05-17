@@ -94,49 +94,6 @@ void MenuManager::createMainMenu(bool& appRunning, bool& startGame) {
 	}
 }
 
-void MenuManager::readFileMenu(bool& appRunning) {
-	viewer.createWindow(appRunning, viewer.backgroundGame);
-	{
-		viewer.setButtonPos(800, 370);
-		Viewer::Button exitReaderButton("exitReaderBtn", viewer.buttonExitBoardImg, viewer.buttonExitBoardHoverImg, Viewer::Button::Type::MAINMENU);
-
-		if (exitReaderButton) {
-			reader.clear();
-		}
-
-		if (!reader.empty()) {
-			
-
-			for (int i = 0; i < gmDummy->on_board.size(); i++) {
-				Viewer::ID id(i);
-				viewer.setButtonPos(gmDummy->board.xPosition[gmDummy->on_board[i]->curPos.x], gmDummy->board.yPosition[gmDummy->on_board[i]->curPos.y]);
-				Viewer::Button thisBtn(gmDummy->on_board[i]->id, *(gmDummy->on_board[i]->img), *(gmDummy->on_board[i]->img), Viewer::Button::Type::CIRCLE);
-			}
-
-			auto& io = ImGui::GetIO();
-			static auto curDuration = 0.f;
-			curDuration += io.DeltaTime;
-			if (curDuration >= 3) {
-
-				for (int i = 0; i < gmDummy->on_board.size(); i++) {
-					if (gmDummy->on_board[i]->side == reader[0].playerSide && gmDummy->on_board[i]->curPos == reader[0].startPos) {
-						gmDummy->on_board[i]->curPos = reader[0].endPos;
-					}
-				}
-
-				reader.pop_front();
-
-				curDuration = 0;
-			}
-		}
-		else {
-			isReading = false;
-			delete gmDummy;
-		}
-	}
-	viewer.endWindow();
-}
-
 void MenuManager::readFile(bool& appRunning) {
 	auto screenSize = viewer.createWindow(appRunning, viewer.backgroundGame);
 	{
@@ -317,16 +274,17 @@ void MenuManager::readFile(bool& appRunning) {
 
 GameManager* MenuManager::loadGameMenu(bool& appRunning, bool& startGame) {
 	GameManager* gameManager = nullptr;
+	static bool displayWarning = false;
 
 	viewer.createWindow(appRunning, viewer.backgroundLoadGame);
 	{
 		viewer.setButtonPos(170, 250);
 		Viewer::Button loadSlot1("loadSlot1", viewer.buttonSave1Img, viewer.buttonSave1HoverImg, Viewer::Button::Type::SAVESLOT);
-		viewer.setButtonPos(450, 250);
+		viewer.setButtonPos(455, 250);
 		Viewer::Button loadSlot2("loadSlot2", viewer.buttonSave2Img, viewer.buttonSave2HoverImg, Viewer::Button::Type::SAVESLOT);
 		viewer.setButtonPos(750, 250);
 		Viewer::Button loadSlot3("loadSlot3", viewer.buttonSave3Img, viewer.buttonSave3HoverImg, Viewer::Button::Type::SAVESLOT);
-		viewer.setButtonPos(450, 450);
+		viewer.setButtonPos(455, 450);
 		Viewer::Button exitSaveMenuButton("exitSaveMenuBtn", viewer.buttonExitBoardImg, viewer.buttonExitBoardHoverImg, Viewer::Button::Type::MAINMENU);
 
 		if (loadSlot1) {
@@ -336,6 +294,9 @@ GameManager* MenuManager::loadGameMenu(bool& appRunning, bool& startGame) {
 				isLoading = false;
 				startGame = true;
 			}
+			else {
+				displayWarning = true;
+			}
 		}
 		else if (loadSlot2) {
 			std::ifstream file("savefile2.txt");
@@ -343,6 +304,9 @@ GameManager* MenuManager::loadGameMenu(bool& appRunning, bool& startGame) {
 				gameManager = new GameManager("savefile2.txt");
 				isLoading = false;
 				startGame = true;
+			}
+			else {
+				displayWarning = true;
 			}
 		}
 		else if (loadSlot3) {
@@ -352,9 +316,28 @@ GameManager* MenuManager::loadGameMenu(bool& appRunning, bool& startGame) {
 				isLoading = false;
 				startGame = true;
 			}
+			else {
+				displayWarning = true;
+			}
 		}
 		else if (exitSaveMenuButton) {
 			isLoading = false;
+		}
+
+		if (displayWarning) {
+			viewer.setButtonPos(0, 0);
+			viewer.makeExtraWindow();
+			viewer.setButtonPos(470, 380);
+			ImGui::Text("No saved file in this slot");
+			viewer.endExtraWindow();
+
+			auto& io = ImGui::GetIO();
+			static auto curDuration = 0.f;
+			curDuration += io.DeltaTime;
+			if (curDuration >= 1) {
+				displayWarning = false;
+				curDuration = 0;
+			}
 		}
 
 	}
@@ -362,19 +345,6 @@ GameManager* MenuManager::loadGameMenu(bool& appRunning, bool& startGame) {
 	viewer.endWindow();
 
 	return gameManager;
-}
-
-void MenuManager::loadGame(std::string filename) {
-	std::ifstream file{ filename };
-
-	if (file.good()) {
-
-		nlohmann::json js = nlohmann::json::parse(file, nullptr, false, true);
-
-		if (!js.is_discarded()) {
-
-		}
-	}
 }
 
 

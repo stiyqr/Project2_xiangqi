@@ -29,9 +29,7 @@ public:
 
 	// Functions
 	void createMainMenu(bool&, bool&);
-	void readFileMenu(bool&);
 	void readFile(bool&);
 	std::wstring openfilename(const TCHAR* filter = TEXT("(*.txt) Text Files\0*.txt\0"));
 	GameManager* loadGameMenu(bool&, bool&);
-	void loadGame(std::string);
 };
