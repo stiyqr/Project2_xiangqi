@@ -20,7 +20,7 @@ public:
 		std::string id;
 		static std::unordered_map<std::string, bool>mainMenuHover, saveSlotHover;
 	public:
-		enum class Type { MAINMENU, CIRCLE, SAVESLOT };
+		enum class Type { MAINMENU, GAMEPLAY, CIRCLE, SAVESLOT };
 		Type buttonType{};
 
 		// Constructor
@@ -82,7 +82,10 @@ public:
 	// Post: text added
 	template <typename ...Args>
 	void addText(Args&& ...args) {
+		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4{ ImColor{ 252, 190, 90, 255 } });
+		//ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(250, 169, 37, 1));
 		ImGui::Text(args...);
+		ImGui::PopStyleColor();
 	}
 
 	ImGuiIO& getData();
@@ -132,6 +135,7 @@ public:
 	static Texture buttonSave1HoverImg;
 	static Texture buttonSave2HoverImg;
 	static Texture buttonSave3HoverImg;
+	static Texture timerImg;
 
 	/////////////// Chess pieces ///////////////
 	static Texture chessRedGeneral;

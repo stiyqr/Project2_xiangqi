@@ -42,6 +42,7 @@ Viewer::Texture Viewer::buttonSave3Img;
 Viewer::Texture Viewer::buttonSave1HoverImg;
 Viewer::Texture Viewer::buttonSave2HoverImg;
 Viewer::Texture Viewer::buttonSave3HoverImg;
+Viewer::Texture Viewer::timerImg;
 
 /////////////// Chess Pieces ///////////////
 Viewer::Texture Viewer::chessRedGeneral;
@@ -91,6 +92,15 @@ Viewer::Button::Button(const char* id, Texture img, Texture img2, Type type, flo
         ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ ImColor{255, 231, 0, 0} });
         ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ ImColor{255, 255, 255, 0} });
         isClicked = ImGui::ImageButton(mainMenuHover[id] ? img2() : img(), ImVec2(200, 50));
+        mainMenuHover[id] = ImGui::IsItemHovered();
+    }
+    if (type == Type::GAMEPLAY) {
+        buttonType = Type::GAMEPLAY;
+        ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 10);
+        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ ImColor{139, 129, 119, 0} });
+        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ ImColor{255, 231, 0, 0} });
+        ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ ImColor{255, 255, 255, 0} });
+        isClicked = ImGui::ImageButton(mainMenuHover[id] ? img2() : img(), ImVec2(160, 50));
         mainMenuHover[id] = ImGui::IsItemHovered();
     }
     if (type == Type::CIRCLE) {
@@ -206,7 +216,7 @@ BOOL Viewer::DirectX::InitDisplay(HWND hWnd) {
 
     // Initialize font
     auto& io = ImGui::GetIO();
-    io.Fonts->AddFontFromFileTTF("../assets\\tahoma.ttf", 20);
+    ImFont* font = io.Fonts->AddFontFromFileTTF("../assets\\tahoma.ttf", 32);
 
     return TRUE;
 }
@@ -258,6 +268,7 @@ void Viewer::DirectX::InitImgs() {
     imgs.buttonSave1HoverImg.create(TEXT("../assets\\button save1 hover.png"));
     imgs.buttonSave2HoverImg.create(TEXT("../assets\\button save2 hover.png"));
     imgs.buttonSave3HoverImg.create(TEXT("../assets\\button save3 hover.png"));
+    imgs.timerImg.create(TEXT("../assets\\timer.png"));
 
     /////////////// Chess Pieces ///////////////
     // Initialize red chess piece textures

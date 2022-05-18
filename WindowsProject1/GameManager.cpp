@@ -149,30 +149,35 @@ void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
 	// Display timer
 	auto& io = viewer.getData();
 	timer += io.DeltaTime;
-	viewer.setButtonPos(830, 20);
-	viewer.addText("Timer: %.2f", timer);
+	int seconds = (int) timer % 60;
+	int minutes = timer / 60;
+	viewer.setButtonPos(805, board.yPosition[4] + 91);
+	viewer.addText("%02d  %02d", minutes, seconds);
 
 	// Control buttons
-	viewer.setButtonPos(800, 370);
-	Viewer::Button exitBoardButton("exitBoardBtn", viewer.buttonExitBoardImg, viewer.buttonExitBoardHoverImg, Viewer::Button::Type::MAINMENU);
-	viewer.setButtonPos(800, 280);
-	Viewer::Button surrenderButton("surrenderBtn", viewer.buttonSurrenderImg, viewer.buttonSurrenderHoverImg, Viewer::Button::Type::MAINMENU);
-	viewer.setButtonPos(800, 190);
-	Viewer::Button saveGameButton("saveGameBtn", viewer.buttonSaveGameImg, viewer.buttonSaveGameHoverImg, Viewer::Button::Type::MAINMENU);
+	viewer.setButtonPos(750, board.yPosition[1]+10);
+	Viewer::Button saveGameButton("saveGameBtn", viewer.buttonSaveGameImg, viewer.buttonSaveGameHoverImg, Viewer::Button::Type::GAMEPLAY);
+	viewer.setButtonPos(750, board.yPosition[2] + 30);
+	Viewer::Button surrenderButton("surrenderBtn", viewer.buttonSurrenderImg, viewer.buttonSurrenderHoverImg, Viewer::Button::Type::GAMEPLAY);
+	viewer.setButtonPos(750, board.yPosition[3] + 50);
+	Viewer::Button exitBoardButton("exitBoardBtn", viewer.buttonExitBoardImg, viewer.buttonExitBoardHoverImg, Viewer::Button::Type::GAMEPLAY);
+	viewer.setButtonPos(750, board.yPosition[4] + 80);
+	Viewer::Button timer("timer", viewer.timerImg, viewer.timerImg, Viewer::Button::Type::GAMEPLAY);
 
 	// Button click controls
-	if (exitBoardButton) {
-		startGame = false;
-		logFile.close();
+	if (saveGameButton) {
+		savingGame = true;
 	}
 	else if (surrenderButton) {
 		inCheckmate = true;
 		logFile.close();
 	}
-	else if (saveGameButton) {
-		savingGame = true;
+	else if (exitBoardButton) {
+		startGame = false;
+		logFile.close();
 	}
 
+	// Save game
 	if (savingGame) {
 		viewer.setButtonPos(windowPos.x, windowPos.y);
 		saveGameMenu(savingGame);

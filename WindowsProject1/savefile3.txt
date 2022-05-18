@@ -1,0 +1,197 @@
+{
+ "chess_piece_0": {
+  "pos_x": 4,
+  "pos_y": 0,
+  "rank": 0,
+  "side": 1
+ },
+ "chess_piece_1": {
+  "pos_x": 3,
+  "pos_y": 0,
+  "rank": 1,
+  "side": 1
+ },
+ "chess_piece_10": {
+  "pos_x": 5,
+  "pos_y": 2,
+  "rank": 5,
+  "side": 1
+ },
+ "chess_piece_11": {
+  "pos_x": 0,
+  "pos_y": 3,
+  "rank": 6,
+  "side": 1
+ },
+ "chess_piece_12": {
+  "pos_x": 2,
+  "pos_y": 3,
+  "rank": 6,
+  "side": 1
+ },
+ "chess_piece_13": {
+  "pos_x": 4,
+  "pos_y": 4,
+  "rank": 6,
+  "side": 1
+ },
+ "chess_piece_14": {
+  "pos_x": 6,
+  "pos_y": 4,
+  "rank": 6,
+  "side": 1
+ },
+ "chess_piece_15": {
+  "pos_x": 8,
+  "pos_y": 3,
+  "rank": 6,
+  "side": 1
+ },
+ "chess_piece_16": {
+  "pos_x": 4,
+  "pos_y": 9,
+  "rank": 0,
+  "side": 0
+ },
+ "chess_piece_17": {
+  "pos_x": 3,
+  "pos_y": 9,
+  "rank": 1,
+  "side": 0
+ },
+ "chess_piece_18": {
+  "pos_x": 5,
+  "pos_y": 9,
+  "rank": 1,
+  "side": 0
+ },
+ "chess_piece_19": {
+  "pos_x": 2,
+  "pos_y": 9,
+  "rank": 2,
+  "side": 0
+ },
+ "chess_piece_2": {
+  "pos_x": 5,
+  "pos_y": 0,
+  "rank": 1,
+  "side": 1
+ },
+ "chess_piece_20": {
+  "pos_x": 6,
+  "pos_y": 9,
+  "rank": 2,
+  "side": 0
+ },
+ "chess_piece_21": {
+  "pos_x": 1,
+  "pos_y": 9,
+  "rank": 3,
+  "side": 0
+ },
+ "chess_piece_22": {
+  "pos_x": 7,
+  "pos_y": 9,
+  "rank": 3,
+  "side": 0
+ },
+ "chess_piece_23": {
+  "pos_x": 0,
+  "pos_y": 9,
+  "rank": 4,
+  "side": 0
+ },
+ "chess_piece_24": {
+  "pos_x": 4,
+  "pos_y": 8,
+  "rank": 4,
+  "side": 0
+ },
+ "chess_piece_25": {
+  "pos_x": 1,
+  "pos_y": 7,
+  "rank": 5,
+  "side": 0
+ },
+ "chess_piece_26": {
+  "pos_x": 7,
+  "pos_y": 7,
+  "rank": 5,
+  "side": 0
+ },
+ "chess_piece_27": {
+  "pos_x": 0,
+  "pos_y": 6,
+  "rank": 6,
+  "side": 0
+ },
+ "chess_piece_28": {
+  "pos_x": 2,
+  "pos_y": 6,
+  "rank": 6,
+  "side": 0
+ },
+ "chess_piece_29": {
+  "pos_x": 4,
+  "pos_y": 5,
+  "rank": 6,
+  "side": 0
+ },
+ "chess_piece_3": {
+  "pos_x": 2,
+  "pos_y": 0,
+  "rank": 2,
+  "side": 1
+ },
+ "chess_piece_30": {
+  "pos_x": 6,
+  "pos_y": 5,
+  "rank": 6,
+  "side": 0
+ },
+ "chess_piece_31": {
+  "pos_x": 8,
+  "pos_y": 6,
+  "rank": 6,
+  "side": 0
+ },
+ "chess_piece_4": {
+  "pos_x": 6,
+  "pos_y": 0,
+  "rank": 2,
+  "side": 1
+ },
+ "chess_piece_5": {
+  "pos_x": 1,
+  "pos_y": 0,
+  "rank": 3,
+  "side": 1
+ },
+ "chess_piece_6": {
+  "pos_x": 7,
+  "pos_y": 0,
+  "rank": 3,
+  "side": 1
+ },
+ "chess_piece_7": {
+  "pos_x": 0,
+  "pos_y": 0,
+  "rank": 4,
+  "side": 1
+ },
+ "chess_piece_8": {
+  "pos_x": 8,
+  "pos_y": 0,
+  "rank": 4,
+  "side": 1
+ },
+ "chess_piece_9": {
+  "pos_x": 1,
+  "pos_y": 2,
+  "rank": 5,
+  "side": 1
+ },
+ "player": {
+  "current_player": 1
+ }
+}
