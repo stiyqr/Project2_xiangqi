@@ -83,7 +83,6 @@ public:
 	template <typename ...Args>
 	void addText(Args&& ...args) {
 		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4{ ImColor{ 252, 190, 90, 255 } });
-		//ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(250, 169, 37, 1));
 		ImGui::Text(args...);
 		ImGui::PopStyleColor();
 	}
