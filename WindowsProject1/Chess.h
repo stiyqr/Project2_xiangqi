@@ -5,9 +5,11 @@
 
 class Chess {
 public:
+	// Enum for chess sides and ranks
 	enum class Side { RED, BLACK };
 	enum class Rank { GENERAL, ADVISOR, ELEPHANT, HORSE, CHARIOT, CANNON, SOLDIER};
 
+	// Struct for chess position
 	struct Position {
 		int x, y;
 
@@ -32,7 +34,9 @@ public:
 	std::vector<Position> allPossibleMove;
 
 public:
+	// Constructor
 	Chess();
 
+	// Virtual function
 	virtual void updateAllPossibleMove(std::vector<Chess*>);
 };

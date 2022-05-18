@@ -4,11 +4,15 @@
 #include <deque>
 #include <fstream>
 
+/////////////// Constructor ///////////////
 MenuManager::MenuManager() {
 	gmDummy = nullptr;
 }
 
-// Functions
+/////////////// Functions ///////////////
+// Intent: create the main menu window
+// Pre: pass the bools that signify the app is running and the gameplay has not started (still in menu)
+// Post: main menu window created
 void MenuManager::createMainMenu(bool& appRunning, bool& startGame) {
 	// create main menu window
 	ImVec2 screenSize = viewer.createWindow(appRunning, viewer.backgroundMenu);
@@ -44,13 +48,16 @@ void MenuManager::createMainMenu(bool& appRunning, bool& startGame) {
 		appRunning = false;
 	}
 	else if (readFileButton) {
+		// Get file path
 		auto path = openfilename();
 
+		// Open file
 		std::ifstream file(path);
 
 		if (!file.good())
 			return;
 
+		// Copy file contents to the reader vector
 		char line[99];
 		while (file.getline(line, 99)) {
 			std::vector<int> data;
@@ -60,22 +67,23 @@ void MenuManager::createMainMenu(bool& appRunning, bool& startGame) {
 			}
 			reader.emplace_back(data[0], data[1], data[2], data[3], data[4]);
 		}
-
 		file.close();
 
+		// Create a game manager to play file
 		gmDummy = new GameManager;
-
 		isReading = true;
 	}
 	else if (loadGameButton) {
 		isLoading = true;
 	}
 	else if (logReplayButton) {
+		// Open log file
 		std::ifstream file("logFile.txt");
 
 		if (!file.good())
 			return;
 
+		// Copy log file content to reader vector
 		char line[99];
 		while (file.getline(line, 99)) {
 			std::vector<int> data;
@@ -85,37 +93,77 @@ void MenuManager::createMainMenu(bool& appRunning, bool& startGame) {
 			}
 			reader.emplace_back(data[0], data[1], data[2], data[3], data[4]);
 		}
-
 		file.close();
 
+		// No log
 		if (reader.empty()) return;
 
+		// Create a game manager to play file
 		gmDummy = new GameManager;
-
 		isReading = true;
 	}
 }
 
+// Intent: read file from Reader
+// Pre: Reader has content, also pass bool that signifies the app is running
+// Post: file content from Reader is played
 void MenuManager::readFile(bool& appRunning) {
 	auto screenSize = viewer.createWindow(appRunning, viewer.backgroundGame);
 	{
 		auto windowPos = viewer.getCursorPos();
+		static Chess* mover = nullptr;
 
-		viewer.setButtonPos(800, 370);
-		Viewer::Button exitReaderButton("exitReaderBtn", viewer.buttonExitBoardImg, viewer.buttonExitBoardHoverImg, Viewer::Button::Type::MAINMENU);
+		// Display timer
+		auto& io = viewer.getData();
+		gmDummy->timer += io.DeltaTime;
+		int seconds = (int)gmDummy->timer % 60;
+		int minutes = gmDummy->timer / 60;
+		viewer.setButtonPos(805, gmDummy->board.yPosition[4] + 91);
+		viewer.addText("%02d  %02d", minutes, seconds);
 
+		// Control buttons
+		viewer.setButtonPos(750, gmDummy->board.yPosition[3] + 50);
+		Viewer::Button exitReaderButton("exitReaderBtn", viewer.buttonExitBoardImg, viewer.buttonExitBoardHoverImg, Viewer::Button::Type::GAMEPLAY);
+		viewer.setButtonPos(750, gmDummy->board.yPosition[4] + 80);
+		Viewer::Button timer("timer", viewer.timerImg, viewer.timerImg, Viewer::Button::Type::GAMEPLAY);
+
+		// Button click control
 		if (exitReaderButton) {
 			reader.clear();
-			//delete gmDummy;
+			delete gmDummy;
 			isReading = false;
 		}
 
-		static Chess* mover = nullptr;
-
+		// Render chess piece one by one
 		for (int i = 0; i < gmDummy->on_board.size(); i++) {
+			ImVec2 piecePosition, startPos(gmDummy->board.xPosition[gmDummy->on_board[i]->animPos.x], gmDummy->board.yPosition[gmDummy->on_board[i]->animPos.y]);
+			ImVec2 endPos(gmDummy->board.xPosition[gmDummy->on_board[i]->curPos.x], gmDummy->board.yPosition[gmDummy->on_board[i]->curPos.y]);
+
+			// Add animation progress
+			if (gmDummy->on_board[i]->animProg < 1.f) {
+				gmDummy->on_board[i]->animProg += (viewer.getData().DeltaTime * 2);
+			}
+			// Move animation starting position to current position
+			else {
+				gmDummy->on_board[i]->animPos = gmDummy->on_board[i]->curPos;
+			}
+
+			// Interpolate chess piece position
+			piecePosition = ImLerp(startPos, endPos, gmDummy->on_board[i]->animProg);
+
+			// Animate the disappearance of dead chess piece
+			if (gmDummy->on_board[i]->isDead) {
+				gmDummy->on_board[i]->alpha -= (viewer.getData().DeltaTime * 2);
+				if (gmDummy->on_board[i]->alpha <= 0.f) {
+					gmDummy->on_board.erase(gmDummy->on_board.begin() + i);
+					i--;
+				}
+			}
+			
+			// Put chess pieces in place
 			Viewer::ID id(i);
-			viewer.setButtonPos(gmDummy->board.xPosition[gmDummy->on_board[i]->curPos.x], gmDummy->board.yPosition[gmDummy->on_board[i]->curPos.y]);
-			Viewer::Button thisBtn(gmDummy->on_board[i]->id, *(gmDummy->on_board[i]->img), *(gmDummy->on_board[i]->img), Viewer::Button::Type::CIRCLE);
+			viewer.setButtonPos(piecePosition);
+			Viewer::Button thisBtn(gmDummy->on_board[i]->id, *(gmDummy->on_board[i]->img), *(gmDummy->on_board[i]->img), Viewer::Button::Type::CIRCLE, gmDummy->on_board[i]->alpha);
 
 			// get the moving piece
 			if (!reader.empty() && gmDummy->on_board[i]->curPos == reader[0].startPos) {
@@ -209,8 +257,12 @@ void MenuManager::readFile(bool& appRunning) {
 
 					// if next move overlaps with enemy, eat (erase) enemy
 					if (isEnemy) {
-						gmDummy->on_board.erase(gmDummy->on_board.begin() + enemyIndex);
+						gmDummy->on_board[enemyIndex]->isDead = true;
 					}
+
+					// Update position for movement animation
+					mover->animPos = mover->curPos;
+					mover->animProg = 0;
 
 					// move piece to end position
 					mover->curPos.x = reader[0].endPos.x;

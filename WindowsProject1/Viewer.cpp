@@ -81,7 +81,7 @@ auto& Viewer::Texture::operator()() { return data; }
 // Initialize static maps
 std::unordered_map<std::string, bool> Viewer::Button::mainMenuHover, Viewer::Button::saveSlotHover;
 
-// Constructors
+/////////////// Constructors ///////////////
 Viewer::Button::Button() {}
 
 Viewer::Button::Button(const char* id, Texture img, Texture img2, Type type, float alpha) {
@@ -123,7 +123,7 @@ Viewer::Button::Button(const char* id, Texture img, Texture img2, Type type, flo
     }
 }
 
-// Destructor
+/////////////// Destructor ///////////////
 Viewer::Button::~Button() {
     if (buttonType == Type::CIRCLE) {
         ImGui::PopStyleVar();
@@ -132,17 +132,20 @@ Viewer::Button::~Button() {
     ImGui::PopStyleColor(3);
 }
 
+/////////////// Overloads ///////////////
 // overload operator bool for clicking button
 Viewer::Button::operator bool()const { return isClicked; }
+
 
 ///////////////////////////////////////////////////// DirectX9 /////////////////////////////////////////////////////
 
 // Initialize static variable
 LPDIRECT3DDEVICE9 Viewer::DirectX::direct3DDevice9 = NULL;
 
-// Constructor
+/////////////// Constructor ///////////////
 Viewer::DirectX::DirectX(Viewer& viewer) : imgs(viewer) {}
 
+/////////////// Functions ///////////////
 // Intent: create Direct 3D
 // Pre: pass current window handle
 // Post: Direct 3D created
@@ -221,7 +224,9 @@ BOOL Viewer::DirectX::InitDisplay(HWND hWnd) {
     return TRUE;
 }
 
-// Intent: 
+// Intent: load and initialize images from files
+// Pre: have the image files
+// Post: images initialized
 void Viewer::DirectX::InitImgs() {
     /////////////// Main Menu ///////////////
     // Initialize background textures
@@ -309,12 +314,12 @@ void Viewer::DirectX::onResize(WPARAM wParam, LPARAM lParam)noexcept {
 
 ///////////////////////////////////////////////////// ID /////////////////////////////////////////////////////
 
-// Constructor
+/////////////// Constructor ///////////////
 Viewer::ID::ID(int id) {
     ImGui::PushID(id);
 }
 
-// Destructor
+/////////////// Destructor ///////////////
 Viewer::ID::~ID() {
     ImGui::PopID();
 }
@@ -322,9 +327,10 @@ Viewer::ID::~ID() {
 
 ///////////////////////////////////////////////////// Viewer Functions /////////////////////////////////////////////////////
 
-// Constructor
+/////////////// Constructor ///////////////
 Viewer::Viewer() : directx(*this) {}
 
+/////////////// Functions ///////////////
 // Intent: prepare ImGui to render new frame
 // Pre: none
 // Post: ImGui prepared to render new frame

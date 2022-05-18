@@ -18,9 +18,11 @@ public:
 	static std::ofstream logFile;
 
 public:
+	// Constructors
 	GameManager();
 	GameManager(std::string);
 
+	// Functions
 	void createGameBoard(bool&, bool&);
 	bool isCheck(Chess::Side, std::vector<Chess*>);
 	bool isCheckmate(Chess::Side, std::vector<Chess*>);

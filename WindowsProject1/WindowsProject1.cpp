@@ -60,6 +60,64 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     {
         TranslateMessage(&msg);
         DispatchMessage(&msg);
+
+        //// Start rendering the menu
+        //viewer.render();
+        //{
+        //    if (appRunning) {
+        //        // Main Menu or Gameplay
+        //        static bool startGame = false, newGame = false;
+
+        //        // Main Menu
+        //        if (!startGame) {
+        //            // starting new game right away, delete last Game Manager
+        //            if (gameManager && gameManager->startNewGame == true) {
+        //                delete gameManager;
+        //                gameManager = nullptr;
+        //                startGame = true;
+        //                newGame = true;
+        //            }
+        //            else {
+        //                // stay in main menu
+        //                if (mainMenu.isReading == false && mainMenu.isLoading == false) {
+        //                    mainMenu.createMainMenu(appRunning, startGame);
+        //                    mainMenu.viewer.endWindow();
+        //                    if (startGame) newGame = true;
+        //                    // delete Game Manager if exist
+        //                    if (gameManager) {
+        //                        delete gameManager;
+        //                        gameManager = nullptr;
+        //                    }
+        //                }
+        //                else if (mainMenu.isLoading == true) {
+        //                    // load file
+        //                    if (gameManager) delete gameManager;
+        //                    gameManager = mainMenu.loadGameMenu(appRunning, startGame);
+        //                    newGame = true;
+        //                }
+        //                else if (mainMenu.isReading == true) {
+        //                    // read file
+        //                    mainMenu.readFile(appRunning);
+        //                }
+        // 
+        //            }
+        //        }
+
+        //        // Gameplay
+        //        if (startGame) {
+        //            // refresh log file
+        //            if (newGame) {
+        //                GameManager::logFile.open("logFile.txt");
+        //                newGame = false;
+        //            }
+        //            // create new game
+        //            if (!gameManager) gameManager = new GameManager;
+        //            gameManager->createGameBoard(appRunning, startGame);
+        //            viewer.endWindow();
+        //        }
+        //    }
+        //}
+        //viewer.endRender();
     }
     viewer.endAll();
 

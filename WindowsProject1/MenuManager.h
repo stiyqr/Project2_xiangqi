@@ -10,10 +10,11 @@ class GameManager;
 class MenuManager
 {
 public:	
+	// Struct for reader (to read file)
 	struct Reader {
 	Chess::Side playerSide;
 	Chess::Position startPos, endPos;
-
+	// Constructor
 	Reader(int, int, int, int, int);
 };
 
@@ -25,11 +26,12 @@ public:
 	bool isLoading = false;
 
 public:
+	// Constructor
 	MenuManager();
 
 	// Functions
 	void createMainMenu(bool&, bool&);
 	void readFile(bool&);
-	std::wstring openfilename(const TCHAR* filter = TEXT("(*.txt) Text Files\0*.txt\0"));
 	GameManager* loadGameMenu(bool&, bool&);
+	std::wstring openfilename(const TCHAR* filter = TEXT("(*.txt) Text Files\0*.txt\0"));
 };

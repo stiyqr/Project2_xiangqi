@@ -7,6 +7,7 @@
 // Initialize static variable
 std::ofstream GameManager::logFile;
 
+/////////////// Constructors ///////////////
 // Default Constructor
 GameManager::GameManager() {
 	// Black chess pieces
@@ -135,7 +136,10 @@ GameManager::GameManager(std::string filename) {
 	}
 }
 
+/////////////// Functions ///////////////
 // Intent: create gameplay board and background
+// Pre: pass bools that signify the game is running and is in gameplay
+// Post: gameplay window created
 void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
 	static bool inCheckWarning = false, inCheckmateWarning = false, inStalemateWarning = false, savingGame = false;
 	static Chess* mover = nullptr;
@@ -183,7 +187,7 @@ void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
 		saveGameMenu(savingGame);
 	}
 
-	// Put all chess pieces in place
+	// Render chess piece one by one
 	for (int i = 0; i < on_board.size(); i++) {
 		ImVec2 piecePosition, startPos(board.xPosition[on_board[i]->animPos.x], board.yPosition[on_board[i]->animPos.y]);
 		ImVec2 endPos(board.xPosition[on_board[i]->curPos.x], board.yPosition[on_board[i]->curPos.y]);
@@ -209,7 +213,7 @@ void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
 			}
 		}
 
-		// Render chess pieces one by one
+		// Put chess pieces in place
 		Viewer::ID id(i);
 		viewer.setButtonPos(piecePosition);
 		Viewer::Button thisBtn(on_board[i]->id, *(on_board[i]->img), *(on_board[i]->img), Viewer::Button::Type::CIRCLE, on_board[i]->alpha);
@@ -708,22 +712,7 @@ bool GameManager::isStalemate(Chess::Side side, std::vector<Chess*>on_board) {
 				Chess::Position originalPos = on_board[k]->curPos;
 				on_board[k]->curPos = on_board[k]->allPossibleMove[i];
 				// If a possible move makes the General in check position, erase the possible move
-				if (on_board[k]->side == Chess::Side::RED) {
-					if (isCheck(Chess::Side::BLACK, on_board)) {
-						on_board[k]->curPos = originalPos;
-						on_board[k]->allPossibleMove.erase(on_board[k]->allPossibleMove.begin() + i);
-
-						if (on_board[k]->allPossibleMove.empty()) break;
-						i--;
-						continue;
-					}
-					else {
-						// Reset the piece's original position
-						on_board[k]->curPos = originalPos;
-					}
-				}
-				// If a possible move makes the General in check position, erase the possible move
-				else if (on_board[k]->side == Chess::Side::RED) {
+				if (on_board[k]->side == Chess::Side::BLACK) {
 					if (isCheck(Chess::Side::RED, on_board)) {
 						on_board[k]->curPos = originalPos;
 						on_board[k]->allPossibleMove.erase(on_board[k]->allPossibleMove.begin() + i);
@@ -737,7 +726,7 @@ bool GameManager::isStalemate(Chess::Side side, std::vector<Chess*>on_board) {
 					}
 				}
 			}
-			// There is still possible move(s)
+			// If still have possible move(s), return false (not stalemate)
 			if (on_board[k]->allPossibleMove.size() > 0) return false;
 		}
 		return true;
@@ -787,32 +776,22 @@ bool GameManager::isStalemate(Chess::Side side, std::vector<Chess*>on_board) {
 						on_board[k]->curPos = originalPos;
 					}
 				}
-				// Pieces cannot move to positions that put their general in check position
-				else if (on_board[k]->side == Chess::Side::BLACK) {
-					if (isCheck(Chess::Side::RED, on_board)) {
-						on_board[k]->curPos = originalPos;
-						on_board[k]->allPossibleMove.erase(on_board[k]->allPossibleMove.begin() + i);
-
-						if (on_board[k]->allPossibleMove.empty()) break;
-						i--;
-						continue;
-					}
-					else {
-						on_board[k]->curPos = originalPos;
-					}
-				}
 			}
-
+			// If still have possible move(s), return false (not stalemate)
 			if (on_board[k]->allPossibleMove.size() > 0) return false;
 		}
 		return true;
 	}
 }
 
+// Intent: menu for saving game
+// Pre: player clicks save game button
+// Post: player opens this save game menu
 void GameManager::saveGameMenu(bool& savingGame) {
 	viewer.makeExtraWindow();
 	viewer.addWindowImage(viewer.backgroundLoadGame);
 	{
+		// Save slot buttons
 		viewer.setButtonPos(170, 250);
 		Viewer::Button saveSlot1("saveSlot1", viewer.buttonSave1Img, viewer.buttonSave1HoverImg, Viewer::Button::Type::SAVESLOT);
 		viewer.setButtonPos(450, 250);
@@ -822,6 +801,7 @@ void GameManager::saveGameMenu(bool& savingGame) {
 		viewer.setButtonPos(450, 450);
 		Viewer::Button exitSaveMenuButton("exitSaveMenuBtn", viewer.buttonExitBoardImg, viewer.buttonExitBoardHoverImg, Viewer::Button::Type::MAINMENU);
 
+		// Button click controls
 		if (saveSlot1) {
 			saveGame("savefile1.txt");
 			savingGame = false;
@@ -841,6 +821,9 @@ void GameManager::saveGameMenu(bool& savingGame) {
 	viewer.endExtraWindow();
 }
 
+// Intent: save game mechanism
+// Pre: pass save file name
+// Post: game saved in the passed save file name
 void GameManager::saveGame(std::string filename) {
 	nlohmann::json js;
 
