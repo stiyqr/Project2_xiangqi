@@ -387,6 +387,8 @@ void Viewer::endAll() {
 ImVec2 Viewer::createWindow(bool& appRunning, Texture background) {
     // Main Menu's window settings
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{});
+    ImVec2 displaySize(1136, 554);
+    ImGui::SetNextWindowSize(displaySize, ImGuiCond_Always);
     ImGui::Begin("##Window", &appRunning, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize);
 
     // Set background
