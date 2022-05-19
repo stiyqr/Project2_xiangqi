@@ -53,19 +53,19 @@ void ChessHorse::updateAllPossibleMove(std::vector<Chess*> on_board) {
 	}
 
 	if (up) {
-		allPossibleMove.emplace_back(curPos.x - 1, curPos.y - 2);
-		allPossibleMove.emplace_back(curPos.x + 1, curPos.y - 2);
+		if (curPos.x > 0 && curPos.y > 1) allPossibleMove.emplace_back(curPos.x - 1, curPos.y - 2);
+		if (curPos.x < 8 && curPos.y > 1) allPossibleMove.emplace_back(curPos.x + 1, curPos.y - 2);
 	}
 	if (down) {
-		allPossibleMove.emplace_back(curPos.x - 1, curPos.y + 2);
-		allPossibleMove.emplace_back(curPos.x + 1, curPos.y + 2);
+		if (curPos.x > 0 && curPos.y < 8) allPossibleMove.emplace_back(curPos.x - 1, curPos.y + 2);
+		if (curPos.x < 8 && curPos.y < 8) allPossibleMove.emplace_back(curPos.x + 1, curPos.y + 2);
 	}
 	if (left) {
-		allPossibleMove.emplace_back(curPos.x - 2, curPos.y - 1);
-		allPossibleMove.emplace_back(curPos.x - 2, curPos.y + 1);
+		if (curPos.x > 1 && curPos.y > 1) allPossibleMove.emplace_back(curPos.x - 2, curPos.y - 1);
+		if (curPos.x > 1 && curPos.y < 9) allPossibleMove.emplace_back(curPos.x - 2, curPos.y + 1);
 	}
 	if (right) {
-		allPossibleMove.emplace_back(curPos.x + 2, curPos.y - 1);
-		allPossibleMove.emplace_back(curPos.x + 2, curPos.y + 1);
+		if (curPos.x < 7 && curPos.y > 1) allPossibleMove.emplace_back(curPos.x + 2, curPos.y - 1);
+		if (curPos.x < 7 && curPos.y < 9) allPossibleMove.emplace_back(curPos.x + 2, curPos.y + 1);
 	}
 }
