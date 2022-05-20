@@ -76,63 +76,74 @@ GameManager::GameManager(std::string filename) {
 			js["chess_piece_" + std::to_string(i)]["pos_x"].get_to(x);
 			js["chess_piece_" + std::to_string(i)]["pos_y"].get_to(y);
 
+#pragma region Create_Chess_Piece
 			// Create chess piece according to the loaded information
-			if (rank == Chess::Rank::GENERAL) {
-				if (side == Chess::Side::RED) {
-					on_board.emplace_back(new ChessGeneral("redGeneralBtn", x, y));
-				}
-				else if (side == Chess::Side::BLACK) {
-					on_board.emplace_back(new ChessGeneral("blackGeneralBtn", x, y));
-				}
+			switch (rank) {
+
+			case Chess::Rank::GENERAL:
+					if (side == Chess::Side::RED) {
+						on_board.emplace_back(new ChessGeneral("redGeneralBtn", x, y));
+					}
+					else if (side == Chess::Side::BLACK) {
+						on_board.emplace_back(new ChessGeneral("blackGeneralBtn", x, y));
+					}
+					break;
+
+			case Chess::Rank::ADVISOR:
+					if (side == Chess::Side::RED) {
+						on_board.emplace_back(new ChessAdvisor("redAdvisorBtn", x, y));
+					}
+					else if (side == Chess::Side::BLACK) {
+						on_board.emplace_back(new ChessAdvisor("blackAdvisorBtn", x, y));
+					}
+					break;
+
+			case Chess::Rank::CANNON:
+					if (side == Chess::Side::RED) {
+						on_board.emplace_back(new ChessCannon("redCannonBtn", x, y));
+					}
+					else if (side == Chess::Side::BLACK) {
+						on_board.emplace_back(new ChessCannon("blackCannonBtn", x, y));
+					}
+					break;
+
+			case Chess::Rank::CHARIOT:
+					if (side == Chess::Side::RED) {
+						on_board.emplace_back(new ChessChariot("redChariotBtn", x, y));
+					}
+					else if (side == Chess::Side::BLACK) {
+						on_board.emplace_back(new ChessChariot("blackChariotBtn", x, y));
+					}
+					break;
+
+			case Chess::Rank::ELEPHANT:
+					if (side == Chess::Side::RED) {
+						on_board.emplace_back(new ChessElephant("redElephantBtn", x, y));
+					}
+					else if (side == Chess::Side::BLACK) {
+						on_board.emplace_back(new ChessElephant("blackElephantBtn", x, y));
+					}
+					break;
+
+			case Chess::Rank::HORSE:
+					if (side == Chess::Side::RED) {
+						on_board.emplace_back(new ChessHorse("redHorseBtn", x, y));
+					}
+					else if (side == Chess::Side::BLACK) {
+						on_board.emplace_back(new ChessHorse("blackHorseBtn", x, y));
+					}
+					break;
+
+			case Chess::Rank::SOLDIER:
+					if (side == Chess::Side::RED) {
+						on_board.emplace_back(new ChessSoldier("redSoldierBtn", x, y));
+					}
+					else if (side == Chess::Side::BLACK) {
+						on_board.emplace_back(new ChessSoldier("blackSoldierBtn", x, y));
+					}
+					break;
 			}
-			else if (rank == Chess::Rank::ADVISOR) {
-				if (side == Chess::Side::RED) {
-					on_board.emplace_back(new ChessAdvisor("redAdvisorBtn", x, y));
-				}
-				else if (side == Chess::Side::BLACK) {
-					on_board.emplace_back(new ChessAdvisor("blackAdvisorBtn", x, y));
-				}
-			}
-			else if (rank == Chess::Rank::CANNON) {
-				if (side == Chess::Side::RED) {
-					on_board.emplace_back(new ChessCannon("redCannonBtn", x, y));
-				}
-				else if (side == Chess::Side::BLACK) {
-					on_board.emplace_back(new ChessCannon("blackCannonBtn", x, y));
-				}
-			}
-			else if (rank == Chess::Rank::CHARIOT) {
-				if (side == Chess::Side::RED) {
-					on_board.emplace_back(new ChessChariot("redChariotBtn", x, y));
-				}
-				else if (side == Chess::Side::BLACK) {
-					on_board.emplace_back(new ChessChariot("blackChariotBtn", x, y));
-				}
-			}
-			else if (rank == Chess::Rank::ELEPHANT) {
-				if (side == Chess::Side::RED) {
-					on_board.emplace_back(new ChessElephant("redElephantBtn", x, y));
-				}
-				else if (side == Chess::Side::BLACK) {
-					on_board.emplace_back(new ChessElephant("blackElephantBtn", x, y));
-				}
-			}
-			else if (rank == Chess::Rank::HORSE) {
-				if (side == Chess::Side::RED) {
-					on_board.emplace_back(new ChessHorse("redHorseBtn", x, y));
-				}
-				else if (side == Chess::Side::BLACK) {
-					on_board.emplace_back(new ChessHorse("blackHorseBtn", x, y));
-				}
-			}
-			else if (rank == Chess::Rank::SOLDIER) {
-				if (side == Chess::Side::RED) {
-					on_board.emplace_back(new ChessSoldier("redSoldierBtn", x, y));
-				}
-				else if (side == Chess::Side::BLACK) {
-					on_board.emplace_back(new ChessSoldier("blackSoldierBtn", x, y));
-				}
-			}
+#pragma endregion
 		}
 	}
 }
@@ -151,16 +162,58 @@ void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
 	float middle_x = (screenSize.x / 2) - 100;
 	float middle_y = (screenSize.y / 2) + 140;
 
+#pragma region Timers
 	// Display timer
 	auto& io = viewer.getData();
 	timer += io.DeltaTime;
 	int seconds = (int) timer % 60;
 	int minutes = timer / 60;
-	viewer.setButtonPos(805, board.yPosition[4] + 91);
+	viewer.setButtonPos(805, board.yPosition[6] + 1);
 	viewer.addText("%02d  %02d", minutes, seconds);
 
+	// Display countdown timer
+	countdown -= io.DeltaTime;
+	viewer.setButtonPos(800,board.yPosition[7] + 20);
+	viewer.addColoredText(ImLerp(ImVec4{ ImColor{ 252, 190, 90, 255 } }, ImVec4{ ImColor{ 255, 0, 0, 255 } }, (10.f - countdown + 0.5) / 10), "%05.2f", countdown);
+	
+	// If countdown reaches 0, player loses
+	if (countdown < 0.f) {
+		viewer.setButtonPos(windowPos.x, windowPos.y);
+		viewer.makeExtraWindow();
+		{
+			// Black loses
+			if (current_player == Chess::Side::BLACK)
+				viewer.addWindowImage(viewer.backgroundRedWin);
+			// Red loses
+			else
+				viewer.addWindowImage(viewer.backgroundBlackWin);
+
+
+			// Play again or exit button
+			viewer.setButtonPos(middle_x - 150, middle_y);
+			Viewer::Button playAgainButton("playAgainBtn", viewer.buttonPlayAgainImg, viewer.buttonPlayAgainHoverImg, Viewer::Button::Type::MAINMENU);
+			viewer.setButtonPos(middle_x + 150, middle_y);
+			Viewer::Button backToMenuButton("backToMenuBtn", viewer.buttonBackToMenuImg, viewer.buttonBackToMenuHoverImg, Viewer::Button::Type::MAINMENU);
+
+			// Button click controls
+			if (playAgainButton) {
+				startNewGame = true;
+				startGame = false;
+				logFile.close();
+			}
+			else if (backToMenuButton) {
+				startGame = false;
+				logFile.close();
+			}
+		}
+		viewer.endExtraWindow();
+	}
+#pragma endregion
+
+
+
 	// Control buttons
-	viewer.setButtonPos(750, board.yPosition[1]+10);
+	viewer.setButtonPos(750, board.yPosition[1] + 10);
 	Viewer::Button saveGameButton("saveGameBtn", viewer.buttonSaveGameImg, viewer.buttonSaveGameHoverImg, Viewer::Button::Type::GAMEPLAY);
 	viewer.setButtonPos(750, board.yPosition[2] + 30);
 	Viewer::Button surrenderButton("surrenderBtn", viewer.buttonSurrenderImg, viewer.buttonSurrenderHoverImg, Viewer::Button::Type::GAMEPLAY);
@@ -226,7 +279,7 @@ void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
 		}
 	}
 
-
+#pragma region Check_Warning
 	// "Check" (not "Checkmate") warning
 	if (inCheckWarning) {
 		viewer.setButtonPos(windowPos.x, windowPos.y);
@@ -279,8 +332,9 @@ void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
 			curDuration = 0;
 		}
 	}
+#pragma endregion
 
-
+#pragma region Move_Chess_Piece
 	// If player selected a chess piece
 	if (mover != nullptr) {
 		// Make extra window for possible moves buttons
@@ -291,6 +345,7 @@ void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
 			viewer.setButtonPos(board.xPosition[mover->curPos.x], board.yPosition[mover->curPos.y]);
 			Viewer::Button backBtn("back", *(mover->img), *(mover->img), Viewer::Button::Type::CIRCLE);
 
+#pragma region Filter_Moves
 			// Check if each move is enemy or friend, or "check" position
 			for (int i = 0; i < mover->allPossibleMove.size(); i++) {
 				bool mustContinue = false;
@@ -429,7 +484,8 @@ void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
 					i--;
 				}
 				mover->curPos = originalPos;
-				
+#pragma endregion
+
 				// Render the selected chess piece as a back button (cancel move)
 				Viewer::ID id(i);
 				viewer.setButtonPos(board.xPosition[mover->allPossibleMove[i].x], board.yPosition[mover->allPossibleMove[i].y]);
@@ -459,6 +515,9 @@ void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
 					// Move the selected chess piece
 					mover->curPos.x = mover->allPossibleMove[i].x;
 					mover->curPos.y = mover->allPossibleMove[i].y;
+
+					// Reset countdown timer
+					countdown = 11.f;
 
 					// Check if there is a Check/Checkmate
 					if (isCheck(current_player, on_board)) {
@@ -502,6 +561,7 @@ void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
 		}
 		viewer.endExtraWindow();
 	}
+#pragma endregion
 
 	// "Checkmate", game ends
 	if (inCheckmate) {
@@ -624,7 +684,6 @@ bool GameManager::isCheck(Chess::Side side, std::vector<Chess*> on_board) {
 
 	return false;
 }
-
 
 // Intent: check if the opposing General is in "Checkmate" position
 // Pre: the opponent is in "Check" position, pass the current player side all chess pieces on board

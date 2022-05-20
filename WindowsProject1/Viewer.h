@@ -88,10 +88,16 @@ public:
 		ImGui::PopStyleColor();
 	}
 
+	template <typename ...Args>
+	void addColoredText(const ImColor& color, Args&& ...args) {
+		ImGui::TextColored(color, args...);
+	}
+
 
 public:
 	DirectX directx;
 
+#pragma region Static_Textures
 	// Textures
 	/////////////// Main Menu ///////////////
 	static Texture backgroundMenu;
@@ -155,4 +161,5 @@ public:
 	// Possible move chess piece
 	static Texture possibleRed;
 	static Texture possibleBlack;
+#pragma endregion
 };

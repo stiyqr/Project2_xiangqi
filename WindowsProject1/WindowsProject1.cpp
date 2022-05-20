@@ -89,7 +89,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
             }
             file.close();
 
-            // Create a game manager to play file
+            // Create a game manager to play file and refresh variables to read file
             mainMenu.gmDummy = new GameManager;
             mainMenu.isReading = true;
             mainMenu.openFile = false;

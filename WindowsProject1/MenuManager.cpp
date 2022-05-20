@@ -152,6 +152,7 @@ void MenuManager::readFile(bool& appRunning) {
 			}
 		}
 
+#pragma region Check_Warning
 		////////////////////////////////////////// Check/Checkmate/Stalemate Warning //////////////////////////////////////////
 		static bool inCheckWarning = false, inCheckmateWarning = false, inStalemateWarning = false;
 
@@ -213,6 +214,7 @@ void MenuManager::readFile(bool& appRunning) {
 			}
 		}
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma endregion
 
 		// Play file while reader is not empty after displaying warning
 		if (!inCheckWarning && !inCheckmateWarning && !inStalemateWarning) {

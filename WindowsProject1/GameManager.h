@@ -15,6 +15,7 @@ public:
 	bool inStalemate = false;
 	bool startNewGame = false;
 	float timer = 0.f;
+	float countdown = 11.f;
 	static std::ofstream logFile;
 
 public:

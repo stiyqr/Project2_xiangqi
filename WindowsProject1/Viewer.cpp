@@ -1,6 +1,6 @@
 #include "Viewer.h"
 
-
+#pragma region Initialize_Static
 // Initialize static variables
 /////////////// Main Menu ///////////////
 Viewer::Texture Viewer::backgroundMenu;
@@ -62,6 +62,7 @@ Viewer::Texture Viewer::chessBlackSoldier;
 // possible moves
 Viewer::Texture Viewer::possibleRed;
 Viewer::Texture Viewer::possibleBlack;
+#pragma endregion
 
 ///////////////////////////////////////////////////// Texture /////////////////////////////////////////////////////
 
