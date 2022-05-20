@@ -88,6 +88,9 @@ public:
 		ImGui::PopStyleColor();
 	}
 
+	// Intent: add text whose color can be modified
+	// Pre: pass the desired text and color
+	// Post: colored text added
 	template <typename ...Args>
 	void addColoredText(const ImColor& color, Args&& ...args) {
 		ImGui::TextColored(color, args...);
