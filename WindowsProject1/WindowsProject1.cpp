@@ -61,6 +61,40 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         TranslateMessage(&msg);
         DispatchMessage(&msg);
 
+        // Open file explorer when want to select file
+        if (mainMenu.openFile) {
+            // Get file path
+            auto path = mainMenu.openFileName();
+
+            // User didn't select any file
+            if (path.empty()) {
+                mainMenu.openFile = false;
+                continue;
+            }
+
+            // Open file
+            std::ifstream file(path);
+
+            if (!file.good()) continue;
+
+            // Copy file contents to the reader vector
+            char line[99];
+            while (file.getline(line, 99)) {
+                std::vector<int> data;
+                for (auto& i : line) {
+                    if (i >= '0' && i <= '9')
+                        data.emplace_back(i - '0');
+                }
+                mainMenu.reader.emplace_back(data[0], data[1], data[2], data[3], data[4]);
+            }
+            file.close();
+
+            // Create a game manager to play file
+            mainMenu.gmDummy = new GameManager;
+            mainMenu.isReading = true;
+            mainMenu.openFile = false;
+        }
+
     }
     viewer.endAll();
 
@@ -225,7 +259,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 #if !UNICODE
 string openfilename(const TCHAR* filter) {
 #else
-std::wstring MenuManager::openfilename(const TCHAR* filter) {
+std::wstring MenuManager::openFileName(const TCHAR* filter) {
 #endif
 
     OPENFILENAME ofn{};

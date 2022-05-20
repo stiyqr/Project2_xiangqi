@@ -50,30 +50,7 @@ void MenuManager::createMainMenu(bool& appRunning, bool& startGame) {
 		appRunning = false;
 	}
 	else if (readFileButton) {
-		// Get file path
-		auto path = openfilename();
-
-		// Open file
-		std::ifstream file(path);
-
-		if (!file.good())
-			return;
-
-		// Copy file contents to the reader vector
-		char line[99];
-		while (file.getline(line, 99)) {
-			std::vector<int> data;
-			for (auto& i : line) {
-				if (i >= '0' && i <= '9')
-					data.emplace_back(i - '0');
-			}
-			reader.emplace_back(data[0], data[1], data[2], data[3], data[4]);
-		}
-		file.close();
-
-		// Create a game manager to play file
-		gmDummy = new GameManager;
-		isReading = true;
+		openFile = true;
 	}
 	else if (loadGameButton) {
 		isLoading = true;
@@ -114,6 +91,7 @@ void MenuManager::readFile(bool& appRunning) {
 	{
 		auto windowPos = viewer.getCursorPos();
 		static Chess* mover = nullptr;
+		bool inAnimation = false;
 
 		// Display timer
 		auto& io = viewer.getData();
@@ -144,6 +122,7 @@ void MenuManager::readFile(bool& appRunning) {
 			// Add animation progress
 			if (gmDummy->on_board[i]->animProg < 1.f) {
 				gmDummy->on_board[i]->animProg += (viewer.getData().DeltaTime * 2);
+				inAnimation = true;
 			}
 			// Move animation starting position to current position
 			else {
@@ -173,11 +152,10 @@ void MenuManager::readFile(bool& appRunning) {
 			}
 		}
 
-		// Play file while reader is not empty
-		if (!reader.empty()) {
-			static bool inCheckWarning = false, inCheckmateWarning = false, inStalemateWarning = false;
+		////////////////////////////////////////// Check/Checkmate/Stalemate Warning //////////////////////////////////////////
+		static bool inCheckWarning = false, inCheckmateWarning = false, inStalemateWarning = false;
 
-			////////////////////////////////////////// Check/Checkmate/Stalemate Warning //////////////////////////////////////////
+		if (!inAnimation) {
 			// Display "Check" warning for 1.25 seconds
 			if (inCheckWarning) {
 				viewer.setButtonPos(windowPos.x, windowPos.y);
@@ -189,13 +167,13 @@ void MenuManager::readFile(bool& appRunning) {
 				auto& io = viewer.getData();
 				static auto curDurationCheck = 0.f;
 				curDurationCheck += io.DeltaTime;
-				if (curDurationCheck >= 1.25) {
+				if (curDurationCheck >= 2) {
 					// Reset state after 1.25 seconds
 					inCheckWarning = false;
 					curDurationCheck = 0;
 				}
 			}
-			
+
 			// Display "Checkmate" warning for 1.25 seconds
 			if (inCheckmateWarning) {
 				viewer.setButtonPos(windowPos.x, windowPos.y);
@@ -207,7 +185,7 @@ void MenuManager::readFile(bool& appRunning) {
 				auto& io = viewer.getData();
 				static auto curDurationCheckmate = 0.f;
 				curDurationCheckmate += io.DeltaTime;
-				if (curDurationCheckmate >= 1.25) {
+				if (curDurationCheckmate >= 2) {
 					// Reset state after 1.25 seconds
 					inCheckmateWarning = false;
 					gmDummy->inCheckmate = true;
@@ -226,100 +204,102 @@ void MenuManager::readFile(bool& appRunning) {
 				auto& io = viewer.getData();
 				static auto curDurationStalemate = 0.f;
 				curDurationStalemate += io.DeltaTime;
-				if (curDurationStalemate >= 1.25) {
+				if (curDurationStalemate >= 2) {
 					// Reset state after 1.25 seconds
 					inStalemateWarning = false;
 					gmDummy->inStalemate = true;
 					curDurationStalemate = 0;
 				}
 			}
+		}
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-			//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		// Play file while reader is not empty after displaying warning
+		if (!inCheckWarning && !inCheckmateWarning && !inStalemateWarning) {
+			if (!reader.empty()) {
 
-			// Render next move every 2.5 seconds
-			auto& io = viewer.getData();
-			static auto curDuration = 0.f;
-			curDuration += io.DeltaTime;
-			if (curDuration >= 2.5) {
+				// Render next move every 2.5 seconds
+				auto& io = viewer.getData();
+				static auto curDuration = 0.f;
+				curDuration += io.DeltaTime;
+				if (curDuration >= 1.5) {
 
-				// If a piece is selected, render next movement
-				if (mover != nullptr) {
-					bool isEnemy = false;
-					int enemyIndex = 0;
-					// Check if next move overlaps with other chess piece (to be eaten)
-					for (int j = 0; j < gmDummy->on_board.size(); j++) {
-						if (reader[0].endPos == gmDummy->on_board[j]->curPos) {
-							// Next move overlaps with enemy
-							if (gmDummy->on_board[j]->side != mover->side) {
-								isEnemy = true;
-								enemyIndex = j;
-								break;
+					// If a piece is selected, render next movement
+					if (mover != nullptr) {
+						bool isEnemy = false;
+						int enemyIndex = 0;
+						// Check if next move overlaps with other chess piece (to be eaten)
+						for (int j = 0; j < gmDummy->on_board.size(); j++) {
+							if (reader[0].endPos == gmDummy->on_board[j]->curPos) {
+								// Next move overlaps with enemy
+								if (gmDummy->on_board[j]->side != mover->side) {
+									isEnemy = true;
+									enemyIndex = j;
+									break;
+								}
 							}
 						}
-					}
 
-					// If next move overlaps with enemy, eat (erase) enemy
-					if (isEnemy) {
-						gmDummy->on_board[enemyIndex]->isDead = true;
-					}
-
-					// Update position for movement animation
-					mover->animPos = mover->curPos;
-					mover->animProg = 0;
-
-					// Move piece to end position
-					mover->curPos.x = reader[0].endPos.x;
-					mover->curPos.y = reader[0].endPos.y;
-
-					// Check if there is a "Check" or "Checkmate"
-					if (gmDummy->isCheck(gmDummy->current_player, gmDummy->on_board)) {
-						// Checkmate
-						if (gmDummy->isCheckmate(gmDummy->current_player, gmDummy->on_board)) {
-							inCheckmateWarning = true;
+						// If next move overlaps with enemy, eat (erase) enemy
+						if (isEnemy) {
+							gmDummy->on_board[enemyIndex]->isDead = true;
 						}
-						// "Check" only
+
+						// Update position for movement animation
+						mover->animPos = mover->curPos;
+						mover->animProg = 0;
+
+						// Move piece to end position
+						mover->curPos.x = reader[0].endPos.x;
+						mover->curPos.y = reader[0].endPos.y;
+
+						// Check if there is a "Check" or "Checkmate"
+						if (gmDummy->isCheck(gmDummy->current_player, gmDummy->on_board)) {
+							// Checkmate
+							if (gmDummy->isCheckmate(gmDummy->current_player, gmDummy->on_board)) {
+								inCheckmateWarning = true;
+							}
+							// "Check" only
+							else {
+								inCheckWarning = true;
+							}
+						}
+						// no "Check" or "Checkmate"
 						else {
-							inCheckWarning = true;
+							inCheckWarning = false;
 						}
-					}
-					// no "Check" or "Checkmate"
-					else {
-						inCheckWarning = false;
-					}
 
-					// Check for "Stalemate"
-					if (!inCheckWarning && !inCheckmateWarning) {
-						if (gmDummy->isStalemate(gmDummy->current_player, gmDummy->on_board)) {
-							inStalemateWarning = true;
+						// Check for "Stalemate"
+						if (!inCheckWarning && !inCheckmateWarning) {
+							if (gmDummy->isStalemate(gmDummy->current_player, gmDummy->on_board)) {
+								inStalemateWarning = true;
+							}
 						}
+
+						// change player side
+						if (gmDummy->current_player == Chess::Side::RED) gmDummy->current_player = Chess::Side::BLACK;
+						else gmDummy->current_player = Chess::Side::RED;
+
+						// deselect chess piece, pop reader deque
+						mover = nullptr;
+						reader.pop_front();
 					}
 
-					// change player side
-					if (gmDummy->current_player == Chess::Side::RED) gmDummy->current_player = Chess::Side::BLACK;
-					else gmDummy->current_player = Chess::Side::RED;
-
-					// deselect chess piece, pop reader deque
-					mover = nullptr;
-					reader.pop_front();
+					// reset duration
+					curDuration = 0;
 				}
-
-				// reset duration
-				curDuration = 0;
 			}
+			else {
+				// Render the last move after 2.5 seconds
+				auto& io = viewer.getData();
+				static auto curDuration = 0.f;
+				curDuration += io.DeltaTime;
+				if (curDuration >= 2.5) {
 
-
-			
-		}
-		else {
-			// Render the last move after 2.5 seconds
-			auto& io = viewer.getData();
-			static auto curDuration = 0.f;
-			curDuration += io.DeltaTime;
-			if (curDuration >= 2.5) {
-
-				// Reset reading state and duration variable
-				isReading = false;
-				curDuration = 0;
+					// Reset reading state and duration variable
+					isReading = false;
+					curDuration = 0;
+				}
 			}
 		}
 	}

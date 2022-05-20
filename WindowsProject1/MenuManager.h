@@ -23,6 +23,7 @@ public:
 	std::deque<Reader> reader;
 	bool isReading = false;
 	bool isLoading = false;
+	bool openFile = false;
 
 public:
 	// Constructor
@@ -32,5 +33,5 @@ public:
 	void createMainMenu(bool&, bool&);
 	void readFile(bool&);
 	GameManager* loadGameMenu(bool&, bool&);
-	std::wstring openfilename(const TCHAR* filter = TEXT("(*.txt) Text Files\0*.txt\0"));
+	std::wstring openFileName(const TCHAR* filter = TEXT("(*.txt) Text Files\0*.txt\0"));
 };
