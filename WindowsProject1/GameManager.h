@@ -27,6 +27,7 @@ public:
 	bool isCheck(Chess::Side, std::vector<Chess*>);
 	bool isCheckmate(Chess::Side, std::vector<Chess*>);
 	bool isStalemate(Chess::Side, std::vector<Chess*>);
+	bool generalMeet();
 	void saveGameMenu(bool&);
 	void saveGame(std::string);
 };

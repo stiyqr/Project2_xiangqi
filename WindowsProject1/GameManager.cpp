@@ -324,8 +324,8 @@ void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
 				Chess::Position originalPos = mover->curPos;
 				mover->curPos = mover->allPossibleMove[i];
 
+				// Black checks the Red General
 				if (mover->side == Chess::Side::RED) {
-					// Black checks the Red General
 					if (isCheck(Chess::Side::BLACK, on_board)) {
 						bool eatEnemy = false;
 
@@ -413,6 +413,21 @@ void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
 						mover->curPos = originalPos;
 					}
 				}
+
+				// Pieces cannot move to positions that make the two generals can see each other
+				mover->curPos = mover->allPossibleMove[i];
+
+				if (generalMeet()) {
+					mover->allPossibleMove.erase(mover->allPossibleMove.begin() + i);
+
+					// Delete the move that makes the General meet each other
+					if (mover->allPossibleMove.empty()) {
+						mover->curPos = originalPos;
+						break;
+					}
+					i--;
+				}
+				mover->curPos = originalPos;
 				
 				// Render the selected chess piece as a back button (cancel move)
 				Viewer::ID id(i);
@@ -493,13 +508,12 @@ void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
 		viewer.makeExtraWindow();
 		{
 			// Red wins
-			if (current_player == Chess::Side::BLACK) {
+			if (current_player == Chess::Side::BLACK) 
 				viewer.addWindowImage(viewer.backgroundRedWin);
-			}
 			// Black wins
-			else {
+			else 
 				viewer.addWindowImage(viewer.backgroundBlackWin);
-			}
+			
 
 			// Play again or exit button
 			viewer.setButtonPos(middle_x - 150, middle_y);
@@ -527,13 +541,11 @@ void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
 		viewer.makeExtraWindow();
 		{
 			// Red wins
-			if (current_player == Chess::Side::BLACK) {
+			if (current_player == Chess::Side::BLACK) 
 				viewer.addWindowImage(viewer.backgroundRedWin);
-			}
 			// Black wins
-			else {
+			else 
 				viewer.addWindowImage(viewer.backgroundBlackWin);
-			}
 
 			// Play again or exit button
 			viewer.setButtonPos(middle_x - 150, middle_y);
@@ -562,6 +574,7 @@ void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
 bool GameManager::isCheck(Chess::Side side, std::vector<Chess*> on_board) {
 	// Check if black is in check (red is attacking)
 	if (side == Chess::Side::RED) {
+
 		// Check possible move of every red piece
 		for (int i = 0; i < on_board.size(); i++) {
 			if (on_board[i]->side == Chess::Side::BLACK) continue;
@@ -571,6 +584,7 @@ bool GameManager::isCheck(Chess::Side side, std::vector<Chess*> on_board) {
 			// Compare each possible move to each piece's position
 			for (int j = 0; j < on_board[i]->allPossibleMove.size(); j++) {
 				for (int k = 0; k < on_board.size(); k++) {
+
 					// If possible move and a other piece position is the same, check if it's the other side's General
 					if (on_board[i]->allPossibleMove[j] == on_board[k]->curPos) {
 						if (on_board[k]->rank == Chess::Rank::GENERAL && on_board[k]->side != on_board[i]->side) {
@@ -584,6 +598,7 @@ bool GameManager::isCheck(Chess::Side side, std::vector<Chess*> on_board) {
 	}
 	// Check if red is in check (black is attacking)
 	else if (side == Chess::Side::BLACK) {
+
 		// Check possible move of every black piece
 		for (int i = 0; i < on_board.size(); i++) {
 			if (on_board[i]->side == Chess::Side::RED) continue;
@@ -593,6 +608,7 @@ bool GameManager::isCheck(Chess::Side side, std::vector<Chess*> on_board) {
 			// Compare each possible move to each piece's position
 			for (int j = 0; j < on_board[i]->allPossibleMove.size(); j++) {
 				for (int k = 0; k < on_board.size(); k++) {
+
 					// If possible move and a other piece position is the same, check if it's the other side's General
 					if (on_board[i]->allPossibleMove[j] == on_board[k]->curPos) {
 						if (on_board[k]->rank == Chess::Rank::GENERAL && on_board[k]->side != on_board[i]->side) {
@@ -615,10 +631,12 @@ bool GameManager::isCheck(Chess::Side side, std::vector<Chess*> on_board) {
 bool GameManager::isCheckmate(Chess::Side side, std::vector<Chess*> on_board) {
 	// Black is in check (red is attacking)
 	if (side == Chess::Side::RED) {
+
 		// Check every possible move of black pieces
 		for (int i = 0; i < on_board.size(); i++) {
 			if (on_board[i]->side == Chess::Side::RED) continue;
 
+			// Save original position
 			on_board[i]->updateAllPossibleMove(on_board);
 			Chess::Position originalPos = on_board[i]->curPos;
 
@@ -643,10 +661,12 @@ bool GameManager::isCheckmate(Chess::Side side, std::vector<Chess*> on_board) {
 	}
 	// Red is in check (black is attacking)
 	else if (side == Chess::Side::BLACK) {
+
 		// Check every possible move of red pieces
 		for (int i = 0; i < on_board.size(); i++) {
 			if (on_board[i]->side == Chess::Side::BLACK) continue;
 
+			// Save original position
 			on_board[i]->updateAllPossibleMove(on_board);
 			Chess::Position originalPos = on_board[i]->curPos;
 
@@ -711,6 +731,7 @@ bool GameManager::isStalemate(Chess::Side side, std::vector<Chess*>on_board) {
 				// Pieces cannot move to positions that put their general in check position
 				Chess::Position originalPos = on_board[k]->curPos;
 				on_board[k]->curPos = on_board[k]->allPossibleMove[i];
+
 				// If a possible move makes the General in check position, erase the possible move
 				if (on_board[k]->side == Chess::Side::BLACK) {
 					if (isCheck(Chess::Side::RED, on_board)) {
@@ -782,6 +803,35 @@ bool GameManager::isStalemate(Chess::Side side, std::vector<Chess*>on_board) {
 		}
 		return true;
 	}
+}
+
+// Intent: check if the two generals can see each other
+// Pre: pass all the chess pieces on board
+// Post: returnt true is the generals can see each other, return false otherwise
+bool GameManager::generalMeet() {
+	int redGeneralIndex = -1, blackGeneralIndex = -1;
+
+	// Find each general's index
+	for (int i = 0; i < on_board.size(); i++) {
+		if (on_board[i]->rank == Chess::Rank::GENERAL) {
+			if (on_board[i]->side == Chess::Side::RED) redGeneralIndex = i;
+			else blackGeneralIndex = i;
+		}
+		if (redGeneralIndex >= 0 && blackGeneralIndex >= 0) break;
+	}
+
+	// If red and black general is in the same column
+	if (on_board[redGeneralIndex]->curPos.x == on_board[blackGeneralIndex]->curPos.x) {
+
+		// Check if there is other chess piece in the same column
+		for (int i = 0; i < on_board.size(); i++) {
+			if (on_board[i]->rank != Chess::Rank::GENERAL && on_board[i]->curPos.x == on_board[redGeneralIndex]->curPos.x) 
+				return false;
+		}
+		return true;
+	}
+	// The red and black general is not in the same column
+	else return false;
 }
 
 // Intent: menu for saving game

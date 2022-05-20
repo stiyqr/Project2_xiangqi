@@ -245,8 +245,8 @@ std::wstring MenuManager::openfilename(const TCHAR* filter) {
     std::wstring fileNameStr;
 #endif;
 
-    //if (GetOpenFileName(&ofn))
-    //    fileNameStr = fileName;
+    if (GetOpenFileName(&ofn))
+        fileNameStr = fileName;
 
     return fileNameStr;
 }
