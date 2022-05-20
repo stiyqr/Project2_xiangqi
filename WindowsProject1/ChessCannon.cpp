@@ -39,7 +39,7 @@ void ChessCannon::updateAllPossibleMove(std::vector<Chess*> on_board) {
 				found++;
 
 				if (found >= 2 && side != on_board[j]->side) {
-					if (on_board[j]->rank != Chess::Rank::GENERAL) isEnemy = true;
+					isEnemy = true;
 					break;
 				}
 			}
@@ -83,7 +83,7 @@ void ChessCannon::updateAllPossibleMove(std::vector<Chess*> on_board) {
 				found++;
 
 				if (found >= 2 && side != on_board[j]->side) {
-					if (on_board[j]->rank != Chess::Rank::GENERAL) isEnemy = true;
+					isEnemy = true;
 					break;
 				}
 			}
@@ -127,7 +127,7 @@ void ChessCannon::updateAllPossibleMove(std::vector<Chess*> on_board) {
 				found++;
 
 				if (found >= 2 && side != on_board[j]->side) {
-					if (on_board[j]->rank != Chess::Rank::GENERAL) isEnemy = true;
+					isEnemy = true;
 					break;
 				}
 			}
@@ -171,7 +171,7 @@ void ChessCannon::updateAllPossibleMove(std::vector<Chess*> on_board) {
 				found++;
 
 				if (found >= 2 && side != on_board[j]->side) {
-					if (on_board[j]->rank != Chess::Rank::GENERAL) isEnemy = true;
+					isEnemy = true;
 					break;
 				}
 			}
