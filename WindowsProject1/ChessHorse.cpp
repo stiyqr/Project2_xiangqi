@@ -1,6 +1,7 @@
 #include "ChessHorse.h"
 #include "Viewer.h"
 
+/////////////// Constructors ///////////////
 ChessHorse::ChessHorse() {}
 
 ChessHorse::ChessHorse(const char* name, int x, int y) {
@@ -24,34 +25,40 @@ ChessHorse::ChessHorse(const char* name, int x, int y) {
 	}
 }
 
+/////////////// Functions ///////////////
+// Intent: update horse's possible moves
+// Pre: pass the vector of all the current pieces on board
+// Post: horse's possible moves are updated
 void ChessHorse::updateAllPossibleMove(std::vector<Chess*> on_board) {
 	allPossibleMove.clear();
 
 	bool up = true, down = true, left = true, right = true;
 
+	// Check if there is any piece that obstructs horse's movement
 	for (int i = 0; i < on_board.size(); i++) {
-		// up
+		// Up
 		if (curPos.x == on_board[i]->curPos.x && curPos.y - 1 == on_board[i]->curPos.y) {
 			up = false;
 		}
 		if (curPos.y - 2 < 0) up = false;
-		// down
+		// Down
 		if (curPos.x == on_board[i]->curPos.x && curPos.y + 1 == on_board[i]->curPos.y) {
 			down = false;
 		}
 		if (curPos.y + 2 > 9) down = false;
-		// left
+		// Left
 		if (curPos.x - 1 == on_board[i]->curPos.x && curPos.y == on_board[i]->curPos.y) {
 			left = false;
 		}
 		if (curPos.x - 2 < 0) left = false;
-		// right
+		// Right
 		if (curPos.x + 1 == on_board[i]->curPos.x && curPos.y == on_board[i]->curPos.y) {
 			right = false;
 		}
 		if (curPos.x + 2 > 8) right = false;
 	}
 
+	// Add possible moves if there is no obstructing piece
 	if (up) {
 		if (curPos.x > 0 && curPos.y > 1) allPossibleMove.emplace_back(curPos.x - 1, curPos.y - 2);
 		if (curPos.x < 8 && curPos.y > 1) allPossibleMove.emplace_back(curPos.x + 1, curPos.y - 2);

@@ -72,7 +72,7 @@ void Viewer::Texture::create(CONST TCHAR* fileName) {
     assert(D3DXCreateTextureFromFile(DirectX::direct3DDevice9, fileName, &this->data) == S_OK);
 }
 
-// overload operator () to return Texture's data
+// Overload operator () to return Texture's data
 auto& Viewer::Texture::operator()() { return data; }
 
 
@@ -133,7 +133,7 @@ Viewer::Button::~Button() {
 }
 
 /////////////// Overloads ///////////////
-// overload operator bool for clicking button
+// Overload operator bool for clicking button
 Viewer::Button::operator bool()const { return isClicked; }
 
 
@@ -327,7 +327,7 @@ Viewer::ID::~ID() {
 
 ///////////////////////////////////////////////////// Viewer Functions /////////////////////////////////////////////////////
 
-/////////////// Constructor ///////////////
+/////////////// Constructors ///////////////
 Viewer::Viewer() : directx(*this) {}
 
 /////////////// Functions ///////////////

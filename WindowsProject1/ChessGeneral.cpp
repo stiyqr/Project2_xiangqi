@@ -1,6 +1,7 @@
 #include "ChessGeneral.h"
 #include "Viewer.h"
 
+/////////////// Constructors ///////////////
 ChessGeneral::ChessGeneral() {}
 
 ChessGeneral::ChessGeneral(const char* name) {
@@ -45,6 +46,10 @@ ChessGeneral::ChessGeneral(const char* name, int x, int y) {
 	}
 }
 
+/////////////// Functions ///////////////
+// Intent: update general's possible moves
+// Pre: pass the vector of all the current pieces on board
+// Post: general's possible moves are updated
 void ChessGeneral::updateAllPossibleMove(std::vector<Chess*>on_board) {
 	allPossibleMove.clear();
 

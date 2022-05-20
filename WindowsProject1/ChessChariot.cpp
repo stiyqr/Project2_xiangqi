@@ -1,6 +1,7 @@
 #include "ChessChariot.h"
 #include "Viewer.h"
 
+/////////////// Constructors ///////////////
 ChessChariot::ChessChariot() {}
 
 ChessChariot::ChessChariot(const char* name, int x, int y) {
@@ -24,6 +25,10 @@ ChessChariot::ChessChariot(const char* name, int x, int y) {
 	}
 }
 
+/////////////// Functions ///////////////
+// Intent: update chariot's possible moves
+// Pre: pass the vector of all the current pieces on board
+// Post: chariot's possible moves are updated
 void ChessChariot::updateAllPossibleMove(std::vector<Chess*>on_board) {
 	allPossibleMove.clear();
 

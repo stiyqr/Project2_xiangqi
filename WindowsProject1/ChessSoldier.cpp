@@ -1,6 +1,7 @@
 #include "ChessSoldier.h"
 #include "Viewer.h"
 
+/////////////// Constructors ///////////////
 ChessSoldier::ChessSoldier() {}
 
 ChessSoldier::ChessSoldier(const char* name, int x, int y) {
@@ -24,6 +25,10 @@ ChessSoldier::ChessSoldier(const char* name, int x, int y) {
 	}
 }
 
+/////////////// Functions ///////////////
+// Intent: update soldier's possible moves
+// Pre: pass the vector of all the current pieces on board
+// Post: soldier's possible moves are updated
 void ChessSoldier::updateAllPossibleMove(std::vector<Chess*>on_board) {
 	allPossibleMove.clear();
 

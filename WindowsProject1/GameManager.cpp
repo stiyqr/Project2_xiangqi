@@ -54,6 +54,7 @@ GameManager::GameManager() {
 // Constructor when loading game
 GameManager::GameManager(std::string filename) {
 
+	// Open the saved file
 	std::ifstream file{ filename };
 
 	if (file.good()) {
@@ -75,7 +76,7 @@ GameManager::GameManager(std::string filename) {
 			js["chess_piece_" + std::to_string(i)]["pos_x"].get_to(x);
 			js["chess_piece_" + std::to_string(i)]["pos_y"].get_to(y);
 
-			// create chess piece according to loaded information
+			// Create chess piece according to the loaded information
 			if (rank == Chess::Rank::GENERAL) {
 				if (side == Chess::Side::RED) {
 					on_board.emplace_back(new ChessGeneral("redGeneralBtn", x, y));
@@ -226,7 +227,7 @@ void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
 	}
 
 
-	// Check (not checkmate) warning
+	// "Check" (not "Checkmate") warning
 	if (inCheckWarning) {
 		viewer.setButtonPos(windowPos.x, windowPos.y);
 		viewer.makeExtraWindow();
@@ -261,7 +262,7 @@ void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
 		}
 	}
 
-	// Stalemate warning
+	// "Stalemate" warning
 	if (inStalemateWarning) {
 		viewer.setButtonPos(windowPos.x, windowPos.y);
 		viewer.makeExtraWindow();
@@ -290,7 +291,7 @@ void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
 			viewer.setButtonPos(board.xPosition[mover->curPos.x], board.yPosition[mover->curPos.y]);
 			Viewer::Button backBtn("back", *(mover->img), *(mover->img), Viewer::Button::Type::CIRCLE);
 
-			// Check if each move is enemy or friend, or check position
+			// Check if each move is enemy or friend, or "check" position
 			for (int i = 0; i < mover->allPossibleMove.size(); i++) {
 				bool mustContinue = false;
 				bool isEnemy = false;
@@ -320,7 +321,7 @@ void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
 				// No possible move
 				if (mover->allPossibleMove.empty()) continue;
 
-				// Pieces cannot move to positions that put their General in check position
+				// Pieces cannot move to positions that put their General in "Check" position
 				Chess::Position originalPos = mover->curPos;
 				mover->curPos = mover->allPossibleMove[i];
 
@@ -355,7 +356,7 @@ void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
 						mover->curPos = originalPos;
 
 						// If the piece that checks the General can't be eaten, or the selected piece is the checked General,
-						// erase the possible move that keeps the General in check position
+						// erase the possible move that keeps the General in "Check" position
 						if (!eatEnemy || mover->rank == Chess::Rank::GENERAL) {
 							mover->allPossibleMove.erase(mover->allPossibleMove.begin() + i);
 
@@ -399,7 +400,7 @@ void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
 						// Reset selected piece's position
 						mover->curPos = originalPos;
 
-						// Delete the move that keeps the General in check position
+						// Delete the move that keeps the General in "Check" position
 						if (!eatEnemy || mover->rank == Chess::Rank::GENERAL) {
 							mover->allPossibleMove.erase(mover->allPossibleMove.begin() + i);
 
@@ -459,23 +460,23 @@ void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
 					mover->curPos.x = mover->allPossibleMove[i].x;
 					mover->curPos.y = mover->allPossibleMove[i].y;
 
-					// Check if there is a check/checkmate
+					// Check if there is a Check/Checkmate
 					if (isCheck(current_player, on_board)) {
-						// Check mate
+						// Checkmate
 						if (isCheckmate(current_player, on_board)) {
 							inCheckmateWarning = true;
 						}
-						// Check only
+						// "Check" only
 						else {
 							inCheckWarning = true;
 						}
 					}
 					else {
-						// No check/checkmate
+						// No Check/Checkmate
 						inCheckWarning = false;
 					}
 
-					// Check for stalemate
+					// Check for "Stalemate"
 					if (!inCheckWarning && !inCheckmateWarning) {
 						if (isStalemate(current_player, on_board)) {
 							inStalemateWarning = true;
@@ -502,7 +503,7 @@ void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
 		viewer.endExtraWindow();
 	}
 
-	// Checkmate, game ends
+	// "Checkmate", game ends
 	if (inCheckmate) {
 		viewer.setButtonPos(windowPos.x, windowPos.y);
 		viewer.makeExtraWindow();
@@ -535,7 +536,7 @@ void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
 		viewer.endExtraWindow();
 	}
 
-	// Stalemate, game ends
+	// "Stalemate", game ends
 	if (inStalemate) {
 		viewer.setButtonPos(windowPos.x, windowPos.y);
 		viewer.makeExtraWindow();
@@ -568,11 +569,11 @@ void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
 	}
 }
 
-// Intent: check if the opposing General is in check position
+// Intent: check if the opposing General is in "Check" position
 // Pre: pass the current player side all chess pieces on board
 // Post: return true is opponent is in check, return false otherwise
 bool GameManager::isCheck(Chess::Side side, std::vector<Chess*> on_board) {
-	// Check if black is in check (red is attacking)
+	// Check if black is in "Check" (red is attacking)
 	if (side == Chess::Side::RED) {
 
 		// Check possible move of every red piece
@@ -596,7 +597,7 @@ bool GameManager::isCheck(Chess::Side side, std::vector<Chess*> on_board) {
 		}
 		return false;
 	}
-	// Check if red is in check (black is attacking)
+	// Check if red is in "Check" (black is attacking)
 	else if (side == Chess::Side::BLACK) {
 
 		// Check possible move of every black piece
@@ -625,11 +626,11 @@ bool GameManager::isCheck(Chess::Side side, std::vector<Chess*> on_board) {
 }
 
 
-// Intent: check if the opposing General is in checkmate position
-// Pre: the opponent is in check position, pass the current player side all chess pieces on board
-// Post: return true is opponent is in checkmate, return false otherwise
+// Intent: check if the opposing General is in "Checkmate" position
+// Pre: the opponent is in "Check" position, pass the current player side all chess pieces on board
+// Post: return true is opponent is in "Checkmate", return false otherwise
 bool GameManager::isCheckmate(Chess::Side side, std::vector<Chess*> on_board) {
-	// Black is in check (red is attacking)
+	// Black is in "Check" (red is attacking)
 	if (side == Chess::Side::RED) {
 
 		// Check every possible move of black pieces
@@ -646,7 +647,7 @@ bool GameManager::isCheckmate(Chess::Side side, std::vector<Chess*> on_board) {
 				// Move the piece to each possible move
 				on_board[i]->curPos = on_board[i]->allPossibleMove[j];
 
-				// Check if the General is not in check anymore
+				// Check if the General is not in "Check" anymore
 				if (!isCheck(Chess::Side::RED, on_board)) {
 					on_board[i]->curPos = originalPos;
 					return false;
@@ -656,10 +657,10 @@ bool GameManager::isCheckmate(Chess::Side side, std::vector<Chess*> on_board) {
 			// Move the piece back to its original position
 			on_board[i]->curPos = originalPos;
 		}
-		// The General is still in check even after moving every piece, return true
+		// The General is still in "Check" even after moving every piece, return true
 		return true;
 	}
-	// Red is in check (black is attacking)
+	// Red is in "Check" (black is attacking)
 	else if (side == Chess::Side::BLACK) {
 
 		// Check every possible move of red pieces
@@ -676,7 +677,7 @@ bool GameManager::isCheckmate(Chess::Side side, std::vector<Chess*> on_board) {
 				// Move the piece to each possible move
 				on_board[i]->curPos = on_board[i]->allPossibleMove[j];
 
-				// Check if the General is not in check anymore
+				// Check if the General is not in "Check" anymore
 				if (!isCheck(Chess::Side::BLACK, on_board)) {
 					on_board[i]->curPos = originalPos;
 					return false;
@@ -686,18 +687,18 @@ bool GameManager::isCheckmate(Chess::Side side, std::vector<Chess*> on_board) {
 			// Move the piece back to its original position
 			on_board[i]->curPos = originalPos;
 		}
-		// The General is still in check even after moving every piece, return true
+		// The General is still in "Check" even after moving every piece, return true
 		return true;
 	}
 
 	return false;
 }
 
-// Intent: check if the opponent is in stalemate
+// Intent: check if the opponent is in "Stalemate"
 // Pre: pass the current player side all chess pieces on board
-// Post: return true is opponent is in stalemate (have no more possible move), return false otherwise
+// Post: return true is opponent is in "Stalemate" (have no more possible move), return false otherwise
 bool GameManager::isStalemate(Chess::Side side, std::vector<Chess*>on_board) {
-	// Check if black is in stalemate (red is attacking)
+	// Check if black is in "Stalemate" (red is attacking)
 	if (side == Chess::Side::RED) {
 		for (int k = 0; k < on_board.size(); k++) {
 			if (on_board[k]->side == Chess::Side::RED) continue;
@@ -705,7 +706,7 @@ bool GameManager::isStalemate(Chess::Side side, std::vector<Chess*>on_board) {
 			// Update each piece's possible move
 			on_board[k]->updateAllPossibleMove(on_board);
 
-			// Check if each move is enemy or friend, or check position
+			// Check if each move is enemy or friend, or "Check" position
 			for (int i = 0; i < on_board[k]->allPossibleMove.size(); i++) {
 				bool mustContinue = false;
 
@@ -715,6 +716,7 @@ bool GameManager::isStalemate(Chess::Side side, std::vector<Chess*>on_board) {
 				for (int j = 0; j < on_board.size(); j++) {
 					if (on_board[k]->allPossibleMove[i] == on_board[j]->curPos) {
 						if (on_board[j]->side == on_board[k]->side) {
+							// Erasing move
 							on_board[k]->allPossibleMove.erase(on_board[k]->allPossibleMove.begin() + i);
 
 							if (on_board[k]->allPossibleMove.empty()) break;
@@ -728,13 +730,15 @@ bool GameManager::isStalemate(Chess::Side side, std::vector<Chess*>on_board) {
 
 				if (on_board[k]->allPossibleMove.empty()) continue;
 
-				// Pieces cannot move to positions that put their general in check position
+				// Pieces cannot move to positions that put their general in "Check" position
 				Chess::Position originalPos = on_board[k]->curPos;
 				on_board[k]->curPos = on_board[k]->allPossibleMove[i];
 
-				// If a possible move makes the General in check position, erase the possible move
+				// If a possible move makes the General in "Check" position, erase the possible move
 				if (on_board[k]->side == Chess::Side::BLACK) {
 					if (isCheck(Chess::Side::RED, on_board)) {
+
+						// Reset position and erase the move that keeps the general in "Check" position
 						on_board[k]->curPos = originalPos;
 						on_board[k]->allPossibleMove.erase(on_board[k]->allPossibleMove.begin() + i);
 
@@ -743,16 +747,17 @@ bool GameManager::isStalemate(Chess::Side side, std::vector<Chess*>on_board) {
 						continue;
 					}
 					else {
+						// Return to original position
 						on_board[k]->curPos = originalPos;
 					}
 				}
 			}
-			// If still have possible move(s), return false (not stalemate)
+			// If still have possible move(s), return false (not "Stalemate")
 			if (on_board[k]->allPossibleMove.size() > 0) return false;
 		}
 		return true;
 	}
-	// Check if red is in stalemate (black is attacking)
+	// Check if red is in "Stalemate" (black is attacking)
 	else {
 		for (int k = 0; k < on_board.size(); k++) {
 			if (on_board[k]->side == Chess::Side::BLACK) continue;
@@ -760,13 +765,17 @@ bool GameManager::isStalemate(Chess::Side side, std::vector<Chess*>on_board) {
 			// Update each piece's possible move
 			on_board[k]->updateAllPossibleMove(on_board);
 
-			// Check if each move is enemy or friend, or check position
+			// Check if each move is enemy or friend, or "Check" position
 			for (int i = 0; i < on_board[k]->allPossibleMove.size(); i++) {
 				bool mustContinue = false;
 
+				if (on_board[k]->allPossibleMove.empty()) continue;
+
+				// If a possible move overlaps with enemy, erase the possible move
 				for (int j = 0; j < on_board.size(); j++) {
 					if (on_board[k]->allPossibleMove[i] == on_board[j]->curPos) {
 						if (on_board[j]->side == on_board[k]->side) {
+							// Erasing move
 							on_board[k]->allPossibleMove.erase(on_board[k]->allPossibleMove.begin() + i);
 
 							if (on_board[k]->allPossibleMove.empty()) break;
@@ -780,12 +789,14 @@ bool GameManager::isStalemate(Chess::Side side, std::vector<Chess*>on_board) {
 
 				if (on_board[k]->allPossibleMove.empty()) continue;
 
-				// Pieces cannot move to positions that put their general in check position
+				// Pieces cannot move to positions that put their general in "Check" position
 				Chess::Position originalPos = on_board[k]->curPos;
 				on_board[k]->curPos = on_board[k]->allPossibleMove[i];
 
 				if (on_board[k]->side == Chess::Side::RED) {
 					if (isCheck(Chess::Side::BLACK, on_board)) {
+
+						// Reset position and erase the move that keeps the general in "Check" position
 						on_board[k]->curPos = originalPos;
 						on_board[k]->allPossibleMove.erase(on_board[k]->allPossibleMove.begin() + i);
 
@@ -794,11 +805,12 @@ bool GameManager::isStalemate(Chess::Side side, std::vector<Chess*>on_board) {
 						continue;
 					}
 					else {
+						// Return to original position
 						on_board[k]->curPos = originalPos;
 					}
 				}
 			}
-			// If still have possible move(s), return false (not stalemate)
+			// If still have possible move(s), return false (not "Stalemate")
 			if (on_board[k]->allPossibleMove.size() > 0) return false;
 		}
 		return true;
@@ -877,8 +889,10 @@ void GameManager::saveGameMenu(bool& savingGame) {
 void GameManager::saveGame(std::string filename) {
 	nlohmann::json js;
 
+	// Save the current playing player's side
 	js["player"]["current_player"] = current_player;
 	
+	// Save all the pieces' rank, side, and position
 	for (int i = 0; i < on_board.size(); i++) {
 		js["chess_piece_" + std::to_string(i)]["side"] = on_board[i]->side;
 		js["chess_piece_" + std::to_string(i)]["rank"] = on_board[i]->rank;
@@ -886,6 +900,7 @@ void GameManager::saveGame(std::string filename) {
 		js["chess_piece_" + std::to_string(i)]["pos_y"] = on_board[i]->curPos.y;
 	}
 
+	// Write the save file
 	std::ofstream writeFile{ filename };
 	if (writeFile.good()) {
 		writeFile << std::setw(1) << js;

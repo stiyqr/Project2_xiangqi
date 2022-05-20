@@ -158,7 +158,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
                 // Main Menu
                 if (!startGame) {
-                    // starting new game right away, delete last Game Manager
+                    // Starting new game right away, delete last Game Manager
                     if (gameManager && gameManager->startNewGame == true) {
                         delete gameManager;
                         gameManager = nullptr;
@@ -166,25 +166,25 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                         newGame = true;
                     }
                     else {
-                        // stay in main menu
+                        // Stay in main menu
                         if (mainMenu.isReading == false && mainMenu.isLoading == false) {
                             mainMenu.createMainMenu(appRunning, startGame);
                             mainMenu.viewer.endWindow();
                             if (startGame) newGame = true;
-                            // delete Game Manager if exist
+                            // Delete Game Manager if exist
                             if (gameManager) {
                                 delete gameManager;
                                 gameManager = nullptr;
                             }
                         }
                         else if (mainMenu.isLoading == true) {
-                            // load file
+                            // Load file
                             if (gameManager) delete gameManager;
                             gameManager = mainMenu.loadGameMenu(appRunning, startGame);
                             newGame = true;
                         }
                         else if (mainMenu.isReading == true) {
-                            // read file
+                            // Read file
                             mainMenu.readFile(appRunning);
                         }
                     }
@@ -192,12 +192,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
                 // Gameplay
                 if (startGame) {
-                    // refresh log file
+                    // Refresh log file
                     if (newGame) {
                         GameManager::logFile.open("logFile.txt");
                         newGame = false;
                     }
-                    // create new game
+                    // Create new game
                     if (!gameManager) gameManager = new GameManager;
                     gameManager->createGameBoard(appRunning, startGame);
                     viewer.endWindow();

@@ -30,7 +30,7 @@ public:
 		// Destructor
 		~Button();
 
-		// Overload
+		// Operator Overload
 		operator bool()const;
 	};
 
@@ -56,7 +56,7 @@ public:
 		VOID onResize(WPARAM, LPARAM)noexcept;
 	};
 
-	// Class for ID to differentiate ImGui widgets
+	// Class for ID (to differentiate ImGui widgets)
 	class ID {
 	public:
 		ID(int);
@@ -76,6 +76,7 @@ public:
 	void makeExtraWindow();
 	void endExtraWindow();
 	void addWindowImage(Texture);
+	ImGuiIO& getData();
 
 	// Intent: add a text
 	// Pre: pass the desired text
@@ -87,7 +88,6 @@ public:
 		ImGui::PopStyleColor();
 	}
 
-	ImGuiIO& getData();
 
 public:
 	DirectX directx;

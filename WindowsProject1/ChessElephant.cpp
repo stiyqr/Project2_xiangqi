@@ -1,6 +1,7 @@
 #include "ChessElephant.h"
 #include "Viewer.h"
 
+/////////////// Contructors ///////////////
 ChessElephant::ChessElephant() {}
 
 ChessElephant::ChessElephant(const char* name, int x, int y) {
@@ -24,6 +25,10 @@ ChessElephant::ChessElephant(const char* name, int x, int y) {
 	}
 }
 
+/////////////// Functions ///////////////
+// Intent: update elephant's possible moves
+// Pre: pass the vector of all the current pieces on board
+// Post: elephant's possible moves are updated
 void ChessElephant::updateAllPossibleMove(std::vector<Chess*>on_board) {
 	allPossibleMove.clear();
 

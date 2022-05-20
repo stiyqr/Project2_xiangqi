@@ -4,6 +4,8 @@
 #include <deque>
 #include <fstream>
 
+///////////////////////////////////////////////////// Menu Manager /////////////////////////////////////////////////////
+
 /////////////// Constructor ///////////////
 MenuManager::MenuManager() {
 	gmDummy = nullptr;
@@ -14,29 +16,29 @@ MenuManager::MenuManager() {
 // Pre: pass the bools that signify the app is running and the gameplay has not started (still in menu)
 // Post: main menu window created
 void MenuManager::createMainMenu(bool& appRunning, bool& startGame) {
-	// create main menu window
+	// Create main menu window
 	ImVec2 screenSize = viewer.createWindow(appRunning, viewer.backgroundMenu);
 	auto windowPos = viewer.getCursorPos();
 	float middle_x = (screenSize.x / 2) - 100;
 	float middle_y = (screenSize.y / 2) + 90;
 
-	// make Start Game button
+	// Make Start Game button
 	viewer.setButtonPos(middle_x, middle_y + 50);
 	Viewer::Button startGameButton("startGameBtn", viewer.buttonStartGameImg, viewer.buttonStartGameHoverImg, Viewer::Button::Type::MAINMENU);
 
-	// make Exit Game button
+	// Make Exit Game button
 	viewer.setButtonPos(middle_x + 300, middle_y + 50);
 	Viewer::Button exitGameButton("exitGameBtn", viewer.buttonExitGameImg, viewer.buttonExitGameHoverImg, Viewer::Button::Type::MAINMENU);
 
-	// make Read File button
+	// Make Read File button
 	viewer.setButtonPos(middle_x - 300, middle_y + 50);
 	Viewer::Button readFileButton("readFileBtn", viewer.buttonReadFileImg, viewer.buttonReadFileHoverImg, Viewer::Button::Type::MAINMENU);
 
-	// make Load Game button
+	// Make Load Game button
 	viewer.setButtonPos(middle_x + 150, middle_y + 105);
 	Viewer::Button loadGameButton("loadFileBtn", viewer.buttonLoadGameImg, viewer.buttonLoadGameHoverImg, Viewer::Button::Type::MAINMENU);
 
-	// make Log Replay button
+	// Make Log Replay button
 	viewer.setButtonPos(middle_x - 150, middle_y + 105);
 	Viewer::Button logReplayButton("logReplayBtn", viewer.buttonLogReplayImg, viewer.buttonLogReplayHoverImg, Viewer::Button::Type::MAINMENU);
 
@@ -171,15 +173,16 @@ void MenuManager::readFile(bool& appRunning) {
 			}
 		}
 
+		// Play file while reader is not empty
 		if (!reader.empty()) {
 			static bool inCheckWarning = false, inCheckmateWarning = false, inStalemateWarning = false;
 
 			////////////////////////////////////////// Check/Checkmate/Stalemate Warning //////////////////////////////////////////
-			// display check warning for 1.25 seconds
+			// Display "Check" warning for 1.25 seconds
 			if (inCheckWarning) {
 				viewer.setButtonPos(windowPos.x, windowPos.y);
 				viewer.makeExtraWindow();
-				// check warning image
+				// "Check" warning image
 				viewer.addWindowImage(viewer.backgroundCheck);
 				viewer.endExtraWindow();
 
@@ -187,17 +190,17 @@ void MenuManager::readFile(bool& appRunning) {
 				static auto curDurationCheck = 0.f;
 				curDurationCheck += io.DeltaTime;
 				if (curDurationCheck >= 1.25) {
-					// reset state after 1.25 seconds
+					// Reset state after 1.25 seconds
 					inCheckWarning = false;
 					curDurationCheck = 0;
 				}
 			}
 			
-			// display checkmate warning for 1.25 seconds
+			// Display "Checkmate" warning for 1.25 seconds
 			if (inCheckmateWarning) {
 				viewer.setButtonPos(windowPos.x, windowPos.y);
 				viewer.makeExtraWindow();
-				// checkmate warning image
+				// "Checkmate" warning image
 				viewer.addWindowImage(viewer.backgroundCheckmate);
 				viewer.endExtraWindow();
 
@@ -205,18 +208,18 @@ void MenuManager::readFile(bool& appRunning) {
 				static auto curDurationCheckmate = 0.f;
 				curDurationCheckmate += io.DeltaTime;
 				if (curDurationCheckmate >= 1.25) {
-					// reset state after 1.25 seconds
+					// Reset state after 1.25 seconds
 					inCheckmateWarning = false;
 					gmDummy->inCheckmate = true;
 					curDurationCheckmate = 0;
 				}
 			}
 
-			// display stalemate warning for 1.25 seconds
+			// Display "Stalemate" warning for 1.25 seconds
 			if (inStalemateWarning) {
 				viewer.setButtonPos(windowPos.x, windowPos.y);
 				viewer.makeExtraWindow();
-				// stalemate warning image
+				// "Stalemate" warning image
 				viewer.addWindowImage(viewer.backgroundStalemate);
 				viewer.endExtraWindow();
 
@@ -224,7 +227,7 @@ void MenuManager::readFile(bool& appRunning) {
 				static auto curDurationStalemate = 0.f;
 				curDurationStalemate += io.DeltaTime;
 				if (curDurationStalemate >= 1.25) {
-					// reset state after 1.25 seconds
+					// Reset state after 1.25 seconds
 					inStalemateWarning = false;
 					gmDummy->inStalemate = true;
 					curDurationStalemate = 0;
@@ -233,20 +236,20 @@ void MenuManager::readFile(bool& appRunning) {
 
 			//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-			// render next move every 2.5 seconds
+			// Render next move every 2.5 seconds
 			auto& io = viewer.getData();
 			static auto curDuration = 0.f;
 			curDuration += io.DeltaTime;
 			if (curDuration >= 2.5) {
 
-				// if a piece is selected, render next movement
+				// If a piece is selected, render next movement
 				if (mover != nullptr) {
 					bool isEnemy = false;
 					int enemyIndex = 0;
-					// check if next move overlaps with other chess piece (to be eaten)
+					// Check if next move overlaps with other chess piece (to be eaten)
 					for (int j = 0; j < gmDummy->on_board.size(); j++) {
 						if (reader[0].endPos == gmDummy->on_board[j]->curPos) {
-							// next move overlaps with enemy
+							// Next move overlaps with enemy
 							if (gmDummy->on_board[j]->side != mover->side) {
 								isEnemy = true;
 								enemyIndex = j;
@@ -255,7 +258,7 @@ void MenuManager::readFile(bool& appRunning) {
 						}
 					}
 
-					// if next move overlaps with enemy, eat (erase) enemy
+					// If next move overlaps with enemy, eat (erase) enemy
 					if (isEnemy) {
 						gmDummy->on_board[enemyIndex]->isDead = true;
 					}
@@ -264,27 +267,27 @@ void MenuManager::readFile(bool& appRunning) {
 					mover->animPos = mover->curPos;
 					mover->animProg = 0;
 
-					// move piece to end position
+					// Move piece to end position
 					mover->curPos.x = reader[0].endPos.x;
 					mover->curPos.y = reader[0].endPos.y;
 
-					// check if there is a check or checkmate
+					// Check if there is a "Check" or "Checkmate"
 					if (gmDummy->isCheck(gmDummy->current_player, gmDummy->on_board)) {
-						// check mate
+						// Checkmate
 						if (gmDummy->isCheckmate(gmDummy->current_player, gmDummy->on_board)) {
 							inCheckmateWarning = true;
 						}
-						// check only
+						// "Check" only
 						else {
 							inCheckWarning = true;
 						}
 					}
-					// no check or checkmate
+					// no "Check" or "Checkmate"
 					else {
 						inCheckWarning = false;
 					}
 
-					// check for stalemate
+					// Check for "Stalemate"
 					if (!inCheckWarning && !inCheckmateWarning) {
 						if (gmDummy->isStalemate(gmDummy->current_player, gmDummy->on_board)) {
 							inStalemateWarning = true;
@@ -308,17 +311,14 @@ void MenuManager::readFile(bool& appRunning) {
 			
 		}
 		else {
-			// render last move after 2.5 seconds
+			// Render the last move after 2.5 seconds
 			auto& io = viewer.getData();
 			static auto curDuration = 0.f;
 			curDuration += io.DeltaTime;
 			if (curDuration >= 2.5) {
 
-				// reset reading state
+				// Reset reading state and duration variable
 				isReading = false;
-				//delete gmDummy;
-
-				// reset duration
 				curDuration = 0;
 			}
 		}
@@ -326,12 +326,16 @@ void MenuManager::readFile(bool& appRunning) {
 	viewer.endWindow();
 }
 
+// Intent: load a saved game from the selected slot
+// Pre: pass the variables that indicate the game is running and gameplay hasn't started
+// Post: the selected file is accessed and opened
 GameManager* MenuManager::loadGameMenu(bool& appRunning, bool& startGame) {
 	GameManager* gameManager = nullptr;
 	static bool displayWarning = false;
 
 	viewer.createWindow(appRunning, viewer.backgroundLoadGame);
 	{
+		// Slots and exit buttons
 		viewer.setButtonPos(170, 250);
 		Viewer::Button loadSlot1("loadSlot1", viewer.buttonSave1Img, viewer.buttonSave1HoverImg, Viewer::Button::Type::SAVESLOT);
 		viewer.setButtonPos(455, 250);
@@ -341,35 +345,42 @@ GameManager* MenuManager::loadGameMenu(bool& appRunning, bool& startGame) {
 		viewer.setButtonPos(455, 450);
 		Viewer::Button exitSaveMenuButton("exitSaveMenuBtn", viewer.buttonExitBoardImg, viewer.buttonExitBoardHoverImg, Viewer::Button::Type::MAINMENU);
 
+		// Button click control
 		if (loadSlot1) {
+			// Load saved file from the first slot
 			std::ifstream file("savefile1.txt");
 			if (file.is_open()) {
 				gameManager = new GameManager("savefile1.txt");
 				isLoading = false;
 				startGame = true;
 			}
+			// If there is no saved file in the first slot
 			else {
 				displayWarning = true;
 			}
 		}
 		else if (loadSlot2) {
+			// Load saved file from the second slot
 			std::ifstream file("savefile2.txt");
 			if (file.is_open()) {
 				gameManager = new GameManager("savefile2.txt");
 				isLoading = false;
 				startGame = true;
 			}
+			// If there is no saved file in the second slot
 			else {
 				displayWarning = true;
 			}
 		}
 		else if (loadSlot3) {
+			// Load saved file from the third slot
 			std::ifstream file("savefile3.txt");
 			if (file.is_open()) {
 				gameManager = new GameManager("savefile3.txt");
 				isLoading = false;
 				startGame = true;
 			}
+			// If there is no saved file in the third slot
 			else {
 				displayWarning = true;
 			}
@@ -378,6 +389,7 @@ GameManager* MenuManager::loadGameMenu(bool& appRunning, bool& startGame) {
 			isLoading = false;
 		}
 
+		// Display warning if there is no saved file in the selected slot
 		if (displayWarning) {
 			viewer.setButtonPos(0, 0);
 			viewer.makeExtraWindow();
@@ -385,6 +397,7 @@ GameManager* MenuManager::loadGameMenu(bool& appRunning, bool& startGame) {
 			viewer.addText("No saved file in this slot");
 			viewer.endExtraWindow();
 
+			// Display warning for 1 second
 			auto& io = viewer.getData();
 			static auto curDuration = 0.f;
 			curDuration += io.DeltaTime;
@@ -395,13 +408,15 @@ GameManager* MenuManager::loadGameMenu(bool& appRunning, bool& startGame) {
 		}
 
 	}
-	//viewer.endExtraWindow();
 	viewer.endWindow();
 
 	return gameManager;
 }
 
 
+///////////////////////////////////////////////////// Struct Reader /////////////////////////////////////////////////////
+
+/////////////// Constructors ///////////////
 MenuManager::Reader::Reader(int playerNum, int x1, int y1, int x2, int y2) {
 	if (playerNum == 1) playerSide = Chess::Side::RED;
 	else playerSide = Chess::Side::BLACK;

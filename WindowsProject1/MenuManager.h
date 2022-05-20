@@ -16,9 +16,8 @@ public:
 	Chess::Position startPos, endPos;
 	// Constructor
 	Reader(int, int, int, int, int);
-};
+	};
 
-public:
 	Viewer viewer;
 	GameManager* gmDummy;
 	std::deque<Reader> reader;
