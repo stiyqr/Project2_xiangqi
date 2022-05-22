@@ -13,6 +13,7 @@ public:
 	Viewer viewer;
 	bool inCheckmate = false;
 	bool inStalemate = false;
+	bool isTimeout = false;
 	bool startNewGame = false;
 	float timer = 0.f;
 	float countdown = 11.f;

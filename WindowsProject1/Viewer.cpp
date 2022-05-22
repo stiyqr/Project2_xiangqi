@@ -25,6 +25,7 @@ Viewer::Texture Viewer::backgroundBlackWin;
 Viewer::Texture Viewer::backgroundCheck;
 Viewer::Texture Viewer::backgroundCheckmate;
 Viewer::Texture Viewer::backgroundStalemate;
+Viewer::Texture Viewer::backgroundTimeout;
 // buttons
 Viewer::Texture Viewer::buttonBackToMenuImg;
 Viewer::Texture Viewer::buttonBackToMenuHoverImg;
@@ -43,6 +44,8 @@ Viewer::Texture Viewer::buttonSave1HoverImg;
 Viewer::Texture Viewer::buttonSave2HoverImg;
 Viewer::Texture Viewer::buttonSave3HoverImg;
 Viewer::Texture Viewer::timerImg;
+Viewer::Texture Viewer::countdownRedImg;
+Viewer::Texture Viewer::countdownBlackImg;
 
 /////////////// Chess Pieces ///////////////
 Viewer::Texture Viewer::chessRedGeneral;
@@ -122,11 +125,20 @@ Viewer::Button::Button(const char* id, Texture img, Texture img2, Type type, flo
         isClicked = ImGui::ImageButton(saveSlotHover[id] ? img2() : img(), ImVec2(200, 100));
         saveSlotHover[id] = ImGui::IsItemHovered();
     }
+    if (type == Type::COUNTDOWN) {
+        buttonType = Type::COUNTDOWN;
+        ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 25);
+        ImGui::PushStyleVar(ImGuiStyleVar_Alpha, alpha);
+        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ ImColor{0,0,0,0} });
+        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ ImColor{0,0,0,0} });
+        ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ ImColor{0,0,0,0} });
+        isClicked = ImGui::ImageButton(img(), ImVec2(120, 110));
+    }
 }
 
 /////////////// Destructor ///////////////
 Viewer::Button::~Button() {
-    if (buttonType == Type::CIRCLE) {
+    if (buttonType == Type::CIRCLE || buttonType == Type::COUNTDOWN) {
         ImGui::PopStyleVar();
     }
     ImGui::PopStyleVar();
@@ -256,6 +268,7 @@ void Viewer::DirectX::InitImgs() {
     imgs.backgroundCheck.create(TEXT("../assets\\background check.png"));
     imgs.backgroundCheckmate.create(TEXT("../assets\\background checkmate.png"));
     imgs.backgroundStalemate.create(TEXT("../assets\\background stalemate.png"));
+    imgs.backgroundTimeout.create(TEXT("../assets\\background timeout.png"));
 
     // Initialize button textures
     imgs.buttonBackToMenuImg.create(TEXT("../assets\\button backtomenu.png"));
@@ -275,6 +288,8 @@ void Viewer::DirectX::InitImgs() {
     imgs.buttonSave2HoverImg.create(TEXT("../assets\\button save2 hover.png"));
     imgs.buttonSave3HoverImg.create(TEXT("../assets\\button save3 hover.png"));
     imgs.timerImg.create(TEXT("../assets\\timer.png"));
+    imgs.countdownRedImg.create(TEXT("../assets\\countdown red.png"));
+    imgs.countdownBlackImg.create(TEXT("../assets\\countdown black.png"));
 
     /////////////// Chess Pieces ///////////////
     // Initialize red chess piece textures
@@ -458,4 +473,11 @@ void Viewer::addWindowImage(Texture img) {
 // Post: return ImGui's data global variable
 ImGuiIO& Viewer::getData() {
     return ImGui::GetIO();
+}
+
+// Intent: edit a text's size
+// Pre: pass the wanted size in float (0.0 ~ 1.0)
+// Post: the text's size is changed
+void Viewer::setTextSize(float size) {
+    ImGui::SetWindowFontScale(size);
 }

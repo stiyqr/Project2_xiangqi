@@ -153,7 +153,7 @@ GameManager::GameManager(std::string filename) {
 // Pre: pass bools that signify the game is running and is in gameplay
 // Post: gameplay window created
 void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
-	static bool inCheckWarning = false, inCheckmateWarning = false, inStalemateWarning = false, savingGame = false;
+	static bool inCheckWarning = false, inCheckmateWarning = false, inStalemateWarning = false, timeoutWarning = false, savingGame = false;
 	static Chess* mover = nullptr;
 
 	// Create window with board and get window size
@@ -161,55 +161,6 @@ void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
 	auto windowPos = viewer.getCursorPos();
 	float middle_x = (screenSize.x / 2) - 100;
 	float middle_y = (screenSize.y / 2) + 140;
-
-#pragma region Timers
-	// Display timer
-	auto& io = viewer.getData();
-	timer += io.DeltaTime;
-	int seconds = (int) timer % 60;
-	int minutes = timer / 60;
-	viewer.setButtonPos(805, board.yPosition[6] + 1);
-	viewer.addText("%02d  %02d", minutes, seconds);
-
-	// Display countdown timer
-	countdown -= io.DeltaTime;
-	viewer.setButtonPos(800,board.yPosition[7] + 20);
-	viewer.addColoredText(ImLerp(ImVec4{ ImColor{ 252, 190, 90, 255 } }, ImVec4{ ImColor{ 255, 0, 0, 255 } }, (10.f - countdown + 0.5) / 10), "%05.2f", countdown);
-	
-	// If countdown reaches 0, player loses
-	if (countdown < 0.f) {
-		viewer.setButtonPos(windowPos.x, windowPos.y);
-		viewer.makeExtraWindow();
-		{
-			// Black loses
-			if (current_player == Chess::Side::BLACK)
-				viewer.addWindowImage(viewer.backgroundRedWin);
-			// Red loses
-			else
-				viewer.addWindowImage(viewer.backgroundBlackWin);
-
-
-			// Play again or exit button
-			viewer.setButtonPos(middle_x - 150, middle_y);
-			Viewer::Button playAgainButton("playAgainBtn", viewer.buttonPlayAgainImg, viewer.buttonPlayAgainHoverImg, Viewer::Button::Type::MAINMENU);
-			viewer.setButtonPos(middle_x + 150, middle_y);
-			Viewer::Button backToMenuButton("backToMenuBtn", viewer.buttonBackToMenuImg, viewer.buttonBackToMenuHoverImg, Viewer::Button::Type::MAINMENU);
-
-			// Button click controls
-			if (playAgainButton) {
-				startNewGame = true;
-				startGame = false;
-				logFile.close();
-			}
-			else if (backToMenuButton) {
-				startGame = false;
-				logFile.close();
-			}
-		}
-		viewer.endExtraWindow();
-	}
-#pragma endregion
-
 
 
 	// Control buttons
@@ -220,7 +171,7 @@ void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
 	viewer.setButtonPos(750, board.yPosition[3] + 50);
 	Viewer::Button exitBoardButton("exitBoardBtn", viewer.buttonExitBoardImg, viewer.buttonExitBoardHoverImg, Viewer::Button::Type::GAMEPLAY);
 	viewer.setButtonPos(750, board.yPosition[4] + 80);
-	Viewer::Button timer("timer", viewer.timerImg, viewer.timerImg, Viewer::Button::Type::GAMEPLAY);
+	Viewer::Button timerBtn("timerBtn", viewer.timerImg, viewer.timerImg, Viewer::Button::Type::GAMEPLAY);
 
 	// Button click controls
 	if (saveGameButton) {
@@ -240,6 +191,39 @@ void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
 		viewer.setButtonPos(windowPos.x, windowPos.y);
 		saveGameMenu(savingGame);
 	}
+
+	// Current player badge
+	viewer.setButtonPos(920, board.yPosition[1] + 40);
+	if (current_player == Chess::Side::RED) {
+		Viewer::Button countdownRedButton("countdownRedBtn", viewer.countdownRedImg, viewer.countdownRedImg, Viewer::Button::Type::COUNTDOWN);
+	}
+	else {
+		Viewer::Button countdownBlackButton("countdownBlackBtn", viewer.countdownBlackImg, viewer.countdownBlackImg, Viewer::Button::Type::COUNTDOWN);
+	}
+
+#pragma region Timers
+	// Display timer
+	auto& io = viewer.getData();
+	timer += io.DeltaTime;
+	int seconds = (int)timer % 60;
+	int minutes = timer / 60;
+	viewer.setButtonPos(805, board.yPosition[6] + 1);
+	viewer.addText("%02d  %02d", minutes, seconds);
+
+	// Display countdown timer
+	if (!isTimeout) countdown -= io.DeltaTime;
+	viewer.setTextSize(0.8);
+	viewer.setButtonPos(953, board.yPosition[3] + 20);
+	viewer.addColoredText(ImColor{ 135, 25, 26, 255 }, "%05.2f", countdown);
+	viewer.setTextSize(1);
+
+	// If countdown reaches 0, player loses
+	if (countdown < 0.f) {
+		timeoutWarning = true;
+		countdown = 1.f;
+	}
+#pragma endregion
+
 
 	// Render chess piece one by one
 	for (int i = 0; i < on_board.size(); i++) {
@@ -279,7 +263,7 @@ void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
 		}
 	}
 
-#pragma region Check_Warning
+#pragma region Warning_Backgrounds
 	// "Check" (not "Checkmate") warning
 	if (inCheckWarning) {
 		viewer.setButtonPos(windowPos.x, windowPos.y);
@@ -329,6 +313,24 @@ void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
 		if (curDuration >= 2.5) {
 			inStalemateWarning = false;
 			inStalemate = true;
+			curDuration = 0;
+		}
+	}
+
+	// "Timeout" warning
+	if (timeoutWarning) {
+		viewer.setButtonPos(windowPos.x, windowPos.y);
+		viewer.makeExtraWindow();
+		viewer.addWindowImage(viewer.backgroundTimeout);
+		viewer.endExtraWindow();
+
+		// Display warning for 2.5 seconds
+		auto& io = viewer.getData();
+		static auto curDuration = 0.f;
+		curDuration += io.DeltaTime;
+		if (curDuration >= 2.5) {
+			timeoutWarning = false;
+			isTimeout = true;
 			curDuration = 0;
 		}
 	}
@@ -563,8 +565,8 @@ void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
 	}
 #pragma endregion
 
-	// "Checkmate", game ends
-	if (inCheckmate) {
+	// "Checkmate" / "Stalemate" / "Timeout" = game ends
+	if (inCheckmate || inStalemate || isTimeout) {
 		viewer.setButtonPos(windowPos.x, windowPos.y);
 		viewer.makeExtraWindow();
 		{
@@ -575,38 +577,6 @@ void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
 			else 
 				viewer.addWindowImage(viewer.backgroundBlackWin);
 			
-
-			// Play again or exit button
-			viewer.setButtonPos(middle_x - 150, middle_y);
-			Viewer::Button playAgainButton("playAgainBtn", viewer.buttonPlayAgainImg, viewer.buttonPlayAgainHoverImg, Viewer::Button::Type::MAINMENU);
-			viewer.setButtonPos(middle_x + 150, middle_y);
-			Viewer::Button backToMenuButton("backToMenuBtn", viewer.buttonBackToMenuImg, viewer.buttonBackToMenuHoverImg, Viewer::Button::Type::MAINMENU);
-
-			// Button click controls
-			if (playAgainButton) {
-				startNewGame = true;
-				startGame = false;
-				logFile.close();
-			}
-			else if (backToMenuButton) {
-				startGame = false;
-				logFile.close();
-			}
-		}
-		viewer.endExtraWindow();
-	}
-
-	// "Stalemate", game ends
-	if (inStalemate) {
-		viewer.setButtonPos(windowPos.x, windowPos.y);
-		viewer.makeExtraWindow();
-		{
-			// Red wins
-			if (current_player == Chess::Side::BLACK) 
-				viewer.addWindowImage(viewer.backgroundRedWin);
-			// Black wins
-			else 
-				viewer.addWindowImage(viewer.backgroundBlackWin);
 
 			// Play again or exit button
 			viewer.setButtonPos(middle_x - 150, middle_y);

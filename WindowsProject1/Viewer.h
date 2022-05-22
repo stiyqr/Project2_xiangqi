@@ -20,7 +20,7 @@ public:
 		std::string id;
 		static std::unordered_map<std::string, bool>mainMenuHover, saveSlotHover;
 	public:
-		enum class Type { MAINMENU, GAMEPLAY, CIRCLE, SAVESLOT };
+		enum class Type { MAINMENU, GAMEPLAY, CIRCLE, SAVESLOT, COUNTDOWN };
 		Type buttonType{};
 
 		// Constructor
@@ -77,6 +77,7 @@ public:
 	void endExtraWindow();
 	void addWindowImage(Texture);
 	ImGuiIO& getData();
+	void setTextSize(float);
 
 	// Intent: add a text
 	// Pre: pass the desired text
@@ -125,6 +126,7 @@ public:
 	static Texture backgroundCheck;
 	static Texture backgroundCheckmate;
 	static Texture backgroundStalemate;
+	static Texture backgroundTimeout;
 
 	// Buttons
 	static Texture buttonBackToMenuImg;
@@ -144,6 +146,8 @@ public:
 	static Texture buttonSave2HoverImg;
 	static Texture buttonSave3HoverImg;
 	static Texture timerImg;
+	static Texture countdownRedImg;
+	static Texture countdownBlackImg;
 
 	/////////////// Chess pieces ///////////////
 	static Texture chessRedGeneral;
