@@ -324,8 +324,8 @@ GameManager* MenuManager::loadGameMenu(bool& appRunning, bool& startGame) {
 		Viewer::Button loadSlot2("loadSlot2", viewer.buttonSave2Img, viewer.buttonSave2HoverImg, Viewer::Button::Type::SAVESLOT);
 		viewer.setButtonPos(750, 250);
 		Viewer::Button loadSlot3("loadSlot3", viewer.buttonSave3Img, viewer.buttonSave3HoverImg, Viewer::Button::Type::SAVESLOT);
-		viewer.setButtonPos(455, 450);
-		Viewer::Button exitSaveMenuButton("exitSaveMenuBtn", viewer.buttonExitBoardImg, viewer.buttonExitBoardHoverImg, Viewer::Button::Type::MAINMENU);
+		viewer.setButtonPos(475, 450);
+		Viewer::Button exitSaveMenuButton("exitSaveMenuBtn", viewer.buttonExitBoardImg, viewer.buttonExitBoardHoverImg, Viewer::Button::Type::GAMEPLAY);
 
 		// Button click control
 		if (loadSlot1) {
