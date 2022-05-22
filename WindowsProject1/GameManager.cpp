@@ -204,14 +204,14 @@ void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
 #pragma region Timers
 	// Display timer
 	auto& io = viewer.getData();
-	timer += io.DeltaTime;
+	if (!savingGame) timer += io.DeltaTime;
 	int seconds = (int)timer % 60;
 	int minutes = timer / 60;
 	viewer.setButtonPos(805, board.yPosition[6] + 1);
 	viewer.addText("%02d  %02d", minutes, seconds);
 
 	// Display countdown timer
-	if (!isTimeout) countdown -= io.DeltaTime;
+	if (!isTimeout && !savingGame) countdown -= io.DeltaTime;
 	viewer.setTextSize(0.8);
 	viewer.setButtonPos(953, board.yPosition[3] + 20);
 	viewer.addColoredText(ImColor{ 135, 25, 26, 255 }, "%05.2f", countdown);
