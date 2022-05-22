@@ -218,10 +218,10 @@ void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
 	viewer.setTextSize(1);
 
 	// If countdown reaches 0, player loses
-	//if (countdown < 0.f) {
-	//	timeoutWarning = true;
-	//	countdown = 1.f;
-	//}
+	if (countdown < 0.f) {
+		timeoutWarning = true;
+		countdown = 1.f;
+	}
 #pragma endregion
 
 
