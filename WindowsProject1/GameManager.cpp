@@ -218,10 +218,10 @@ void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
 	viewer.setTextSize(1);
 
 	// If countdown reaches 0, player loses
-	if (countdown < 0.f) {
-		timeoutWarning = true;
-		countdown = 1.f;
-	}
+	//if (countdown < 0.f) {
+	//	timeoutWarning = true;
+	//	countdown = 1.f;
+	//}
 #pragma endregion
 
 
@@ -385,12 +385,12 @@ void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
 				// Black checks the Red General
 				if (mover->side == Chess::Side::RED) {
 					if (isCheck(Chess::Side::BLACK, on_board)) {
-						bool eatEnemy = false;
+						bool eatEnemy = false, mustBreak = false;
 
 						// Loop through all pieces to check if the piece that checks the General can be eaten
 						for (int j = 0; j < on_board.size(); j++) {
 							if (mover->curPos == on_board[j]->curPos) {
-								Chess eaten = *on_board[j];
+								Chess& eaten = *on_board[j];
 								eaten.updateAllPossibleMove(on_board);
 
 								// The piece that checks the General can be eaten
@@ -398,15 +398,21 @@ void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
 									for (int l = 0; l < on_board.size(); l++) {
 										if (eaten.allPossibleMove[k] == on_board[l]->curPos) {
 											if (on_board[l]->rank == Chess::Rank::GENERAL && on_board[l]->side == Chess::Side::RED) {
-												eatEnemy = true;
+
+												// Check if eating the enemy removes "Check"
+												if (!isCheck(Chess::Side::BLACK, on_board, j)) {
+													// General is not in "Check" after eating the enemy
+													eatEnemy = true;
+												}
+												mustBreak = true;
 												break;
 											}
 										}
 									}
-									if (eatEnemy) break;
+									if (mustBreak) break;
 								}
 							}
-							if (eatEnemy) break;
+							if (mustBreak) break;
 						}
 
 						// Reset selected piece's position
@@ -421,6 +427,7 @@ void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
 							i--;
 							continue;
 						}
+
 					}
 					else {
 						// Reset selected piece's position
@@ -430,7 +437,7 @@ void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
 				// Red checks the Black General
 				else {
 					if (isCheck(Chess::Side::RED, on_board)) {
-						bool eatEnemy = false;
+						bool eatEnemy = false, mustBreak = false;
 
 						// Loop through all pieces to check if the piece that checks the General can be eaten
 						for (int j = 0; j < on_board.size(); j++) {
@@ -443,15 +450,21 @@ void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
 									for (int l = 0; l < on_board.size(); l++) {
 										if (eaten.allPossibleMove[k] == on_board[l]->curPos) {
 											if (on_board[l]->rank == Chess::Rank::GENERAL && on_board[l]->side == Chess::Side::BLACK) {
-												eatEnemy = true;
+												
+												// Check if eating the enemy removes "Check"
+												if (!isCheck(Chess::Side::BLACK, on_board, j)) {
+													// General is not in "Check" after eating the enemy
+													eatEnemy = true;
+												}
+												mustBreak = true;
 												break;
 											}
 										}
 									}
-									if (eatEnemy) break;
+									if (mustBreak) break;
 								}
 							}
-							if (eatEnemy) break;
+							if (mustBreak) break;
 						}
 
 						// Reset selected piece's position
@@ -635,6 +648,62 @@ bool GameManager::isCheck(Chess::Side side, std::vector<Chess*> on_board) {
 			if (on_board[i]->side == Chess::Side::RED) continue;
 
 			on_board[i]->updateAllPossibleMove(on_board);
+
+			// Compare each possible move to each piece's position
+			for (int j = 0; j < on_board[i]->allPossibleMove.size(); j++) {
+				for (int k = 0; k < on_board.size(); k++) {
+
+					// If possible move and a other piece position is the same, check if it's the other side's General
+					if (on_board[i]->allPossibleMove[j] == on_board[k]->curPos) {
+						if (on_board[k]->rank == Chess::Rank::GENERAL && on_board[k]->side != on_board[i]->side) {
+							return true;
+						}
+					}
+				}
+			}
+		}
+		return false;
+	}
+
+	return false;
+}
+
+// Intent: check if the opposing General is in "Check" position while simulating a piece being eaten
+// Pre: pass the current player side all chess pieces on board, and the index of the eaten piece
+// Post: return true is opponent is in check, return false otherwise
+bool GameManager::isCheck(Chess::Side side, std::vector<Chess*> on_board, int index) {
+	// Check if black is in "Check" (red is attacking)
+	if (side == Chess::Side::RED) {
+
+		// Check possible move of every red piece
+		for (int i = 0; i < on_board.size(); i++) {
+			if (on_board[i]->side == Chess::Side::BLACK) continue;
+
+			if (i != index) on_board[i]->updateAllPossibleMove(on_board);
+
+			// Compare each possible move to each piece's position
+			for (int j = 0; j < on_board[i]->allPossibleMove.size(); j++) {
+				for (int k = 0; k < on_board.size(); k++) {
+
+					// If possible move and a other piece position is the same, check if it's the other side's General
+					if (on_board[i]->allPossibleMove[j] == on_board[k]->curPos) {
+						if (on_board[k]->rank == Chess::Rank::GENERAL && on_board[k]->side != on_board[i]->side) {
+							return true;
+						}
+					}
+				}
+			}
+		}
+		return false;
+	}
+	// Check if red is in "Check" (black is attacking)
+	else if (side == Chess::Side::BLACK) {
+
+		// Check possible move of every black piece
+		for (int i = 0; i < on_board.size(); i++) {
+			if (on_board[i]->side == Chess::Side::RED) continue;
+
+			if (i != index) on_board[i]->updateAllPossibleMove(on_board);
 
 			// Compare each possible move to each piece's position
 			for (int j = 0; j < on_board[i]->allPossibleMove.size(); j++) {

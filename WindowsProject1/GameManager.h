@@ -27,6 +27,7 @@ public:
 	// Functions
 	void createGameBoard(bool&, bool&);
 	bool isCheck(Chess::Side, std::vector<Chess*>);
+	bool isCheck(Chess::Side, std::vector<Chess*>, int index);
 	bool isCheckmate(Chess::Side, std::vector<Chess*>);
 	bool isStalemate(Chess::Side, std::vector<Chess*>);
 	bool generalMeet();
