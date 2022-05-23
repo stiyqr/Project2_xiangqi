@@ -375,7 +375,7 @@ GameManager* MenuManager::loadGameMenu(bool& appRunning, bool& startGame) {
 		if (displayWarning) {
 			viewer.setButtonPos(0, 0);
 			viewer.makeExtraWindow();
-			viewer.setButtonPos(471, 380);
+			viewer.setButtonPos(420, 380);
 			viewer.addText("No saved file in this slot");
 			viewer.endExtraWindow();
 

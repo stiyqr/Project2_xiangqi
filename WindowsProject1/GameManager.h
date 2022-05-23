@@ -18,6 +18,7 @@ public:
 	float timer = 0.f;
 	float countdown = 11.f;
 	static std::ofstream logFile;
+	std::string logData;
 
 public:
 	// Constructors

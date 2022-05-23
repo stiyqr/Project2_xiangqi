@@ -49,6 +49,9 @@ GameManager::GameManager() {
 	on_board.emplace_back(new ChessSoldier("redSoldierBtn", 4, 6));
 	on_board.emplace_back(new ChessSoldier("redSoldierBtn", 6, 6));
 	on_board.emplace_back(new ChessSoldier("redSoldierBtn", 8, 6));
+
+	// Initialize logData as blank
+	logData = "";
 }
 
 // Constructor when loading game
@@ -81,71 +84,80 @@ GameManager::GameManager(std::string filename) {
 			switch (rank) {
 
 			case Chess::Rank::GENERAL:
-					if (side == Chess::Side::RED) {
-						on_board.emplace_back(new ChessGeneral("redGeneralBtn", x, y));
-					}
-					else if (side == Chess::Side::BLACK) {
-						on_board.emplace_back(new ChessGeneral("blackGeneralBtn", x, y));
-					}
-					break;
+				if (side == Chess::Side::RED) {
+					on_board.emplace_back(new ChessGeneral("redGeneralBtn", x, y));
+				}
+				else if (side == Chess::Side::BLACK) {
+					on_board.emplace_back(new ChessGeneral("blackGeneralBtn", x, y));
+				}
+				break;
 
 			case Chess::Rank::ADVISOR:
-					if (side == Chess::Side::RED) {
-						on_board.emplace_back(new ChessAdvisor("redAdvisorBtn", x, y));
-					}
-					else if (side == Chess::Side::BLACK) {
-						on_board.emplace_back(new ChessAdvisor("blackAdvisorBtn", x, y));
-					}
-					break;
+				if (side == Chess::Side::RED) {
+					on_board.emplace_back(new ChessAdvisor("redAdvisorBtn", x, y));
+				}
+				else if (side == Chess::Side::BLACK) {
+					on_board.emplace_back(new ChessAdvisor("blackAdvisorBtn", x, y));
+				}
+				break;
 
 			case Chess::Rank::CANNON:
-					if (side == Chess::Side::RED) {
-						on_board.emplace_back(new ChessCannon("redCannonBtn", x, y));
-					}
-					else if (side == Chess::Side::BLACK) {
-						on_board.emplace_back(new ChessCannon("blackCannonBtn", x, y));
-					}
-					break;
+				if (side == Chess::Side::RED) {
+					on_board.emplace_back(new ChessCannon("redCannonBtn", x, y));
+				}
+				else if (side == Chess::Side::BLACK) {
+					on_board.emplace_back(new ChessCannon("blackCannonBtn", x, y));
+				}
+				break;
 
 			case Chess::Rank::CHARIOT:
-					if (side == Chess::Side::RED) {
-						on_board.emplace_back(new ChessChariot("redChariotBtn", x, y));
-					}
-					else if (side == Chess::Side::BLACK) {
-						on_board.emplace_back(new ChessChariot("blackChariotBtn", x, y));
-					}
-					break;
+				if (side == Chess::Side::RED) {
+					on_board.emplace_back(new ChessChariot("redChariotBtn", x, y));
+				}
+				else if (side == Chess::Side::BLACK) {
+					on_board.emplace_back(new ChessChariot("blackChariotBtn", x, y));
+				}
+				break;
 
 			case Chess::Rank::ELEPHANT:
-					if (side == Chess::Side::RED) {
-						on_board.emplace_back(new ChessElephant("redElephantBtn", x, y));
-					}
-					else if (side == Chess::Side::BLACK) {
-						on_board.emplace_back(new ChessElephant("blackElephantBtn", x, y));
-					}
-					break;
+				if (side == Chess::Side::RED) {
+					on_board.emplace_back(new ChessElephant("redElephantBtn", x, y));
+				}
+				else if (side == Chess::Side::BLACK) {
+					on_board.emplace_back(new ChessElephant("blackElephantBtn", x, y));
+				}
+				break;
 
 			case Chess::Rank::HORSE:
-					if (side == Chess::Side::RED) {
-						on_board.emplace_back(new ChessHorse("redHorseBtn", x, y));
-					}
-					else if (side == Chess::Side::BLACK) {
-						on_board.emplace_back(new ChessHorse("blackHorseBtn", x, y));
-					}
-					break;
+				if (side == Chess::Side::RED) {
+					on_board.emplace_back(new ChessHorse("redHorseBtn", x, y));
+				}
+				else if (side == Chess::Side::BLACK) {
+					on_board.emplace_back(new ChessHorse("blackHorseBtn", x, y));
+				}
+				break;
 
 			case Chess::Rank::SOLDIER:
-					if (side == Chess::Side::RED) {
-						on_board.emplace_back(new ChessSoldier("redSoldierBtn", x, y));
-					}
-					else if (side == Chess::Side::BLACK) {
-						on_board.emplace_back(new ChessSoldier("blackSoldierBtn", x, y));
-					}
-					break;
+				if (side == Chess::Side::RED) {
+					on_board.emplace_back(new ChessSoldier("redSoldierBtn", x, y));
+				}
+				else if (side == Chess::Side::BLACK) {
+					on_board.emplace_back(new ChessSoldier("blackSoldierBtn", x, y));
+				}
+				break;
 			}
 #pragma endregion
 		}
+
+		// Get saved log data
+		js["log_file"]["log"].get_to(logData);
 	}
+	file.close();
+
+
+	// Write saved log data to current logFile
+	logFile.open("logFile.txt");
+	logFile.write(logData.c_str(), logData.length());
 }
 
 /////////////// Functions ///////////////
@@ -514,14 +526,19 @@ void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
 					}
 
 					// Output Log
+					std::string tempLog = "";
+
 					if (current_player == Chess::Side::RED) {
-						logFile << "1 ";
+						tempLog += "1 ";
 					}
 					else {
-						logFile << "2 ";
+						tempLog += "2 ";
 					}
-					logFile << "(" << mover->curPos.x << ", " << mover->curPos.y << ")";
-					logFile << "(" << mover->allPossibleMove[i].x << ", " << mover->allPossibleMove[i].y << ")\n";
+					tempLog += "(" + std::to_string(mover->curPos.x) + ", " + std::to_string(mover->curPos.y) + ")";
+					tempLog += "(" + std::to_string(mover->allPossibleMove[i].x) + ", " + std::to_string(mover->allPossibleMove[i].y) + ")" + '\n';
+					logData += tempLog;
+					logFile.write(tempLog.c_str(), tempLog.length());
+
 
 					// Update position for movement animation
 					mover->animPos = mover->curPos;
@@ -954,12 +971,12 @@ void GameManager::saveGameMenu(bool& savingGame) {
 		// Save slot buttons
 		viewer.setButtonPos(170, 250);
 		Viewer::Button saveSlot1("saveSlot1", viewer.buttonSave1Img, viewer.buttonSave1HoverImg, Viewer::Button::Type::SAVESLOT);
-		viewer.setButtonPos(450, 250);
+		viewer.setButtonPos(455, 250);
 		Viewer::Button saveSlot2("saveSlot2", viewer.buttonSave2Img, viewer.buttonSave2HoverImg, Viewer::Button::Type::SAVESLOT);
 		viewer.setButtonPos(750, 250);
 		Viewer::Button saveSlot3("saveSlot3", viewer.buttonSave3Img, viewer.buttonSave3HoverImg, Viewer::Button::Type::SAVESLOT);
-		viewer.setButtonPos(450, 450);
-		Viewer::Button exitSaveMenuButton("exitSaveMenuBtn", viewer.buttonExitBoardImg, viewer.buttonExitBoardHoverImg, Viewer::Button::Type::MAINMENU);
+		viewer.setButtonPos(475, 450);
+		Viewer::Button exitSaveMenuButton("exitSaveMenuBtn", viewer.buttonExitBoardImg, viewer.buttonExitBoardHoverImg, Viewer::Button::Type::GAMEPLAY);
 
 		// Button click controls
 		if (saveSlot1) {
@@ -997,6 +1014,9 @@ void GameManager::saveGame(std::string filename) {
 		js["chess_piece_" + std::to_string(i)]["pos_x"] = on_board[i]->curPos.x;
 		js["chess_piece_" + std::to_string(i)]["pos_y"] = on_board[i]->curPos.y;
 	}
+
+	// Save log
+	js["log_file"]["log"] = logData;
 
 	// Write the save file
 	std::ofstream writeFile{ filename };

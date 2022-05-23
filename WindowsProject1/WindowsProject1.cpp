@@ -228,7 +228,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 if (startGame) {
                     // Refresh log file
                     if (newGame) {
-                        GameManager::logFile.open("logFile.txt");
+                        if (!GameManager::logFile.is_open()) GameManager::logFile.open("logFile.txt");
                         newGame = false;
                     }
                     // Create new game
