@@ -16,7 +16,8 @@ public:
 	bool isTimeout = false;
 	bool startNewGame = false;
 	float timer = 0.f;
-	float countdown = 11.f;
+	float countdownRed = 600.f;
+	float countdownBlack = 600.f;
 	static std::ofstream logFile;
 	std::string logData;
 

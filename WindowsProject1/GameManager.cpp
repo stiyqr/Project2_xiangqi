@@ -223,16 +223,35 @@ void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
 	viewer.addText("%02d  %02d", minutes, seconds);
 
 	// Display countdown timer
-	if (!isTimeout && !savingGame) countdown -= io.DeltaTime;
+	if (!isTimeout && !savingGame) {
+		if (current_player == Chess::Side::RED) {
+			countdownRed -= io.DeltaTime;
+		}
+		else {
+			countdownBlack -= io.DeltaTime;
+		}
+	}
 	viewer.setTextSize(0.8);
 	viewer.setButtonPos(953, board.yPosition[3] + 20);
-	viewer.addColoredText(ImColor{ 135, 25, 26, 255 }, "%05.2f", countdown);
+	if (!isTimeout && !savingGame) {
+		if (current_player == Chess::Side::RED) {
+			int secondsRed = (int)countdownRed % 60;
+			int minutesRed = countdownRed / 60;
+			viewer.addColoredText(ImColor{ 135, 25, 26, 255 }, "%02d:%02d", minutesRed, secondsRed);
+		}
+		else {
+			int secondsBlack = (int)countdownBlack % 60;
+			int minutesBlack = countdownBlack / 60;
+			viewer.addColoredText(ImColor{ 135, 25, 26, 255 }, "%02d:%02d", minutesBlack, secondsBlack);
+		}
+	}
 	viewer.setTextSize(1);
 
 	// If countdown reaches 0, player loses
-	if (countdown < 0.f) {
+	if (countdownRed < 0.f || countdownBlack < 0.f) {
 		timeoutWarning = true;
-		countdown = 1.f;
+		countdownRed = 1.f;
+		countdownBlack = 1.f;
 	}
 #pragma endregion
 
@@ -548,8 +567,11 @@ void GameManager::createGameBoard(bool& appRunning, bool& startGame) {
 					mover->curPos.x = mover->allPossibleMove[i].x;
 					mover->curPos.y = mover->allPossibleMove[i].y;
 
-					// Reset countdown timer
-					countdown = 11.f;
+					// Add ten seconds to current player's countdown timer
+					if (current_player == Chess::Side::RED)
+						countdownRed += 10.f;
+					else
+						countdownBlack += 10.f;
 
 					// Check if there is a Check/Checkmate
 					if (isCheck(current_player, on_board)) {
