@@ -1,7 +1,4 @@
-﻿// WindowsProject1.cpp : Defines the entry point for the application.
-//
-
-#include "framework.h"
+﻿#include "framework.h"
 #include "main.h"
 #include "resource.h"
 #include <string>
