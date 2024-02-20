@@ -1,6 +1,6 @@
 # Xiangqi 象棋
 
-A game of Chinese Chess or also known as Xiangqi（象棋）
+A game of Chinese Chess, also known as Xiangqi（象棋）
 
 ## Main Menu
 
